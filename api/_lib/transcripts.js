@@ -7,6 +7,7 @@
 // ============================================================
 
 import { activeSubscription } from './subscription.js';
+import { getConfig } from './config.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -87,7 +88,22 @@ export function sourcesFor(sources, texts) {
 // characters is reached, then on to the end of that answer, so the free part
 // never stops on an unanswered question. Locked turns are never returned,
 // only the section titles and how many turns each hides.
-export function splitFree(sections) {
+export async function splitFree(sections) {
+  // Setting transcripts.public_full (default on): the whole dialogue is public, nothing is locked.
+  const publicFull = await getConfig('transcripts.public_full');
+  return cutFree(sections, publicFull);
+}
+
+export function cutFree(sections, publicFull) {
+  if (publicFull) {
+    const n = sections.reduce((m, s) => m + s.turns.length, 0);
+    return {
+      free: sections.map((s) => ({ title: s.title, turns: s.turns })),
+      toc: sections.map((s) => ({ title: s.title, locked: false, lockedTurns: 0 })),
+      lockedTurns: 0,
+      totalTurns: n,
+    };
+  }
   const total = sections.reduce((n, s) => n + s.turns.reduce((m, t) => m + t.text.length, 0), 0);
   const budget = total * FREE_SHARE;
   let used = 0, stop = false;

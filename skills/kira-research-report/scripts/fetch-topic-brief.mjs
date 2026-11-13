@@ -13,8 +13,8 @@
 // ---------------------------------------------------------------
 
 const [, , id] = process.argv;
-const URL = process.env.SUPABASE_URL;
-const KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!id || !URL || !KEY) process.exit(0);
 if (!/^[a-z0-9][a-z0-9-]{2,120}$/.test(id)) process.exit(0);
 

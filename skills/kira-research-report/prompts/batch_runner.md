@@ -72,10 +72,12 @@ These 3 env vars must be present (cloud: the Routine environment's variables; lo
 - `SUPABASE_URL` — `https://iygoynbnscednfzdsflc.supabase.co`
 - `SUPABASE_SERVICE_KEY` — Bearer token for Supabase Storage + SQL via MCP
 
+In a shared cloud environment the two Supabase variables may carry the project prefix (`KIRA_SUPABASE_URL`, `KIRA_SUPABASE_SERVICE_KEY`, owner 2026-11-11); every script reads either name.
+
 **Use Node for the check, NOT bash `${VAR:+SET}` expansion** — bash variable expansion triggers Claude Code's "Contains expansion" permission prompt every fire even when `Bash(node *)` and `Bash(cd *)` are pre-approved. Node reads `process.env` directly without shell expansion, so the command stays in the auto-approved allowlist.
 
 ```bash
-node -e "['PDF_RENDER_SECRET','SUPABASE_URL','SUPABASE_SERVICE_KEY'].forEach(k=>{const v=process.env[k];console.log(k+'='+(v&&v.length?'SET':'MISSING'))})"
+node -e "['PDF_RENDER_SECRET','SUPABASE_URL','SUPABASE_SERVICE_KEY'].forEach(k=>{const v=process.env[k]||process.env['KIRA_'+k];console.log(k+'='+(v&&v.length?'SET':'MISSING'))})"
 ```
 
 Also check the brain (private repo `kira-pipeline`, cloned next to this repo or at env `KIRA_BRAIN_DIR`): `node -e "const p=require('path'),f=require('fs');const b=process.env.KIRA_BRAIN_DIR||p.resolve('..','kira-pipeline','brain');console.log('BRAIN='+(f.existsSync(p.join(b,'runner','retrieve.py'))?b:'MISSING'))"`. A missing brain is NOT fatal: Stage A falls back to UC1/UC2. Note it in the fire summary.
@@ -520,6 +522,25 @@ node skills/kira-research-report/scripts/make-insight.mjs --pending 5
 ```
 
 Cuts the report's executive-summary page and its first chart page out of the finished HTML into an insight, in every language that was just published (nothing is written or translated by a model), and renders its cover slides. `--pending 5` takes the 5 newest published reports that lack an insight (or a language of it): the report just published is the newest, the rest are retries. Prints one JSON line per report and a `summary` line; a report whose layout the insight styles do not cover prints `status: skipped` (fine, nothing to do). NOT fatal, and never delays the queue: note any `failed` line (slug + reason) in the fire summary and continue. Details: `prompts/insight_runner.md`.
+
+**5.3b-7 — Cut the report into citable answers (GEO, migration 065).**
+
+Prompts live in the private brain: `${KIRA_BRAIN_DIR}/geo/prompts/` (`common.md`, `report_extract.md`, `qa.md`, `translate.md`). Never copy them here.
+
+0. **Segment** — `node scripts/geo-segment.mjs --report <slug>` prints `{segment_key, method, candidates}`: the topic's level-2 segment, or `null` plus up to 8 candidate segments of the country.
+1. **Extract** — spawn ONE Haiku subagent (`model: haiku`). Give it the two prompt files, the slug, `country_code`, the resolved `segment_key` (or, when it is null, the `candidates` list), the analysis name and buyer question from the topic brief, and the local files `outputs/batch/${id}/en.html` + `outputs/batch/${id}/exhibits.json` (if present). It writes `outputs/batch/${id}/geo.json`.
+2. **QA** — spawn ONE Sonnet subagent (`model: sonnet`) with `qa.md`, the slug, title, kind `report` and analysis name, and ONLY `geo.json` (not the report). It rewrites `geo.json` in place (drops or fixes rows whose first clause does not answer the question, fixes the analysis name).
+2b. **Translate** — spawn ONE Haiku subagent (`model: haiku`) with `translate.md` and ONLY `geo.json`. It adds `i18n.ja` / `i18n.ko` / `i18n.zh` (`question` + `answer_short`) to every row in place and leaves any other `i18n` key as it is.
+3. **Gate + insert** (code, no model). The first command drops any ja/ko/zh version whose numbers differ from the English row (or that lost "KIRA"); the English rows are not touched:
+
+```bash
+B=skills/kira-research-report/outputs/batch/${id}
+node scripts/geo-i18n-gate.mjs --rows $B/geo.json
+node scripts/geo-gate.mjs --rows $B/geo.json --source $B/en.html \
+  $( [ -s $B/exhibits.json ] && echo --source $B/exhibits.json ) --status published --insert
+```
+
+`geo-i18n-gate.mjs` prints `ja x kept / y dropped · ko … · zh …`; a dropped translation only means that row shows in English for that language. `geo-gate.mjs` prints `answers x/y passed` and one `✗` line per rejected row; only passed rows are inserted (`kira_answers`, upsert on `content_hash`, so a re-run adds nothing twice). NOT fatal and never delays the queue: note `geo: x/y` (or the failure) in the fire summary and continue. `geo.json` stays in the private archive with the rest of the folder (Step 5.3d), never in this repo.
 
 **5.3c — Verify (3 cache-busted curls):**
 

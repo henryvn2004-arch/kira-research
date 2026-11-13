@@ -22,8 +22,8 @@ import fs from 'fs';
 import { getConfig } from '../../../api/_lib/config.js';
 import { requestedPriority } from '../../../api/_lib/queue-band.js';   // owner settings (/en/admin/config); defaults apply if unreachable
 
-const URL = process.env.SUPABASE_URL;
-const KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 // stuck-claim threshold: owner setting pipeline.stale_minutes (default 150, above the 90-min EN cap)
 const LANGS = process.env.QUEUE_TARGET_LANGUAGES || 'en,ja,ko,zh';
 

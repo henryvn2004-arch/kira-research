@@ -61,6 +61,7 @@
       <a href="/en/admin/chains">Chains</a>
       <a href="/en/admin/moves">Moves</a>
       <a href="/en/admin/transcripts">Transcripts</a>
+      <a href="/en/admin/geo">GEO</a>
       <a href="/en/admin/topics">Topics</a>
       <a href="/en/admin/audit">Audit</a>
       <span class="spacer"></span>
@@ -127,6 +128,14 @@
         <div class="hl-sub">${s.active_year || 0} of them on Annual. ${s.cancelling} cancelled but still inside the paid period. ${esc(note)}</div></div>
         <span class="hl-pill ${(s.suspended || s.stuck_pending) ? 'warn' : 'ok'}">${(s.suspended || s.stuck_pending) ? 'Look' : 'Fine'}</span></div>`;
     }
+    // GEO answers (kira_answers / field_claims): the daily hooks must keep adding rows while documents are published.
+    function geoCard(g) {
+      const head = '<h2 class="hl-sec">GEO answers</h2>';
+      if (!g) return head + '<div class="hl-card"><div><b>Could not read</b><div class="hl-sub">The GEO tables need migration 065.</div></div><span class="hl-pill warn">Check</span></div>';
+      return head + `<div class="hl-card"><div><b>${g.ok ? 'New rows are arriving' : 'No new answers or claims in 72 hours'}</b>
+        <div class="hl-sub">${g.ok ? (g.new_rows_72h ? 'Rows were added in the last 72 hours.' : 'Nothing was published in the last 72 hours, so nothing was expected.') : 'Reports or transcripts were published in that time, so a daily hook (batch runner step 5.3b-7 or the experts routine) is not writing.'} <a href="/en/admin/geo">Open GEO</a></div></div>
+        <span class="hl-pill ${g.ok ? 'ok' : 'bad'}">${g.ok ? 'Running' : 'Stalled'}</span></div>`;
+    }
     function mailBad(m) {
       if (!m) return false;
       const total = m.delivered + m.bounced + m.complained;
@@ -151,7 +160,7 @@
       const missingCritical = d.env.filter(e => e.level === 'critical' && !e.set);
       const missingImportant = d.env.filter(e => e.level === 'important' && !e.set);
       const modeBad = d.env.find(e => e.name === 'PAYPAL_MODE' && e.set && e.value !== 'live');
-      const problems = missingCritical.length + d.jobs.filter(j => j.status === 'late' || j.status === 'failed').length + (d.db.ok ? 0 : 1) + (mailBad(d.info.email) ? 1 : 0) + ((d.info.late_promises && d.info.late_promises.count) ? 1 : 0);
+      const problems = missingCritical.length + d.jobs.filter(j => j.status === 'late' || j.status === 'failed').length + (d.db.ok ? 0 : 1) + (mailBad(d.info.email) ? 1 : 0) + ((d.info.late_promises && d.info.late_promises.count) ? 1 : 0) + ((d.info.geo && !d.info.geo.ok) ? 1 : 0);
 
       root.innerHTML = `
         <div class="hl-head"><h1>Health</h1>
@@ -165,6 +174,7 @@
         ${promiseCard(d.info.late_promises)}
         ${subscriptionCard(d.info.subscriptions)}
         ${mailCard(d.info.email)}
+        ${geoCard(d.info.geo)}
 
         <h2 class="hl-sec">Scheduled jobs</h2>
         ${d.jobs.map(j => { const p = PILL[j.status] || ['', j.status]; return `

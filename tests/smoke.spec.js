@@ -199,7 +199,7 @@ test.describe('branded 404', () => {
 test.describe('admin auth gate', () => {
   // Each admin page checks for a logged-in user on load and redirects to /auth.html
   // if missing. We don't have a test user — we just verify the redirect happens.
-  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist', '/en/admin/pipeline', '/en/admin/health', '/en/admin/config', '/en/admin/funnel', '/en/admin/crm', '/en/admin/chains', '/en/admin/transcripts'];
+  const ADMIN_PAGES = ['/en/admin/', '/en/admin/leads', '/en/admin/reports', '/en/admin/insights', '/en/admin/transactions', '/en/admin/users', '/en/admin/aggregators', '/en/admin/companies', '/en/admin/audit', '/en/admin/waitlist', '/en/admin/pipeline', '/en/admin/health', '/en/admin/config', '/en/admin/funnel', '/en/admin/crm', '/en/admin/chains', '/en/admin/transcripts', '/en/admin/geo'];
   for (const path of ADMIN_PAGES) {
     test(`${path} redirects unauthenticated users`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'load' });
@@ -575,6 +575,10 @@ test.describe('public APIs', () => {
 
   test('/api/notify-chain-published accepts GET/POST only', async ({ request }) => {
     expect((await request.put('/api/notify-chain-published')).status()).toBe(405);
+  });
+
+  test('/api/cron-pipeline-watch accepts GET/POST only', async ({ request }) => {
+    expect((await request.put('/api/cron-pipeline-watch')).status()).toBe(405);
   });
 
   test('/api/cron-site-events-retention accepts GET/POST only', async ({ request }) => {
@@ -1213,4 +1217,168 @@ test.describe('Kira Data (D1)', () => {
     await expect(page.locator('#dd-tm')).toBeVisible();
     await expect(page.locator('.dd-tab').first()).toHaveAttribute('href', '/en/data/?from=CN');
   });
+});
+
+// ── GEO G0: content pages answer with real HTML, no JavaScript needed ──
+// A bot that does not run JS (GPTBot, ClaudeBot, PerplexityBot) must see the title and the text.
+test.describe('Server-rendered content pages (raw HTML, bot user agent)', () => {
+  const BOT = { 'user-agent': 'GPTBot/1.2 (+https://openai.com/gptbot)' };
+  const htmlOf = async (request, path) => {
+    const r = await request.get(path, { headers: BOT });
+    expect(r.status()).toBe(200);
+    return r.text();
+  };
+  const titleOf = (h) => (h.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '';
+  const unesc = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');   // &amp; last, so "&amp;lt;" is not unescaped twice
+
+  test('transcript: title, basis line, dialogue and JSON-LD in the first response', async ({ request }) => {
+    const list = await (await request.get('/api/transcript-list?locale=en')).json();
+    test.skip(!list.items.length, 'no published transcripts');
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/experts/transcripts/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    expect(h).toContain('tv-turn q');
+    expect(h).toContain(`<b>${it.format.replace(/&/g, '&amp;')}.</b>`);   // "Modelled interview" label stays visible
+    expect(h).toContain(`rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/experts/transcripts/${it.slug}"`);
+    expect(h).toContain('"@type":"Article"');
+    expect(h).toContain('"@type":"BreadcrumbList"');
+    expect(h).not.toContain('tv-locked');
+    const ja = await htmlOf(request, `/ja/experts/transcripts/${it.slug}`);   // falls back to EN text when no JA edition
+    expect(ja).toContain('tv-turn q');
+  });
+
+  test('insight: full body in the first response', async ({ request }) => {
+    const list = await (await request.get('/api/insights-list?locale=en&limit=3')).json();
+    test.skip(!list.items.length, 'no published insights');
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/insights/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    expect(h).toContain('class="article-body"');
+    expect(h).toContain('"@type":"Article"');
+    const ja = await htmlOf(request, `/ja/insights/${it.slug}`);
+    expect(ja).toContain('class="article-body"');
+  });
+
+  test('report: title, summary and key-questions container, no paid text', async ({ request }) => {
+    const list = await (await request.get('/api/library-list?locale=en&limit=3')).json();
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/reports/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    expect(h).toContain('id="overview"');
+    expect(h).toContain('id="key-questions"');
+    expect(h).toContain('"@type":"Product"');
+    expect(h).not.toContain('report-full-content');
+    const ja = await htmlOf(request, `/ja/reports/${it.slug}`);
+    expect(ja).toContain('id="overview"');
+  });
+
+  test('coming-soon: title in the first response, noindex unless it is an SEO-test topic', async ({ request }) => {
+    const list = await (await request.get('/api/library-list?locale=en&status=soon&limit=3')).json();
+    test.skip(!list.items.length, 'no coming-soon topics');
+    const it = list.items[0];
+    const h = await htmlOf(request, `/en/reports/${it.slug}`);
+    expect(unesc(titleOf(h))).toContain(it.title);
+    const topic = await (await request.get(`/api/topic?slug=${it.slug}`)).json();
+    if (topic.index) expect(h).not.toContain('content="noindex');
+    else expect(h).toContain('name="robots" content="noindex,follow"');
+  });
+
+  test('unknown slugs still reach the page script (client shows not found)', async ({ request }) => {
+    const h = await htmlOf(request, '/en/reports/this-report-does-not-exist-xyz');
+    expect(h).toContain('id="rpt-root"');
+  });
+});
+
+// ── GEO G4: market hubs + trade pages render real Q&A / practitioner text in the first response ──
+test.describe('GEO hubs (raw HTML, bot user agent)', () => {
+  const BOT = { 'user-agent': 'GPTBot/1.2 (+https://openai.com/gptbot)' };
+  const hubPath = '/en/markets/thailand/data-centres-cloud--data-centres';
+
+  test('segment hub: questions, answers, sources, FAQ JSON-LD, index rule', async ({ request }) => {
+    const r = await request.get(hubPath, { headers: BOT });
+    test.skip(r.status() === 404, 'hub data not in this environment');
+    expect(r.status()).toBe(200);
+    const h = await r.text();
+    expect(h).toContain('<h1>Thailand Data centres');
+    expect(h).toMatch(/<h3>[^<]+\?<\/h3><p>[^<]{40,}/);        // a real question + answer
+    expect(h).toContain('Source:');
+    expect(h).toContain('"@type":"FAQPage"');
+    expect(h).toContain('rel="canonical" id="meta-canonical" href="https://kiraresearch.com' + hubPath + '"');
+    expect(h).not.toContain('name="robots" content="noindex');  // >= 1 source and >= 5 answers
+    const ja = await (await request.get('/ja/markets/thailand/data-centres-cloud--data-centres', { headers: BOT })).text();
+    // Either translated rows qualify (own canonical, indexable) or the URL serves English text out of the index.
+    if (/rel="canonical"[^>]*href="https:\/\/kiraresearch\.com\/ja\//.test(ja)) {
+      expect(ja).not.toContain('name="robots" content="noindex');
+      expect(ja).toContain('<html lang="ja"');
+      expect(ja).toContain('hreflang="ja"');
+    } else {
+      expect(ja).toContain('name="robots" content="noindex,follow"');
+      expect(ja).toContain('href="https://kiraresearch.com' + hubPath + '"');
+    }
+  });
+
+  test('trade page: practitioner claims always carry their basis label', async ({ request }) => {
+    const sm = await (await request.get('/sitemap-en.xml')).text();
+    const m = sm.match(/<loc>(https:\/\/kiraresearch\.com\/en\/trade\/[a-z0-9-]+\/[a-z0-9-]+)<\/loc>/);
+    test.skip(!m, 'no indexable trade page yet');
+    const h = await (await request.get(new URL(m[1]).pathname, { headers: BOT })).text();
+    expect(h).toContain('geo-claims');
+    expect((h.match(/<li>[^<]{30,}<span class="geo-basis">/g) || []).length).toBeGreaterThan(2);
+    expect(h).toContain('KIRA field research');
+  });
+});
+
+test('GEO feed: public JSON with crosswalk, answers and claims (only the agreed columns)', async ({ request }) => {
+  const r = await request.get('/api/geo-feed?country=TH');
+  expect(r.status()).toBe(200);
+  expect(r.headers()['cache-control']).toContain('s-maxage=3600');
+  const j = await r.json();
+  expect(Array.isArray(j.crosswalk) && Array.isArray(j.answers) && Array.isArray(j.claims)).toBe(true);
+  expect(j.generated_at).toBeTruthy();
+  expect(j.answers.every((a) => a.country_code === 'TH')).toBe(true);
+  if (j.answers.length) expect(Object.keys(j.answers[0]).sort()).toEqual(['answer_short', 'country_code', 'i18n', 'id', 'intent', 'question', 'segment_key', 'source_kind', 'source_ref', 'updated_at']);
+  if (j.claims.length) expect(j.claims[0].basis_label).toBeTruthy();
+  expect((await request.get('/api/geo-feed?country=thailand')).status()).toBe(400);
+});
+
+test('GEO measurement: admin AI-visibility endpoint rejects unauthenticated', async ({ request }) => {
+  expect((await request.get('/api/admin-geo-hits')).status()).toBe(401);
+});
+
+test.describe('GEO admin', () => {
+  test('/api/admin-geo requires admin auth', async ({ request }) => {
+    expect((await request.get('/api/admin-geo')).status()).toBe(401);
+    expect((await request.post('/api/admin-geo', { data: { transcript_slug: 'x-y', posted: true } })).status()).toBe(401);
+  });
+});
+
+// ── GEO hub v2: index pages, who-decides, llms.txt ──
+test.describe('GEO hub v2 (raw HTML, bot user agent)', () => {
+  const BOT = { 'user-agent': 'GPTBot/1.2 (+https://openai.com/gptbot)' };
+
+  test('/en/markets and a country page list hubs in the first response', async ({ request }) => {
+    const r = await request.get('/en/markets', { headers: BOT });
+    expect(r.status()).toBe(200);
+    const h = await r.text();
+    test.skip(!/<h1>Market facts by country/.test(h) || !/href="\/en\/markets\/[a-z-]+"/.test(h), 'no indexable hubs yet');
+    expect(h).toContain('rel="canonical" id="meta-canonical" href="https://kiraresearch.com/en/markets"');
+    const m = h.match(/href="(\/en\/markets\/[a-z-]+)"/);
+    const c = await (await request.get(m[1], { headers: BOT })).text();
+    expect(c).toContain('/markets/');
+    expect(c).toMatch(/<h2>[^<]+<\/h2><ul class="geo-list"><li><a href="\/en\/markets\/[a-z-]+\/[a-z0-9-]+"/);
+    expect(c).not.toContain('name="robots" content="noindex');
+  });
+
+  test('footer links to Market facts; llms.txt points at the hubs', async ({ request }) => {
+    const l = await (await request.get('/llms.txt')).text();
+    expect(l).toContain('https://kiraresearch.com/en/markets');
+    expect(l).toContain('https://kiraresearch.com/en/trade');
+    expect(l).toContain('https://kiraresearch.com/en/methodology');
+    expect(l).toContain('How to cite');
+  });
+});
+
+test('footer Research column has Market facts', async ({ page }) => {
+  await page.goto('/en/');
+  await expect(page.locator('.kira-footer a[href="/en/markets"]')).toHaveCount(1);
 });

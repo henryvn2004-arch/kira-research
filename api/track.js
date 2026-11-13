@@ -45,6 +45,7 @@ function sourceOf(refHost, utm) {
   if (utm && /^[a-z0-9_.-]{1,40}$/i.test(utm)) return utm.toLowerCase();
   const h = String(refHost || '').toLowerCase().replace(/^www\./, '');
   if (!h || /(^|\.)kiraresearch\.com$/.test(h)) return null;       // direct, or internal navigation
+  if (/^(chatgpt\.com|chat\.openai\.com|perplexity\.ai|www\.perplexity\.ai|gemini\.google\.com|copilot\.microsoft\.com|claude\.ai)$/.test(h)) return h.replace(/^www\./, '').replace('chat.openai.com', 'chatgpt.com');   // AI assistants (GEO G7)
   if (/(^|\.)google\./.test(h)) return 'google';
   if (/(^|\.)bing\.com$/.test(h)) return 'bing';
   if (/duckduckgo\.com$/.test(h)) return 'duckduckgo';

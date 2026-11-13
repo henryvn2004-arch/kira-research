@@ -36,9 +36,9 @@
 
   <!-- nav + footer injected by /js/nav.js -->
 
-  <div id="art-root">
+  <div id="art-root"><!--SSR-->
     <div class="r-container art-loading" style="padding-block:96px;text-align:center;color:var(--muted)">…</div>
-  </div>
+  <!--/SSR--></div>
 
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
@@ -93,19 +93,22 @@
     if (metaDesc) metaDesc.setAttribute('content', description);
 
     const head = document.head;
-    ['en','ja','ko','zh'].forEach(loc => {
-      if (data.availableLocales.includes(loc)) {
-        const link = document.createElement('link');
-        link.rel  = 'alternate';
-        link.hreflang = langTag(loc);
-        link.href = base + '/' + loc + '/insights/' + data.slug;
-        head.appendChild(link);
-      }
-    });
-    const xdef = document.createElement('link');
-    xdef.rel = 'alternate'; xdef.hreflang = 'x-default';
-    xdef.href = base + '/en/insights/' + data.slug;
-    head.appendChild(xdef);
+    // The server (api/ssr.js) already wrote these (data-ssr); add them only for pages it did not render.
+    if (!document.querySelector('link[data-ssr]')) {
+      ['en','ja','ko','zh'].forEach(loc => {
+        if (data.availableLocales.includes(loc)) {
+          const link = document.createElement('link');
+          link.rel  = 'alternate';
+          link.hreflang = langTag(loc);
+          link.href = base + '/' + loc + '/insights/' + data.slug;
+          head.appendChild(link);
+        }
+      });
+      const xdef = document.createElement('link');
+      xdef.rel = 'alternate'; xdef.hreflang = 'x-default';
+      xdef.href = base + '/en/insights/' + data.slug;
+      head.appendChild(xdef);
+    }
 
     // ── OG + Twitter (fill placeholders, then add article-specific) ──
     setMetaContent('meta-og-title',       fullTitle);
@@ -124,15 +127,16 @@
     // markup when building cited answers.
     const faqMatches = [];
     const bodyHtml = data.body || '';
-    // Extract Q&A pairs: looks for <strong>Q: ...</strong> ... <p>answer</p> pattern
-    const faqRe = /<strong>Q:\s*([^<]+)<\/strong>[^]*?<\/strong>\s*([\s\S]*?)(?=<strong>Q:|$)/g;
-    let fm;
-    while ((fm = faqRe.exec(bodyHtml)) !== null && faqMatches.length < 8) {
-      const q = fm[1].trim();
-      const aRaw = fm[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300);
+    // Q&A pairs: each "<strong>Q: …</strong>" starts one; its answer runs to the next Q, the next heading, or the end.
+    bodyHtml.split(/<strong>Q:\s*/).slice(1).forEach((chunk) => {
+      const m = chunk.match(/^([^<]+)<\/strong>([\s\S]*)$/);
+      if (!m || faqMatches.length >= 8) return;
+      const rest = m[2].split(/<h[1-6][\s>]/i)[0].replace(/^\s*(?:<[^>]+>\s*)*<strong>\s*A(?:nswer)?\s*:?\s*<\/strong>/i, '');
+      const q = m[1].trim();
+      const aRaw = rest.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300);
       if (q && aRaw) faqMatches.push({ '@type': 'Question', name: q,
         acceptedAnswer: { '@type': 'Answer', text: aRaw } });
-    }
+    });
 
     const articleLd = {
       '@context':       'https://schema.org',

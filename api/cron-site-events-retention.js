@@ -30,8 +30,15 @@ export default async function handler(req, res) {
     });
     if (!r.ok) throw new Error(`Supabase ${r.status}: ${await r.text()}`);
     const deleted = parseInt((r.headers.get('content-range') || '').split('/')[1], 10) || 0;
-    await logJobRun('site-events-retention', { ok: true, detail: `kept ${days} days, deleted ${deleted}`, startedAt });
-    return res.status(200).json({ ok: true, days, deleted });
+    // GEO crawler hits (migration 067): fixed 180 days.
+    const gday = new Date(Date.now() - 180 * 864e5).toISOString().slice(0, 10);
+    const g = await fetch(`${SUPABASE_URL}/rest/v1/geo_hits?day=lt.${gday}`, {
+      method: 'DELETE',
+      headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, Prefer: 'return=minimal,count=exact' }
+    });
+    const geoDeleted = g.ok ? (parseInt((g.headers.get('content-range') || '').split('/')[1], 10) || 0) : 0;   // table may not exist yet
+    await logJobRun('site-events-retention', { ok: true, detail: `kept ${days} days, deleted ${deleted}; geo_hits deleted ${geoDeleted}`, startedAt });
+    return res.status(200).json({ ok: true, days, deleted, geoDeleted });
   } catch (err) {
     console.error('[site-events-retention] error:', err.message);
     await logJobRun('site-events-retention', { ok: false, detail: err.message, startedAt });

@@ -23,7 +23,7 @@ try { execFileSync(process.execPath, [path.join(here, 'check-planned-contents.mj
 catch (e) { console.error(String(e.stdout || e.message)); process.exit(2); }
 const plans = JSON.parse(fs.readFileSync(file, 'utf8'));
 
-const URL_ = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL_ = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL), KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 if (!URL_ || !KEY) { console.log(JSON.stringify({ ok: false, error: 'SUPABASE_URL / SUPABASE_SERVICE_KEY missing' })); process.exit(3); }
 const db = createClient(URL_, KEY, { auth: { persistSession: false } });
 

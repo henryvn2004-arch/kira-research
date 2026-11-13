@@ -27,6 +27,7 @@
 
 import { coverage, countryIndexable, pairIndexable } from './_lib/econ/coverage.js';
 import { INVESTOR_SLUG, HOST_SLUG } from './_lib/moves/alerts.js';
+import { listHubs, tradeIndex, tradeTopicIndexable, topicSlug, countries, slugOf } from './_lib/geo.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -127,6 +128,17 @@ function buildIndex() {
   ].join('\n');
 }
 
+// Every row of a query (PostgREST answers at most 1,000 rows at a time): pages of 1,000, stable order by id.
+async function sbPaged(path) {
+  const all = [];
+  for (let from = 0; from < 50000; from += 1000) {
+    const { rows } = await sb(`${path}&order=id.asc&limit=1000&offset=${from}`);
+    all.push(...rows);
+    if (rows.length < 1000) break;
+  }
+  return { rows: all };
+}
+
 // ── Per-locale sitemap (full urlset) ──
 async function buildLocale(locale) {
   const urls = [];
@@ -149,9 +161,8 @@ async function buildLocale(locale) {
     'status=eq.published' +
     `&select=slug,updated_at,report_translations!inner(locale,status,updated_at)` +
     `&report_translations.locale=eq.${locale}` +
-    `&report_translations.status=eq.published` +
-    '&limit=5000';
-  const { rows: reports } = await sb(`living_reports?${reportQs}`);
+    `&report_translations.status=eq.published`;
+  const { rows: reports } = await sbPaged(`living_reports?${reportQs}`);
   for (const r of reports) {
     // Pick the more recent of base updated_at vs translation updated_at as lastmod.
     const trans = Array.isArray(r.report_translations) && r.report_translations[0];
@@ -175,9 +186,8 @@ async function buildLocale(locale) {
     `&published_at=lte.${encodeURIComponent(nowIso)}` +
     `&select=slug,updated_at,insight_translations!inner(locale,status,updated_at)` +
     `&insight_translations.locale=eq.${locale}` +
-    `&insight_translations.status=eq.published` +
-    '&limit=5000';
-  const { rows: insights } = await sb(`insights?${insightQs}`);
+    `&insight_translations.status=eq.published`;
+  const { rows: insights } = await sbPaged(`insights?${insightQs}`);
   for (const i of insights) {
     const trans = Array.isArray(i.insight_translations) && i.insight_translations[0];
     const lastmod = (trans && trans.updated_at && trans.updated_at > i.updated_at)
@@ -199,9 +209,8 @@ async function buildLocale(locale) {
     'status=eq.published' +
     '&select=slug,updated_at,expert_transcript_translations!inner(locale,status,updated_at)' +
     `&expert_transcript_translations.locale=eq.${locale}` +
-    '&expert_transcript_translations.status=eq.published' +
-    '&limit=5000';
-  const { rows: transcripts } = await sb(`expert_transcripts?${transcriptQs}`);
+    '&expert_transcript_translations.status=eq.published';
+  const { rows: transcripts } = await sbPaged(`expert_transcripts?${transcriptQs}`);
   for (const tr of transcripts) {
     const t = Array.isArray(tr.expert_transcript_translations) && tr.expert_transcript_translations[0];
     const lastmod = (t && t.updated_at && t.updated_at > tr.updated_at) ? t.updated_at : tr.updated_at;
@@ -249,6 +258,34 @@ async function buildLocale(locale) {
     }
   } catch (err) {
     console.error('[sitemap] data pages skipped:', err.message);   // never fail the sitemap over one section
+  }
+
+  // 3e) GEO hubs (G4/G7): hubs and trade pages that are indexable in THIS language (ja/ko/zh only once their
+  //     translated rows meet the same thresholds). lastmod = newest row behind the page. The pages carry their
+  //     own hreflang tags, so no alternates here.
+  try {
+    const [hubs, cos, trade] = await Promise.all([listHubs(), countries(), tradeIndex(locale)]);
+    const withHubs = new Set(hubs.filter((h) => h.byLocale[locale]).map((h) => h.code));
+    if (withHubs.size) urls.push(urlEntry({ subPath: 'markets', locale, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    for (const co of cos) {
+      if (withHubs.has(co.code)) urls.push(urlEntry({ subPath: `markets/${slugOf(co.name)}`, locale, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    }
+    for (const h of hubs) {
+      const co = cos.find((c) => c.code === h.code);
+      if (h.byLocale[locale] && co) urls.push(urlEntry({ subPath: `markets/${slugOf(co.name)}/${h.segment}`, locale, lastmod: h.updated ? h.updated.slice(0, 10) : null, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    }
+    for (const ind of trade.idx.values()) {
+      let any = false;
+      for (const [topic, claims] of ind.topics) {
+        if (!tradeTopicIndexable(claims, topic)) continue;
+        any = true;
+        const lm = claims.reduce((m, c) => (c.updated_at > m ? c.updated_at : m), '');
+        urls.push(urlEntry({ subPath: `trade/${ind.slug}/${topicSlug(topic)}`, locale, lastmod: lm ? lm.slice(0, 10) : null, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
+      }
+      if (any) urls.push(urlEntry({ subPath: `trade/${ind.slug}`, locale, changefreq: 'weekly', priority: '0.5', noAlternates: true }));
+    }
+  } catch (err) {
+    console.error('[sitemap] geo pages skipped:', err.message);
   }
 
   // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)

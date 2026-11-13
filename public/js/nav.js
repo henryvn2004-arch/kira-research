@@ -141,6 +141,7 @@
         <a href="${localPath('/library?status=soon')}"    data-i18n="footer.comingSoon">Coming soon</a>
         <a href="${HOST_PREFIX}/en/experts/transcripts/"  data-i18n="footer.transcripts">Expert transcripts</a>
         <a href="${localPath('/insights')}"               data-i18n="footer.insights">Insights</a>
+        <a href="${localPath('/markets')}"                data-i18n="footer.marketFacts">Market facts</a>
         <a href="${localPath('/data/')}"                  data-i18n="footer.marketData">Market data</a>
         <a href="${localPath('/data/moves')}"             data-i18n="footer.moves">Company moves</a>
       </div>
@@ -236,7 +237,7 @@
   function injectHreflang() {
     // Studio host: skip — Studio is English-only and pages are noindex.
     if (isStudioHost) return;
-    if (document.querySelector('link[data-kira-hreflang]')) return;
+    if (document.querySelector('link[data-kira-hreflang], link[data-ssr]')) return;   // data-ssr: written by api/ssr.js
     const origin = window.location.origin;
     const sub    = subPath.join('/');                // preserves trailing-slash-less form
     const hasTrailingSlash = window.location.pathname.endsWith('/');

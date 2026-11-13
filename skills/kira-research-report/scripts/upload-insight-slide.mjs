@@ -28,7 +28,7 @@ const arg = k => { const i = process.argv.indexOf('--' + k); return i > 0 ? proc
 const flag = k => process.argv.includes('--' + k);
 const slugArg = arg('slug'), localeArg = arg('locale'), outDir = arg('out');
 const all = flag('all'), dry = flag('dry-run');
-const URL_ = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_KEY;
+const URL_ = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL), KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 const LOCALES = ['en', 'ja', 'ko', 'zh'];
 if ((!all && !/^[a-z0-9][a-z0-9-]{1,150}$/.test(slugArg || '')) || (localeArg && !LOCALES.includes(localeArg))) {
   console.error('usage: upload-insight-slide.mjs --slug <slug> [--locale en|ja|ko|zh] [--out <dir>]\n       upload-insight-slide.mjs --all [--dry-run] [--out <dir>]');

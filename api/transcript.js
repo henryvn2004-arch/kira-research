@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   try {
     const found = await loadTranscript(slug, pickLocale(url));
     if (!found) { res.status(404).json({ error: 'not_found' }); return; }
-    const { free, toc, lockedTurns, totalTurns } = splitFree(found.tr.sections || []);
+    const { free, toc, lockedTurns, totalTurns } = await splitFree(found.tr.sections || []);
     const texts = (found.tr.summary || []).concat(free.flatMap((s) => s.turns.map((t) => t.text)));
     res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=600');
     res.status(200).json({
