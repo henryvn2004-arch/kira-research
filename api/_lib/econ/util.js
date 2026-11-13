@@ -7,6 +7,17 @@ export const ISO3 = {
 export const FROM_ISO3 = Object.fromEntries(Object.entries(ISO3).map(([k, v]) => [v, k]));
 export const FIRST_YEAR = 2000;
 
+// Error text with the real reason: Node's fetch throws a bare "fetch failed" and keeps the cause
+// (ENOTFOUND, ECONNRESET, UND_ERR_CONNECT_TIMEOUT, UNABLE_TO_VERIFY_LEAF_SIGNATURE, ...) in err.cause.
+export function errText(err) {
+  let msg = (err && err.message) || String(err);
+  for (let c = err && err.cause, i = 0; c && i < 3; c = c.cause, i++) {
+    const part = [c.code, c.message].filter(Boolean).join(' ');
+    if (part && !msg.includes(part)) msg += ` (${part})`;
+  }
+  return msg;
+}
+
 export const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
 // GET (or POST with `body`) returning JSON, with up to 3 tries. `headers` are added to the defaults.
