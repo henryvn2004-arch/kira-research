@@ -15,7 +15,8 @@
 //       placeholder topic is created (status 'proposed', one per pair) and
 //       returned, so the reader lands on a page with that name;
 //     • otherwise, if the query names exactly one market, Claude Haiku decides
-//       (api/_lib/search-interpret.js) whether it is a lawful product or service
+//       (api/_lib/search-interpret.js; in the default mode "routine" only an already-decided query
+//       answers here, new ones wait for the Routine's batch step) whether it is a lawful product or service
 //       that belongs under one of that market's covered industries; if so a
 //       placeholder named after the query is created ("Condom market in Australia");
 //     • anything else is counted in search_misses and returns no items.
@@ -27,6 +28,7 @@
 // ============================================================
 
 import { interpretSearch, coveredIndustries } from './_lib/search-interpret.js';
+import { outline, cleanQuery } from './_lib/search-rules.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -39,11 +41,6 @@ async function rpc(name, args) {
   });
   if (!r.ok) throw new Error(`Supabase ${name} ${r.status}: ${await r.text()}`);
   return r.status === 204 ? null : r.json();
-}
-
-// Letters/digits/space/&/- only; short queries match too much.
-function cleanQuery(raw) {
-  return String(raw || '').replace(/[^\p{L}\p{N} &-]/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 60);
 }
 
 const item = t => ({
@@ -67,14 +64,6 @@ function titleFor(q, countryName, industryName) {
   }
   return `${industryName} in ${countryName}`.slice(0, 120);
 }
-
-// Neutral outline of what a market overview covers; the owner edits it when approving.
-const outline = (industry, country) => [
-  `How large is the ${industry} market in ${country}, and how fast is it growing?`,
-  'Who are the leading players, and what share does each hold?',
-  'Where is the white space for a foreign entrant, and which segments are already crowded?',
-  'What would make it a go or no-go, and what are the first steps?'
-];
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

@@ -14,6 +14,11 @@ const SUPABASE_URL         = (process.env.SUPABASE_URL || process.env.KIRA_SUPAB
 const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 
 export const CONFIG = {
+  'search.interpret_mode': {
+    group: 'Search', type: 'choice', options: ['routine', 'api'], default: 'routine',
+    label: 'Who decides a product search: the daily Routine or a live AI call',
+    help: 'routine: a new product search (for example "condom market in australia") is filed by the daily report Routine within a day, at no extra cost, and the reader sees the plain request form meanwhile; an email left on that form is attached to the new page. api: the website asks the AI service straight away (needs paid API credit). Searches already decided always land on their page at once.'
+  },
   'search.auto_placeholders': {
     group: 'Search', type: 'bool', default: true,
     label: 'Create placeholder pages for product searches automatically',
@@ -22,7 +27,7 @@ export const CONFIG = {
   'search.daily_model_limit': {
     group: 'Search', type: 'int', min: 0, max: 5000, default: 300, unit: 'calls per 24 h',
     label: 'Daily limit for the AI check behind automatic placeholders',
-    help: 'Caps how many new searches per 24 hours may be sent to the model. 0 stops new checks (cached answers still work). This is the spending cap for that feature.'
+    help: 'Only used when the mode above is api. Caps how many new searches per 24 hours may be sent to the model. 0 stops new checks (cached answers still work). This is the spending cap for that feature.'
   },
   'topics.demand_weight_request': {
     group: 'Topic queue', type: 'int', min: 0, max: 50, default: 3, unit: 'points',
@@ -206,6 +211,10 @@ export function coerceConfig(key, raw) {
     if (n < def.min || n > def.max) return { ok: false, error: `out_of_range_${def.min}_${def.max}` };
     return { ok: true, value: n };
   }
+  if (def.type === 'choice') {
+    if (typeof raw === 'string' && def.options.includes(raw)) return { ok: true, value: raw };
+    return { ok: false, error: 'not_an_option' };
+  }
   return { ok: false, error: 'bad_type' };
 }
 
@@ -228,7 +237,7 @@ export async function listConfig() {
     const c = row ? coerceConfig(key, row.value) : null;
     return {
       key, group: def.group, type: def.type, label: def.label, help: def.help, unit: def.unit || null,
-      min: def.min ?? null, max: def.max ?? null, default: def.default,
+      min: def.min ?? null, max: def.max ?? null, options: def.options || null, default: def.default,
       value: c && c.ok ? c.value : def.default,
       is_default: !(c && c.ok),
       updated_at: c && c.ok ? row.updated_at : null, updated_by: c && c.ok ? row.updated_by : null
