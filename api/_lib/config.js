@@ -85,9 +85,9 @@ export const CONFIG = {
     help: 'A check runs every 6 hours and looks at the data itself (new report stages, new expert transcripts, new commentary insights). If one has been quiet longer than its limit below, the Health page turns red and you get one email per stream per day. Off: the Health page still turns red, no email is sent.'
   },
   'watch.reports_idle_hours': {
-    group: 'Pipeline watch', type: 'int', min: 3, max: 168, default: 12, unit: 'hours',
+    group: 'Pipeline watch', type: 'int', min: 3, max: 168, default: 26, unit: 'hours',
     label: 'Report runner: alert after no activity for',
-    help: 'The report Routine fires 3 times a day. Any claim or finished stage counts as activity; your own actions on the Pipeline page do not.'
+    help: 'The report Routine fires 3 times a day, only between 01:53 and 05:53 UTC, so the quiet gap overnight is about 20 hours: a limit below that would email a false alarm every night. Any claim or finished stage counts as activity; your own actions on the Pipeline page do not.'
   },
   'watch.experts_idle_hours': {
     group: 'Pipeline watch', type: 'int', min: 6, max: 336, default: 36, unit: 'hours',
