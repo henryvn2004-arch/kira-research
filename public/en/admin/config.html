@@ -111,13 +111,16 @@
     const ERR = {
       not_a_whole_number: 'Enter a whole number.',
       not_a_boolean: 'Choose on or off.',
+      not_an_option: 'Choose one of the options.',
       unknown_key: 'Unknown setting.'
     };
     const errText = (code, s) => /^out_of_range_/.test(code) ? `Must be between ${s.min} and ${s.max}.` : (ERR[code] || 'Could not save (' + code + ').');
 
     function card(s) {
       const when = s.updated_at ? new Date(s.updated_at).toLocaleString() : '';
-      const control = s.type === 'bool'
+      const control = s.type === 'choice'
+        ? `<select>${s.options.map(o => `<option value="${esc(o)}" ${o === s.value ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`
+        : s.type === 'bool'
         ? `<label class="cf-switch"><input type="checkbox" ${s.value ? 'checked' : ''} /> <span>${s.value ? 'On' : 'Off'}</span></label>`
         : `<input type="number" step="1" min="${esc(s.min)}" max="${esc(s.max)}" value="${esc(s.value)}" inputmode="numeric" /> <span class="cf-unit">${esc(s.unit || '')} (${esc(s.min)}–${esc(s.max)})</span>`;
       return `<div class="cf-card" data-key="${esc(s.key)}">
@@ -127,7 +130,7 @@
           <button class="cf-btn go" data-act="save">Save</button>
           ${s.is_default ? '' : '<button class="cf-btn" data-act="reset">Reset to default</button>'}
           <span class="cf-msg" aria-live="polite"></span></div>
-        <div class="cf-meta">Default: ${esc(s.type === 'bool' ? (s.default ? 'On' : 'Off') : s.default + (s.unit ? ' ' + s.unit : ''))}${s.is_default ? '' : ` · set by ${esc(s.updated_by || 'unknown')} on ${esc(when)}`}</div>
+        <div class="cf-meta">Default: ${esc(s.type === 'bool' ? (s.default ? 'On' : 'Off') : s.type === 'choice' ? s.default : s.default + (s.unit ? ' ' + s.unit : ''))}${s.is_default ? '' : ` · set by ${esc(s.updated_by || 'unknown')} on ${esc(when)}`}</div>
       </div>`;
     }
 
@@ -145,7 +148,8 @@
         if (box) box.addEventListener('change', () => { el.querySelector('.cf-switch span').textContent = box.checked ? 'On' : 'Off'; });
         el.querySelectorAll('[data-act]').forEach(btn => btn.addEventListener('click', async () => {
           const reset = btn.dataset.act === 'reset';
-          const value = box ? box.checked : el.querySelector('input[type=number]').value;
+          const sel = el.querySelector('select');
+          const value = box ? box.checked : sel ? sel.value : el.querySelector('input[type=number]').value;
           btn.disabled = true; msg.className = 'cf-msg'; msg.textContent = 'Saving…';
           try {
             await api('/api/admin-config', { method: 'PATCH', body: JSON.stringify(reset ? { key, reset: true } : { key, value }) });

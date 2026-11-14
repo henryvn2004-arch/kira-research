@@ -10,8 +10,8 @@
 
 import { getConfig } from './config.js';
 
-const SUPABASE_URL         = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SUPABASE_URL         = (process.env.SUPABASE_URL || process.env.KIRA_SUPABASE_URL);
+const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_KEY || process.env.KIRA_SUPABASE_SERVICE_KEY);
 
 // → { days, date: 'YYYY-MM-DD' (UTC), ahead } or null when the numbers can not be read.
 export async function topicEta(topicId) {

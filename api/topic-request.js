@@ -16,7 +16,7 @@
 import { sendTopicRequestConfirmation } from './_lib/email.js';
 import { cleanAttr } from './_lib/attribution.js';
 import { topicEta, formatEtaEn } from './_lib/eta.js';
-import { getConfig } from './_lib/config.js';
+import { autoApprove, recordPromise } from './_lib/topic-demand.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -48,32 +48,6 @@ async function count(path) {
   });
   const m = /\/(\d+)$/.exec(r.headers.get('content-range') || '');
   return m ? Number(m[1]) : 0;
-}
-
-// A topic a reader made up from a search ('requested') or a planner proposal nobody approved yet ('proposed')
-// is approved the moment someone leaves an email for it, so it can be produced within the promised time
-// (queue.mjs sync-topics then queues it ahead of everything else). Capped per 24 h by the owner setting
-// ondemand.auto_approve_per_day because every approved topic costs one full report.
-const AUTO_NOTE = 'auto-approved: a reader asked for it';
-async function autoApprove(topic) {
-  try {
-    if (topic.status !== 'requested' && topic.status !== 'proposed') return;
-    const cap = await getConfig('ondemand.auto_approve_per_day');
-    if (cap <= 0) return;
-    const since = new Date(Date.now() - 864e5).toISOString();
-    if (await count(`topics?note=ilike.${encodeURIComponent('*auto-approved*')}&decided_at=gte.${since}&select=id`) >= cap) return;
-    await sb(`topics?id=eq.${topic.id}&status=in.(requested,proposed)`, 'PATCH', {
-      status: 'approved', decided_at: new Date().toISOString(), note: topic.note ? `${topic.note} · ${AUTO_NOTE}` : AUTO_NOTE
-    });
-  } catch (err) { console.error('[topic-request] auto-approve failed:', err.message); }
-}
-
-// First email request on a topic: record the date we promised, once (the health page flags topics past it).
-async function recordPromise(topic, eta) {
-  try {
-    if (!eta || topic.promise_at || topic.report_id) return;
-    await sb(`topics?id=eq.${topic.id}&promise_at=is.null`, 'PATCH', { promise_at: `${eta.date}T23:59:59Z` });
-  } catch (err) { console.error('[topic-request] promise not recorded:', err.message); }
 }
 
 // Send the "we got your request" email unless this address or IP already had its share; never throws.
