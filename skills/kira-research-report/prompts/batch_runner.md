@@ -560,6 +560,14 @@ node scripts/geo-gate.mjs --rows $B/geo.json --source $B/en.html \
 
 `geo-i18n-gate.mjs` prints `ja x kept / y dropped · ko … · zh …`; a dropped translation only means that row shows in English for that language. `geo-gate.mjs` prints `answers x/y passed` and one `✗` line per rejected row; only passed rows are inserted (`kira_answers`, upsert on `content_hash`, so a re-run adds nothing twice). NOT fatal and never delays the queue: note `geo: x/y` (or the failure) in the fire summary and continue. `geo.json` stays in the private archive with the rest of the folder (Step 5.3d), never in this repo.
 
+**5.3b-8 — Hand the report text to BizDirect Asia (migration 069).**
+
+```bash
+python3 scripts/load-report-fulltext.py --archive skills/kira-research-report/outputs/batch --batch ${id}
+```
+
+Stores the plain text of `en/ja/ko/zh.html` in `content_fulltext_reports` (reads `SUPABASE_URL` + `SUPABASE_SERVICE_KEY`, which the Routine already has; no model, nothing is published). BizDirect Asia copies the table into its own database each day to tell which reports name a brand; the text is never served from here. NOT fatal and never delays the queue: on a failure note `fulltext: <error>` in the fire summary and carry on (re-run later with the same command; the table is idempotent).
+
 **5.3c — Verify (3 cache-busted curls):**
 
 1. `curl https://kiraresearch.com/api/library-list?_t=$(date +%s)` — `items[]` contains the new slug
