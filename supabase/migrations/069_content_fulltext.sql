@@ -4,7 +4,7 @@
 -- BizDirect Asia asks /api/brand-mentions which KIRA reports and transcripts mention a brand in their
 -- FULL text. The full text of a report is not in the database (report_translations.full_content is null;
 -- reports-html holds only the 5-page preview), so the plain text of every published report is loaded here
--- by kira-pipeline/report-archive/tools/load_fulltext.py. Transcripts are read from their own tables.
+-- by scripts/load-report-fulltext.py. Transcripts are read from their own tables.
 --
 -- The text never leaves the database: content_brand_mentions returns only (kind, slug, locale, counts),
 -- /api/brand-mentions turns that into catalogue fields. RLS on, no policies, execute for service_role only.
