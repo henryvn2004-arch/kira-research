@@ -1,14 +1,14 @@
 -- ============================================================
 -- 069_content_fulltext.sql — "which reports and interviews name this brand?"
 --
--- BizDirect Asia asks /api/brand-mentions which KIRA reports and transcripts mention a brand in their
--- FULL text. The full text of a report is not in the database (report_translations.full_content is null;
+-- BizDirect Asia needs to know which KIRA reports and transcripts mention a brand in their FULL text.
+-- BizDirect copies the report text from this table (and the published transcripts) into its own database every day
+-- and searches there (BizDirect seo/kira_fulltext.py, table kira_fulltext); content_brand_mentions below is not used by it.
+-- The full text of a report is not in the database (report_translations.full_content is null;
 -- reports-html holds only the 5-page preview), so the plain text of every published report is loaded here
 -- by scripts/load-report-fulltext.py. Transcripts are read from their own tables.
 --
--- The text never leaves the database: content_brand_mentions returns only (kind, slug, locale, counts),
--- /api/brand-mentions turns that into catalogue fields. RLS on, no policies, execute for service_role only.
--- Idempotent. NOT applied by the session that wrote it: the commander applies it.
+-- RLS on, no policies, service_role only. Idempotent. Applied 2026-11-18.
 -- ============================================================
 
 create extension if not exists pg_trgm;

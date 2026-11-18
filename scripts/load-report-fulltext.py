@@ -15,7 +15,11 @@ The archive (private kira-pipeline repo) stays where it is: this script only rea
 
 Mapping archive folder -> report: report_queue.id is the folder name; report_queue.output_paths holds
 'reports-pdfs/<living_reports.id>/en.pdf|...'. Folders without a published report are skipped.
-Idempotent (upsert on slug+locale, skipped when the sha1 is unchanged). Keys come from the environment only.
+Idempotent (upsert on slug+locale, skipped when the sha1 is unchanged). Keys come from the environment only
+(KIRA_SUPABASE_URL / KIRA_SUPABASE_SERVICE_KEY, or the SUPABASE_URL / SUPABASE_SERVICE_KEY the batch Routine already has).
+
+BizDirect Asia copies this table (and the published transcripts) into its own database every day (BizDirect `seo/kira_fulltext.py`)
+and searches there; this table is the hand-over point for report text, so run this after every publish (batch_runner Step 5.3b-8).
 """
 import argparse, datetime, hashlib, html, json, os, re, sys, urllib.parse, urllib.request
 from html.parser import HTMLParser
@@ -77,9 +81,10 @@ def main():
     print(f'{len(docs)} documents from {len({b for b, _ in docs})} folders, {total/1e6:.1f} M characters')
     if a.dry_run:
         return
-    base, key = os.environ.get('KIRA_SUPABASE_URL'), os.environ.get('KIRA_SUPABASE_SERVICE_KEY')
+    base = os.environ.get('KIRA_SUPABASE_URL') or os.environ.get('SUPABASE_URL')
+    key = os.environ.get('KIRA_SUPABASE_SERVICE_KEY') or os.environ.get('SUPABASE_SERVICE_KEY')
     if not base or not key:
-        sys.exit('set KIRA_SUPABASE_URL and KIRA_SUPABASE_SERVICE_KEY')
+        sys.exit('set KIRA_SUPABASE_URL and KIRA_SUPABASE_SERVICE_KEY (or SUPABASE_URL and SUPABASE_SERVICE_KEY)')
     ids = ','.join(f'"{b}"' for b in sorted({b for b, _ in docs}))
     queue = rest(f'report_queue?id=in.({urllib.parse.quote(ids)})&select=id,output_paths', base, key)
     rid = {}
