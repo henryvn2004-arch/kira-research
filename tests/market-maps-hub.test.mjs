@@ -166,9 +166,10 @@ test('sitemap: its own file with hub, country hubs and indexable maps; index lis
   const locs = [...mm.body.matchAll(/<loc>([^<]+)<\/loc>/g)].map((x) => x[1]);
   const idx = ROWS.filter((r) => r.indexable);
   assert.equal(locs.length, 1 + COUNTRIES.length + idx.length);
-  assert.ok(locs.includes('https://kiraresearch.com/en/market-maps'));
-  assert.ok(locs.includes('https://kiraresearch.com/en/market-maps/south-korea'));
-  assert.ok(locs.includes(`https://kiraresearch.com/en/market-maps/${idx[0].slug}`));
+  const locSet = new Set(locs);   // exact URL match (a Set, not substring search)
+  assert.ok(locSet.has('https://kiraresearch.com/en/market-maps'));
+  assert.ok(locSet.has('https://kiraresearch.com/en/market-maps/south-korea'));
+  assert.ok(locSet.has(`https://kiraresearch.com/en/market-maps/${idx[0].slug}`));
   assert.ok(!locs.some((l) => ROWS.filter((r) => !r.indexable).some((r) => l.endsWith(r.slug))));
   const index = await call(sitemap, {}, '/api/sitemap');
   assert.match(index.body, /sitemap-market-maps\.xml/);
