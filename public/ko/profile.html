@@ -454,6 +454,21 @@
       renderList(data.items, data.email || user.email, memberSince);
     }
 
+    // Company lists (market maps) bought by this reader: shown next to the reports. English only for now.
+    if (data.lists && data.lists.length) {
+      const box = document.createElement('section');
+      box.style.cssText = 'max-width:1120px;margin:32px auto 64px;padding:0 24px';
+      box.innerHTML = '<h2 style="font-size:20px;margin:0 0 12px">Company lists</h2>' + data.lists.map(l =>
+        '<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:center;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px">' +
+          '<div><a href="/en/market-maps/' + encodeURI(l.slug) + '" style="font-weight:600">' + escHtml(l.title) + '</a>' +
+          '<div style="font-size:13px;color:var(--muted)">' + escHtml(l.companies) + ' companies · bought ' + escHtml(fmtDate(l.purchasedAt)) + '</div></div>' +
+          '<div style="font-size:13px">' + (l.status === 'ready' && l.downloadUrl
+            ? '<a class="r-btn" href="' + escHtml(l.downloadUrl) + '">Download Excel</a> <span style="color:var(--muted)">' + escHtml(l.downloadsLeft) + ' downloads left, link valid until ' + escHtml(fmtDate(l.expiresAt)) + '</span>'
+            : l.status === 'pending' ? '<span style="color:var(--muted)">Your file is being prepared. We will email you the link.</span>'
+            : '<span style="color:var(--muted)">The download link has expired. Reply to your receipt email and we will help.</span>') + '</div></div>').join('');
+      root.appendChild(box);
+    }
+
     // ── Render helpers ───────────────────────────────────────
     function escHtml(s) {
       return String(s == null ? '' : s)

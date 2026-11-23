@@ -1382,3 +1382,68 @@ test('footer Research column has Market facts', async ({ page }) => {
   await page.goto('/en/');
   await expect(page.locator('.kira-footer a[href="/en/markets"]')).toHaveCount(1);
 });
+
+// ── Market maps (off by default: noindex, not in nav, no buy button) ──
+test.describe('market maps', () => {
+  test('hub loads with noindex while indexing is off', async ({ page }) => {
+    const res = await page.goto('/en/market-maps', { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    await expect(page.locator('h1').first()).toBeVisible();
+    expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('noindex');
+  });
+
+  test('an unknown map is a noindex 404', async ({ request }) => {
+    const r = await request.get('/en/market-maps/nowhere/nothing');
+    expect(r.status()).toBe(404);
+    expect(await r.text()).toContain('noindex');
+  });
+
+  test('a published map returns 200, noindex, no contacts and a request form (skipped when none is published)', async ({ page, request }) => {
+    const hub = await (await request.get('/en/market-maps')).text();
+    const m = hub.match(/href="(\/en\/market-maps\/[a-z0-9-]+\/[a-z0-9-]+)"/);
+    test.skip(!m, 'no market map published yet');
+    const res = await page.goto(m[1], { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('noindex');
+    await expect(page.locator('h1').first()).toBeVisible();
+    await expect(page.locator('#mm-req')).toBeVisible();           // request form while checkout.list_enabled is off
+    expect(await page.locator('#mm-root').innerText()).not.toMatch(/[^\s@]+@[^\s@]+\.[a-z]{2,}/i);   // no contacts in the page
+  });
+
+  test('hub is a filterable table of lists', async ({ page }) => {
+    await page.goto('/en/market-maps', { waitUntil: 'domcontentloaded' });
+    // Empty library (nothing published yet) shows the plain message; otherwise the table with its filters and search.
+    const table = page.locator('#mm-table');
+    if (await table.count()) {
+      await expect(page.locator('#mm-q')).toBeVisible();
+      await expect(page.locator('.lib2-side .fgrp').first()).toBeVisible();
+      const heads = (await table.locator('th').allInnerTexts()).map((t) => t.toLowerCase());
+      expect(heads).toEqual(expect.arrayContaining(['segment', 'country', 'companies']));
+    } else {
+      await expect(page.getByText('No company lists are published yet')).toBeVisible();
+    }
+  });
+
+  test('the list JSON endpoint answers', async ({ request }) => {
+    const r = await request.get('/api/market-maps?type=list');
+    expect(r.status()).toBe(200);
+    expect(Array.isArray((await r.json()).items)).toBe(true);
+  });
+
+  test('buying a list is closed while checkout.list_enabled is off', async ({ request }) => {
+    const r = await request.post('/api/list-buy?action=create', { data: { slug: 'vietnam/soft-drinks' } });
+    expect(r.status()).toBe(403);
+    expect((await r.json()).error).toBe('checkout_closed');
+  });
+
+  test('download needs a valid token', async ({ request }) => {
+    expect((await request.get('/api/list-download?token=nope')).status()).toBe(404);
+  });
+
+  test('market-map modules load without parse errors', async () => {
+    for (const f of ['market-maps', 'list-buy', 'list-download', 'library-my-purchases', '_lib/market-map/render', '_lib/market-map/gate', '_lib/lists', '_lib/list-source']) {
+      await import(`../api/${f}.js`);
+    }
+  });
+});

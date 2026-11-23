@@ -113,15 +113,18 @@ export async function sendPurchaseReceipt({
   currency = 'USD',
   reportTitle,
   downloadUrl,
-  kind = 'report'            // 'report' | 'transcript' (expert-interview transcript, S19)
+  kind = 'report',           // 'report' | 'transcript' (expert-interview transcript, S19) | 'list' (market-map company list)
+  pending = false            // list only: paid, the file is not ready yet
 }) {
   if (!buyerEmail) return false;
 
   const niceAmount = typeof amount === 'number' ? amount.toFixed(2) : String(amount || '');
   const title = reportTitle || slug;
   const isTranscript = kind === 'transcript';
-  const noun = isTranscript ? 'transcript' : 'report';
-  const reportUrl = isTranscript ? `${APP_URL}/${locale}/experts/transcripts/${slug}` : `${APP_URL}/${locale}/reports/${slug}`;
+  const isList = kind === 'list';
+  const noun = isTranscript ? 'transcript' : isList ? 'company list' : 'report';
+  const reportUrl = isTranscript ? `${APP_URL}/${locale}/experts/transcripts/${slug}` : isList ? `${APP_URL}/en/market-maps/${slug}` : `${APP_URL}/${locale}/reports/${slug}`;
+  const listNote = !isList ? '' : pending ? 'We are preparing your Excel file and will email the download link as soon as it is ready. You do not need to do anything.' : 'Your Excel file is ready. The link works for 7 days and for up to 5 downloads; you can also find it under My Library in your profile.';
 
   const subject = `Your KIRA RESEARCH ${noun} — ${title}`;
 
@@ -132,7 +135,8 @@ export async function sendPurchaseReceipt({
     `Amount: ${niceAmount} ${currency}`,
     ``,
     `View your ${noun}: ${reportUrl}`,
-    downloadUrl ? `Direct PDF download: ${downloadUrl}` : '',
+    isList ? listNote : '',
+    downloadUrl ? (isList ? `Download your Excel list: ${downloadUrl}` : `Direct PDF download: ${downloadUrl}`) : '',
     ``,
     `If you have any questions, just reply to this email.`,
     ``,
@@ -143,13 +147,14 @@ export async function sendPurchaseReceipt({
 <!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
   <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
   <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Thanks for your purchase.</h1>
-  <p style="margin:0 0 18px;">You now have access to <strong>${esc(title)}</strong>.</p>
+  <p style="margin:0 0 18px;">${isList ? 'Thank you for buying' : 'You now have access to'} <strong>${esc(title)}</strong>.</p>
   <table style="border-collapse:collapse;margin:0 0 24px;">
-    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">${isTranscript ? 'Transcript' : 'Report'}</td><td style="padding:4px 0;font-size:14px;">${esc(title)}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">${isTranscript ? 'Transcript' : isList ? 'Company list' : 'Report'}</td><td style="padding:4px 0;font-size:14px;">${esc(title)}</td></tr>
     <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Amount</td><td style="padding:4px 0;font-size:14px;">${esc(niceAmount)} ${esc(currency)}</td></tr>
   </table>
-  <p style="margin:0 0 12px;"><a href="${esc(reportUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open your ${noun}</a></p>
-  ${downloadUrl ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">Direct PDF link (expires in 1 hour): <a href="${esc(downloadUrl)}">download</a></p>` : ''}
+  <p style="margin:0 0 12px;"><a href="${esc(isList && downloadUrl ? downloadUrl : reportUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">${isList ? (downloadUrl ? 'Download your Excel list' : 'View the list page') : `Open your ${noun}`}</a></p>
+  ${isList ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">${esc(listNote)}</p>` : ''}
+  ${downloadUrl && !isList ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">Direct PDF link (expires in 1 hour): <a href="${esc(downloadUrl)}">download</a></p>` : ''}
   <p style="margin:24px 0 6px;font-size:13px;color:#666;">If you have any questions, just reply to this email.</p>
   <p style="margin:0;font-size:13px;color:#666;">— The KIRA RESEARCH team</p>
 </body></html>`.trim();

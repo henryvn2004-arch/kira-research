@@ -149,6 +149,16 @@ export const CONFIG = {
     label: 'PDF downloads included in the Annual plan',
     help: 'How many different report PDFs an Annual subscriber can download in each yearly billing period. Reading online and the transcripts are unlimited. Downloading the same PDF again in the same period does not count again. A change applies to everyone from their next download.'
   },
+  'checkout.list_enabled': {
+    group: 'Checkout', type: 'bool', default: false,
+    label: 'Sell market-map company lists (Excel, $49 or $99)',
+    help: 'Off: every market map shows a "Request this list" form (the email goes to the same request list as the coming-soon pages) and nothing can be bought. On: the map shows the price and a "Get the list" button (sign-in, PayPal, then a download link valid 7 days for up to 5 downloads; it also appears under My Library). The file is built by the BizDirect partner build API, which is not connected yet: until it is, a purchase stays pending and the buyer is told the file is being prepared. Leave this off until the build API works.'
+  },
+  'marketmaps.indexing_enabled': {
+    group: 'Market maps', type: 'bool', default: false,
+    label: 'Let search engines index market maps',
+    help: 'Off (launch default): every market-map page and the hub carry noindex and none is in the sitemap. On: a published map that passes the gate (at least 50 companies and at least 2 stages or service types with 5 or more companies) becomes index,follow and enters the English sitemap; maps below the gate stay noindex. Turn it on only when the owner says the maps go live.'
+  },
   'subscription.pdf_per_month': {
     group: 'Checkout', type: 'int', min: 1, max: 100, default: 5, unit: 'PDFs per billing period',
     label: 'PDF downloads included in the Month plan',
