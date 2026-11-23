@@ -8,13 +8,15 @@
 //
 //   renderBody(S, C, opts)      <main class="mm">…</main>            (what the route puts inside the chrome)
 //   renderDocument(S, C, opts)  a full HTML document (head, JSON-LD, nav.js chrome)
-//   renderHub(rows, opts)       full document for the hub /<loc>/market-maps/
+//   renderHub(model, params, opts)  full document for the hub /<loc>/market-maps (small landing + paged table)
+//   renderCountryHub(model, opts)   full document for /<loc>/market-maps/<country>
 //
 // opts: { path, canonical, robots, buy: { enabled, price } , hubPath }
 // The stats JSON is the contract with the private pipeline (see the header of scripts/load-market-maps.mjs).
 // Nothing here ever prints a phone number, an email or a named person: the stats hold none.
 // ============================================================
 import { BASE, esc, ldJson } from '../ssr.js';
+import { BANDS, isFiltered, hubHref } from './hub.js';
 
 const TIERS = ['Large', 'Mid-size', 'Small', 'Not rated'];
 const SHORT = {
@@ -55,6 +57,7 @@ const cap1 = (s) => String(s || '').slice(0, 1).toUpperCase() + String(s || '').
 const f1 = (x) => Number(x).toFixed(1);
 const dedupe = (s) => String(s).replace(/\b(\w+) \1\b/g, '$1');   // "environmental service service" -> "environmental service"
 const nf = (n) => Number(n).toLocaleString('en-US');
+const countrySlug = (S) => String(S.meta?.slug || '').split('/')[0] || String(S.country || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
 // ── SVG helpers ──────────────────────────────────────────
 function wrap(text, widthPx, fs) {
@@ -265,6 +268,20 @@ export const MM_CSS = `
 .mm .foot{margin-top:30px;border-top:2px solid var(--text);padding-top:10px;font-size:11px;color:var(--muted-dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .mm .lib2{padding-block:20px 0}.mm .lib2-side{background:var(--surface)}.mm .fgrp-head{color:var(--text)}
 .mm .hubbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.mm .hubbar input[type=search]{flex:1 1 220px;min-width:0;padding:10px 12px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}.mm .hubbar select{padding:6px 8px;border:1px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font:inherit}
+.mm .hub-h{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:0;padding:0;margin:22px 0 10px;display:block}
+.mm .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.mm .tile{display:block;border:1px solid var(--border);border-radius:10px;background:var(--surface);padding:10px 14px}@media (max-width:480px){.mm .tiles{grid-template-columns:1fr 1fr;gap:8px}.mm .tile{padding:8px 12px}}.mm .tile:hover{border-color:var(--primary)}
+.mm .tile b{display:block;font-size:15px}.mm .tile span{font-size:12px;color:var(--muted)}
+.mm .chips{display:flex;flex-wrap:wrap;gap:8px}.mm .ichip{border:1px solid var(--border-strong);border-radius:999px;padding:5px 12px;font-size:13px;line-height:1.3;background:var(--surface);color:var(--text);font-family:inherit;text-transform:none;letter-spacing:0;font-weight:400;display:inline-block}.mm .ichip:hover{border-color:var(--primary)}.mm .ichip span{color:var(--muted-dim);font-size:11px;margin-left:4px}
+.mm .hub-land+.lib2{margin-top:30px}
+.mm a.fopt{display:flex;gap:8px;justify-content:space-between;padding:4px 0;font-size:13px}.mm a.fopt:hover .lbl{text-decoration:underline}.mm a.fopt.on .lbl{font-weight:700;color:var(--primary)}.mm a.fopt .n{color:var(--muted-dim);font-size:12px}
+.mm .fgrp-head{font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:6px 0;display:block}
+.mm .tag{font-size:10px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border-strong);border-radius:4px;padding:0 5px;margin-left:6px;color:var(--muted);vertical-align:middle}
+.mm .sbtn{padding:10px 16px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font:inherit;font-weight:600;cursor:pointer}
+.mm .pager{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:16px;font-size:14px}.mm .pager a{color:var(--primary);font-weight:600}.mm .pager .off{color:var(--muted-dim)}
+.mm .pager .nums{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.mm .pager .nums a,.mm .pager .cur{min-width:30px;text-align:center;padding:3px 6px;border-radius:6px;border:1px solid var(--border)}.mm .pager .cur{background:var(--primary);color:var(--bg);border-color:var(--primary);font-weight:700}.mm .pager .gap{color:var(--muted-dim)}
+.mm .fam{margin-top:26px}.mm .fam h2{font-size:17px;margin-bottom:10px}.mm .fam h2 i{font-style:normal;font-size:12px;color:var(--muted-dim);font-weight:400}
+.mm .mmlist{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 24px}.mm .mmlist li{font-size:14px;padding:3px 0;border-bottom:1px solid var(--border)}.mm .mmlist a{color:var(--primary);font-weight:600}.mm .mmlist a:hover{text-decoration:underline}
 .mm .k{font-size:12px;color:var(--muted-dim)}.mm tr[hidden]{display:none}.mm td a:hover{text-decoration:underline}
 @media (max-width:860px){.mm .grid,.mm .method{grid-template-columns:1fr}.mm .wide{grid-column:auto}.mm .take{grid-template-columns:1fr;gap:6px}.mm .kpis{grid-template-columns:1fr 1fr}.mm .kpi:nth-child(2){border-right:0;margin-right:0}.mm .kpi{border-bottom:1px solid var(--border)}}
 @media (max-width:480px){.mm{padding:16px 16px 44px}.mm .kpi b{font-size:26px}.mm h2{font-size:18px}.mm .big b{font-size:28px}}
@@ -299,6 +316,7 @@ export function renderBody(S, C, opts = {}) {
   }
   const n = S.companies, cn = S.country, seg = S.segment, Ti = titles(S), ax = AXIS(S), axT = AXIS_TITLE(S);
   const hubPath = opts.hubPath || '/en/market-maps';
+  const countryPath = `${hubPath}/${countrySlug(S)}`;
   const so = (k) => (C && C.so_what && C.so_what[k] ? `<p class="sowhat" data-slot="so_what.${k}"><b>So what</b>${esc(C.so_what[k])}</p>` : '');
   const tk = C && C.takeaway ? C.takeaway : fallbackTakeaway(S);
   const M = S.meta.mekko || { y_labels: [], y_title: '' }, stages = S.stages.map((s) => s.stage);
@@ -369,7 +387,7 @@ ${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">Br
 <div><h3>Method and limits</h3><ul><li>Source: company websites read by BizDirect Asia, built ${esc(S.built)}; scale tier is a BizDirect estimate from website footprint, not revenue.</li><li>${esc(cap1(ax))} comes from the company's main ${S.meta?.kind === 'service' ? 'service' : 'role'}${showReg && regCov ? `; region from its stated location (${Math.round(regCov.share_filled * 100)}% of companies state one)` : ''}.</li><li>Only companies BizDirect has read are counted; small or offline-only businesses are under-represented.</li></ul></div></div></section>`;
 
   return `<main class="mm" id="mm-root" data-slug="${esc(S.meta?.slug || '')}">
-<div class="crumb"><a href="${esc(hubPath)}">Market maps</a><i>/</i>${esc(cn)}<i>/</i>${esc(seg)}</div>
+<div class="crumb"><a href="${esc(hubPath)}">Market Map</a><i>/</i><a href="${esc(countryPath)}">${esc(cn)}</a><i>/</i>${esc(seg)}</div>
 <h1>${esc(cn)} ${esc(lc(seg))}: who is in the market, where they sit and how big they are</h1>
 <p class="dek">A company-level map of ${esc(lc(seg))} companies in ${esc(cn)}, compiled from company websites by ${esc(lc(axT))}, region and relative scale. Snapshot ${esc(S.built)}.</p>
 <div class="kpis">${kpis}</div>
@@ -423,67 +441,94 @@ export function renderDocument(S, C, opts = {}) {
     { id: 'ld-breadcrumb', data: {
       '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Kira Research', item: `${BASE}/` },
-        { '@type': 'ListItem', position: 2, name: 'Market maps', item: hubUrl },
-        { '@type': 'ListItem', position: 3, name: `${S.country} ${lc(S.segment)}`, item: canonical },
+        { '@type': 'ListItem', position: 2, name: 'Market Map', item: hubUrl },
+        { '@type': 'ListItem', position: 3, name: S.country, item: `${hubUrl}/${countrySlug(S)}` },
+        { '@type': 'ListItem', position: 4, name: S.segment, item: canonical },
       ] } },
   ];
   return shell({ title: mapTitle(S), description: mapDescription(S, !!(opts.buy && opts.buy.enabled)), canonical, robots: opts.robots || 'noindex,follow', ld, body: renderBody(S, C, opts),
     buyScripts: opts.buy && opts.buy.enabled ? '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/auth.js"></script><script src="/js/market-map-buy.js" defer></script>\n' : '' });
 }
 
-// items: [{ slug, country, country_name, segment_key, title, l2_family, kind, companies, phone_pct, email_pct, price, built }]
-// The hub is a library table in the layout of the report library (research.css: lib2, fgrp, fopt): filters on the left,
-// search + sort above a table. It is rendered whole on the server (so it reads without JavaScript) and the small
-// script at the end only hides rows.
-export const BANDS = [['u100', 'Under 100', 0, 99], ['b100', '100 to 299', 100, 299], ['b300', '300 to 500 ($49)', 300, 500], ['o500', 'Over 500 ($99)', 501, Infinity]];
-const bandOf = (n) => (BANDS.find((b) => n >= b[2] && n <= b[3]) || BANDS[0])[0];
-
+// ── hub and country hubs ──
+// The hub is a small landing page (country tiles, top industries, a search box, 50 rows a page) laid out like the report
+// library (research.css: lib2, fgrp, fopt). It is rendered on the server from query parameters (api/_lib/market-map/hub.js);
+// every filter and page is a plain link, so it reads without JavaScript and a crawler can follow it.
+export { BANDS };
 const EMPTY = {
   en: { h: 'Company lists are being prepared', p: 'The first lists for each country and segment will appear here soon. In the meantime, our research reports are open to read.', a: 'Explore the library →' },
   ja: { h: '企業リストを準備中です', p: '国・セグメント別の最初のリストを近日中に掲載します。それまでは、リサーチレポートをご覧いただけます。', a: 'ライブラリを見る →' },
   ko: { h: '기업 리스트를 준비하고 있습니다', p: '국가·세그먼트별 첫 리스트가 곧 게시됩니다. 그동안 리서치 보고서를 읽어 보실 수 있습니다.', a: '라이브러리 보기 →' },
   zh: { h: '企业名单筹备中', p: '各国家和细分领域的首批名单即将上线。在此期间，欢迎先阅读我们的研究报告。', a: '浏览报告库 →' },
 };
-export function renderHub(items, opts = {}) {
-  const canonical = opts.canonical || `${BASE}/en/market-maps`;
-  const groups = [
-    ['country', 'Country', (i) => i.country_name, (i) => i.country_name],
-    ['family', 'Industry', (i) => i.l2_family || 'Other segments', (i) => i.l2_family || 'Other segments'],
-    ['kind', 'Goods or services', (i) => (i.kind === 'service' ? 'services' : 'goods'), (i) => (i.kind === 'service' ? 'Services' : 'Goods')],
-    ['band', 'Number of companies', (i) => bandOf(i.companies), (i) => BANDS.find((b) => b[0] === bandOf(i.companies))[1]],
-  ];
-  const filterHtml = groups.map(([k, label, val, name]) => {
-    const m = new Map();
-    for (const i of items) { const v = val(i); m.set(v, { name: name(i), n: (m.get(v)?.n || 0) + 1 }); }
-    let opts2 = [...m.entries()];
-    opts2 = k === 'band' ? BANDS.filter((b) => m.has(b[0])).map((b) => [b[0], m.get(b[0])]) : opts2.sort((a, b) => a[1].name.localeCompare(b[1].name));
-    if (!opts2.length) return '';
-    return `<div class="fgrp" data-group="${k}"><button type="button" class="fgrp-head" aria-expanded="true">${esc(label)}</button><div class="fgrp-body">${opts2.map(([v, o]) =>
-      `<label class="fopt"><input type="checkbox" data-filter="${k}" value="${esc(v)}"><span class="lbl">${esc(o.name)}</span><span class="n">${o.n}</span></label>`).join('')}</div></div>`;
-  }).join('');
-  const rows = items.map((i) => `<tr data-country="${esc(i.country_name)}" data-family="${esc(i.l2_family || 'Other segments')}" data-kind="${i.kind === 'service' ? 'services' : 'goods'}" data-band="${bandOf(i.companies)}" data-n="${i.companies}" data-built="${esc(i.built)}" data-name="${esc(`${i.title} ${i.country_name}`.toLowerCase())}" data-text="${esc(`${i.title} ${i.country_name} ${i.l2_family || ''}`.toLowerCase())}">
-<td><a href="/en/market-maps/${esc(i.slug)}"><b>${esc(i.title)}</b></a><div class="k">${esc(i.l2_family || '')}</div></td><td>${esc(i.country_name)}</td><td class="n">${nf(i.companies)}</td><td class="n">${i.phone_pct == null ? '-' : `${i.phone_pct}%`}</td><td class="n">${i.email_pct == null ? '-' : `${i.email_pct}%`}</td><td class="n">$${i.price}</td><td>${esc(i.built)}</td></tr>`).join('');
+const kindTag = (i) => (i.kind === 'service' ? ' <span class="tag">Services</span>' : '');
+const crumbLd = (items) => [{ id: 'ld-breadcrumb', data: { '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: items.map(([name, item], n) => ({ '@type': 'ListItem', position: n + 1, name, item })) } }];
+
+function pager(m, p) {
+  if (m.pages < 2) return '';
+  const at = (n) => hubHref(p, { page: n });
+  const nums = [...new Set([1, m.page - 2, m.page - 1, m.page, m.page + 1, m.page + 2, m.pages])].filter((n) => n >= 1 && n <= m.pages).sort((a, b) => a - b);
+  let last = 0, mid = '';
+  for (const n of nums) { if (n - last > 1) mid += '<span class="gap">…</span>'; mid += n === m.page ? `<span class="cur" aria-current="page">${n}</span>` : `<a href="${esc(at(n))}">${n}</a>`; last = n; }
+  return `<nav class="pager" aria-label="Pages">${m.page > 1 ? `<a rel="prev" href="${esc(at(m.page - 1))}">← Previous</a>` : '<span class="off">← Previous</span>'}<span class="nums">${mid}</span>${m.page < m.pages ? `<a rel="next" href="${esc(at(m.page + 1))}">Next →</a>` : '<span class="off">Next →</span>'}</nav>`;
+}
+
+// model: hubModel() of api/_lib/market-map/hub.js; params: parseParams(); items may carry phone_pct / email_pct.
+export function renderHub(model, params, opts = {}) {
+  const p = params || {};
+  const m = model;
   const loc = ['en', 'ja', 'ko', 'zh'].includes(opts.loc) ? opts.loc : 'en';
   const E = EMPTY[loc];
+  const filtered = isFiltered(p);
+  const canonical = opts.canonical || `${BASE}${hubHref(p, { page: m.page })}`;
+  const link = (over) => esc(hubHref(p, { page: 1, ...over }));
+  const opt = (label, n, on, over, offOver) => `<a class="fopt${on ? ' on' : ''}" href="${link(on ? offOver : over)}"${on ? ' aria-current="true"' : ''}><span class="lbl">${esc(label)}</span><span class="n">${n}</span></a>`;
+  const grp = (k, label, body) => (body ? `<div class="fgrp" data-group="${k}"><div class="fgrp-head">${esc(label)}</div><div class="fgrp-body">${body}</div></div>` : '');
+  const F = m.facets;
+  const filterHtml = [
+    grp('country', 'Country', F.countries.map((c) => opt(c.name, c.n, p.country === c.slug, { country: c.slug }, { country: '' })).join('')),
+    grp('family', 'Industry', F.industries.map((c) => opt(c.name, c.n, p.industry === c.name, { industry: c.name }, { industry: '' })).join('')),
+    grp('kind', 'Goods or services', F.kinds.map((c) => opt(c.name, c.n, p.kind === c.key, { kind: c.key }, { kind: '' })).join('')),
+    grp('band', 'Number of companies', F.sizes.map((c) => opt(c.name, c.n, p.size === c.key, { size: c.key }, { size: '' })).join('')),
+  ].join('');
+  const rows = m.items.map((i) => `<tr><td><a href="/en/market-maps/${esc(i.slug)}"><b>${esc(i.title)}</b></a>${kindTag(i)}<div class="k">${esc(i.l2_family || '')}</div></td><td><a href="/en/market-maps/${esc(i.country)}">${esc(i.country_name)}</a></td><td class="n">${nf(i.companies)}</td><td class="n">${i.phone_pct == null ? '-' : `${i.phone_pct}%`}</td><td class="n">${i.email_pct == null ? '-' : `${i.email_pct}%`}</td><td class="n">$${i.price}</td><td>${esc(i.built)}</td></tr>`).join('');
+  const from = m.total ? (m.page - 1) * m.pageSize + 1 : 0;
+  const hidden = ['country', 'industry', 'kind', 'size'].filter((k) => p[k]).map((k) => `<input type="hidden" name="${k}" value="${esc(p[k])}">`).join('');
+  const tiles = m.tiles.map((t) => `<a class="tile" href="/en/market-maps/${esc(t.slug)}"><b>${esc(t.name)}</b><span>${nf(t.n)} lists</span></a>`).join('');
+  const chips = m.topFamilies.map((f) => `<a class="ichip" href="${esc(hubHref({}, { industry: f.name }))}">${esc(f.name)} <span>${f.n}</span></a>`).join('');
   const body = `<main class="mm" id="mm-root">
-<div class="crumb">Company lists</div>
+<div class="crumb">Market Map</div>
 <h1>Company lists: every company in a segment, by country</h1>
 <p class="dek">Each list covers the companies of one segment in one country, compiled from company websites. The overview of each list is free; the Excel file with company-level phone and email is $49 up to 500 companies, $99 above.</p>
-${items.length ? `<div class="lib2"><aside class="lib2-side" aria-label="Refine by"><div class="lib2-side-head"><h2>Refine by</h2><button type="button" class="r-link" id="mm-clear" hidden>Clear all</button></div><div class="lib2-filters">${filterHtml}</div></aside>
-<section class="lib2-main" aria-live="polite"><div class="hubbar"><input type="search" id="mm-q" placeholder="Search segment, country or industry" aria-label="Search company lists"><label class="k">Sort <select id="mm-sort"><option value="n">Most companies</option><option value="built">Newest</option><option value="name">Segment A to Z</option></select></label><span class="k" id="mm-count"></span></div>
-<div class="scroll top"><table id="mm-table"><thead><tr><th>Segment</th><th>Country</th><th class="n">Companies</th><th class="n">With phone</th><th class="n">With email</th><th class="n">Price</th><th>Built</th></tr></thead><tbody>${rows}</tbody></table></div><p class="k" id="mm-none" hidden style="margin-top:12px">No list matches these filters.</p></section></div>`
+${m.all ? `<section class="hub-land" aria-label="Browse by country and industry"><h2 class="hub-h">Countries</h2><div class="tiles">${tiles}</div><h2 class="hub-h">Top industries</h2><div class="chips">${chips}</div></section>
+<div class="lib2" id="lists"><aside class="lib2-side" aria-label="Refine by"><div class="lib2-side-head"><h2>Refine by</h2>${filtered ? `<a class="r-link" href="/en/market-maps#lists">Clear all</a>` : ''}</div><div class="lib2-filters">${filterHtml}</div></aside>
+<section class="lib2-main"><form class="hubbar" method="get" action="/en/market-maps#lists" role="search">${hidden}<input type="search" id="mm-q" name="q" value="${esc(p.q)}" maxlength="60" placeholder="Search segment, country or industry" aria-label="Search company lists"><button type="submit" class="sbtn">Search</button><span class="k" id="mm-count">${m.total ? `${nf(from)}-${nf(from + m.items.length - 1)} of ${nf(m.total)} lists, largest first` : '0 lists'}</span></form>
+${m.total ? `<div class="scroll top"><table id="mm-table"><thead><tr><th>Segment</th><th>Country</th><th class="n">Companies</th><th class="n">With phone</th><th class="n">With email</th><th class="n">Price</th><th>Built</th></tr></thead><tbody>${rows}</tbody></table></div>${pager(m, p)}` : '<p class="k" id="mm-none" style="margin-top:12px">No list matches these filters.</p>'}</section></div>`
   : `<div class="mm-empty" style="margin-top:24px;padding:28px 24px;border:1px solid var(--border,#e5e7eb);border-radius:12px;max-width:640px"><p style="margin:0 0 8px;font-size:20px;font-weight:600">${esc(E.h)}</p><p class="dek" style="margin:0 0 16px">${esc(E.p)}</p><a href="/${loc}/library" style="font-weight:600">${esc(E.a)}</a></div>`}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
-</main>
-<script>(function(){var t=document.getElementById('mm-table');if(!t)return;var tb=t.tBodies[0],rs=[].slice.call(tb.rows),q=document.getElementById('mm-q'),so=document.getElementById('mm-sort'),cl=document.getElementById('mm-clear'),ct=document.getElementById('mm-count'),no=document.getElementById('mm-none');
-function sel(){var o={};[].forEach.call(document.querySelectorAll('input[data-filter]:checked'),function(c){(o[c.getAttribute('data-filter')]=o[c.getAttribute('data-filter')]||[]).push(c.value)});return o}
-function run(){var o=sel(),w=q.value.trim().toLowerCase().split(/\s+/).filter(Boolean),k=so.value,shown=0;
-rs.sort(function(a,b){return k==='n'?b.dataset.n-a.dataset.n:k==='built'?(b.dataset.built>a.dataset.built?1:-1):(a.dataset.name>b.dataset.name?1:-1)}).forEach(function(r){tb.appendChild(r)});
-rs.forEach(function(r){var ok=w.every(function(x){return r.dataset.text.indexOf(x)>-1});for(var g in o){if(o[g].indexOf(r.dataset[g])<0)ok=false}r.hidden=!ok;if(ok)shown++});
-ct.textContent=shown+' of '+rs.length+' lists';no.hidden=shown>0;cl.hidden=!(w.length||Object.keys(o).length)}
-document.addEventListener('change',function(e){if(e.target.matches&&e.target.matches('input[data-filter]'))run()});q.addEventListener('input',run);so.addEventListener('change',run);
-cl.addEventListener('click',function(){[].forEach.call(document.querySelectorAll('input[data-filter]'),function(c){c.checked=false});q.value='';run()});run()})();</script>`;
-  const ld = [{ id: 'ld-breadcrumb', data: { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Kira Research', item: `${BASE}/` }, { '@type': 'ListItem', position: 2, name: 'Company lists', item: canonical }] } }];
-  return shell({ title: 'Company lists by country and segment | KIRA Research', description: 'Company lists for segments across 15 Asia-Pacific markets: who is in the market, where they sit and how big they are. Free overview, Excel list for sale.', canonical, robots: opts.robots || 'noindex,follow', ld, body, researchCss: true });
+</main>`;
+  const ld = crumbLd([['Kira Research', `${BASE}/`], ['Market Map', `${BASE}/en/market-maps`]]);
+  const title = `Company lists by country and segment${m.page > 1 ? ` (page ${m.page})` : ''} | KIRA Research`;
+  return shell({ title, description: 'Company lists for segments across Asia-Pacific markets: who is in the market, where they sit and how big they are. Free overview, Excel list for sale.', canonical, robots: opts.robots || 'noindex,follow', ld, body, researchCss: true });
+}
+
+// model: countryModel() of hub.js. Every map of the country as a plain link, grouped by industry family.
+export function renderCountryHub(c, opts = {}) {
+  // goods and services lists can share a title: the kind tag shows only where it tells two lists apart
+  const seen = new Set(), dup = new Set();
+  for (const i of c.items) { const t = i.title.toLowerCase(); if (seen.has(t)) dup.add(t); seen.add(t); }
+  const canonical = opts.canonical || `${BASE}/en/market-maps/${c.slug}`;
+  const groups = c.groups.map((g) => `<section class="fam"><h2>${esc(g.name)} <i>${g.items.length} ${g.items.length === 1 ? 'list' : 'lists'}</i></h2><ul class="mmlist">${g.items.map((i) =>
+    `<li><a href="/en/market-maps/${esc(i.slug)}">${esc(i.title)}</a>${dup.has(i.title.toLowerCase()) ? kindTag(i) : ''} <span class="k">${nf(i.companies)} companies</span></li>`).join('')}</ul></section>`).join('');
+  const body = `<main class="mm" id="mm-root">
+<div class="crumb"><a href="/en/market-maps">Market Map</a><i>/</i>${esc(c.name)}</div>
+<h1>${esc(c.name)} company lists: ${nf(c.items.length)} segments mapped</h1>
+<p class="dek">${nf(c.companies)} company entries across ${nf(c.items.length)} segments in ${esc(c.name)}, compiled from company websites. Open a segment for its free overview; the Excel list with company-level phone and email is $49 up to 500 companies, $99 above.</p>
+${groups}
+<p class="k" style="margin-top:24px"><a href="/en/market-maps?country=${esc(c.slug)}#lists">Search and filter ${esc(c.name)} lists</a> · <a href="/en/market-maps">All countries</a></p>
+<div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
+</main>`;
+  const ld = crumbLd([['Kira Research', `${BASE}/`], ['Market Map', `${BASE}/en/market-maps`], [c.name, canonical]]);
+  return shell({ title: `${c.name} company lists by segment | KIRA Research`, description: `${nf(c.items.length)} company lists for ${c.name}, grouped by industry: who is in each segment, where they sit and how big they are. Free overview, Excel list for sale.`, canonical, robots: opts.robots || 'noindex,follow', ld, body, researchCss: true });
 }

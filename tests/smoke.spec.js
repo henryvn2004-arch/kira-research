@@ -1434,6 +1434,18 @@ test.describe('market maps', () => {
     }
   });
 
+  test('a country hub lists its maps as plain links; an unknown country is a noindex 404', async ({ page, request }) => {
+    const hub = await (await request.get('/en/market-maps')).text();
+    const m = hub.match(/href="\/en\/market-maps\/([a-z0-9-]+)"/);
+    test.skip(!m, 'no market map published yet');
+    const res = await page.goto(`/en/market-maps/${m[1]}`, { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('noindex');
+    expect(await page.locator(`.mmlist a[href^="/en/market-maps/${m[1]}/"]`).count()).toBeGreaterThan(0);
+    const nf = await request.get('/en/market-maps/nowhere');
+    expect(nf.status()).toBe(404);
+  });
+
   test('the list JSON endpoint answers', async ({ request }) => {
     const r = await request.get('/api/market-maps?type=list');
     expect(r.status()).toBe(200);

@@ -126,6 +126,7 @@
     { "source": "/sitemap-ja.xml",  "destination": "/api/sitemap?locale=ja" },
     { "source": "/sitemap-ko.xml",  "destination": "/api/sitemap?locale=ko" },
     { "source": "/sitemap-zh.xml",  "destination": "/api/sitemap?locale=zh" },
+    { "source": "/sitemap-market-maps.xml", "destination": "/api/sitemap?type=market-maps" },
 
     { "source": "/en/reports/:slug", "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|WhatsApp|Discordbot|TelegramBot|SkypeUriPreview|Pinterestbot|redditbot|Embedly|Mastodon).*" }], "destination": "/api/report-og?locale=en&slug=:slug" },
     { "source": "/ja/reports/:slug", "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|WhatsApp|Discordbot|TelegramBot|SkypeUriPreview|Pinterestbot|redditbot|Embedly|Mastodon).*" }], "destination": "/api/report-og?locale=ja&slug=:slug" },
@@ -146,12 +147,16 @@
     { "source": "/zh/experts/transcripts/:slug", "destination": "/api/ssr?type=transcript&loc=zh&slug=:slug" },
 
     { "source": "/en/market-maps", "destination": "/api/market-maps?type=hub&loc=en" },
+    { "source": "/en/market-maps/:country", "destination": "/api/market-maps?type=country&loc=en&country=:country" },
     { "source": "/en/market-maps/:country/:segment", "destination": "/api/market-maps?type=map&loc=en&country=:country&segment=:segment" },
     { "source": "/ja/market-maps", "destination": "/api/market-maps?type=hub&loc=ja" },
+    { "source": "/ja/market-maps/:country", "destination": "/api/market-maps?type=country&loc=ja&country=:country" },
     { "source": "/ja/market-maps/:country/:segment", "destination": "/api/market-maps?type=map&loc=ja&country=:country&segment=:segment" },
     { "source": "/ko/market-maps", "destination": "/api/market-maps?type=hub&loc=ko" },
+    { "source": "/ko/market-maps/:country", "destination": "/api/market-maps?type=country&loc=ko&country=:country" },
     { "source": "/ko/market-maps/:country/:segment", "destination": "/api/market-maps?type=map&loc=ko&country=:country&segment=:segment" },
     { "source": "/zh/market-maps", "destination": "/api/market-maps?type=hub&loc=zh" },
+    { "source": "/zh/market-maps/:country", "destination": "/api/market-maps?type=country&loc=zh&country=:country" },
     { "source": "/zh/market-maps/:country/:segment", "destination": "/api/market-maps?type=map&loc=zh&country=:country&segment=:segment" },
     { "source": "/en/markets", "destination": "/api/geo?type=markets&loc=en" },
     { "source": "/en/markets/:country", "destination": "/api/geo?type=market-country&loc=en&country=:country" },
@@ -323,6 +328,12 @@
     },
     {
       "source": "/(en|ja|ko|zh)/market-maps",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=600, stale-while-revalidate=86400" }
+      ]
+    },
+    {
+      "source": "/(en|ja|ko|zh)/market-maps/:country",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=600, stale-while-revalidate=86400" }
       ]
