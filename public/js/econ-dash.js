@@ -536,7 +536,7 @@
     if (lens && CORRIDOR[lens] && lens !== code) {
       h += '<div class="ed-links"><a class="r-btn r-btn-outline" href="/' + L + '/data/' + CORRIDOR[lens] + '-in-' + (D.countries.find((x) => x.code === code) || {}).slug + '">' + esc(T.corridor(nm(lens), C)) + '</a></div>';
     }
-    { const cc = D.countries.find((x) => x.code === code); if (cc) h += '<div class="ed-links"><a class="r-btn r-btn-outline" href="/' + L + '/markets/' + esc(cc.slug) + '">' + esc(T.factsC(C)) + '</a></div>'; }
+    { const cc = D.countries.find((x) => x.code === code); if (cc && cc.facts) h += '<div class="ed-links"><a class="r-btn r-btn-outline" href="/' + L + '/markets/' + esc(cc.slug) + '">' + esc(T.factsC(C)) + '</a></div>'; }
     h += '<div id="dd-moves"></div>';
     el.innerHTML = h;
     if (setup()) draws.forEach((f) => f());
