@@ -3,7 +3,7 @@
 // Public. Kira Data dashboard (/<locale>/data/ and /<locale>/data/<country>): everything the charts need, in one
 // cached reply. Only sources marked public in data_sources are served.
 //   GET /api/econ-dash → {
-//     countries[{code,name,slug}],
+//     countries[{code,name,slug,facts}],
 //     compare { CODE: { indicator_key: [[year, value], ...] } }   annual World Bank set since 2010 (no forecasts)
 //     units   { indicator_key: {label, unit} }
 //     invest  [{ src, host, investor, product, freq, currency, out, points[[period, value]] }]
