@@ -1378,9 +1378,18 @@ test.describe('GEO hub v2 (raw HTML, bot user agent)', () => {
   });
 });
 
-test('footer Research column has Market facts', async ({ page }) => {
+test('top nav is Library | Experts | Market Map | Survey; footer carries the rest', async ({ page }) => {
   await page.goto('/en/');
-  await expect(page.locator('.kira-footer a[href="/en/markets"]')).toHaveCount(1);
+  const links = page.locator('.nav-wrap .nav-links a:not(.nav-cta):visible');
+  await expect(links).toHaveText(['Library', 'Experts', 'Market Map', 'Survey']);
+  await expect(page.locator('.nav-wrap .nav-links a[href="/en/market-maps"]')).toHaveText('Market Map');
+  for (const h of ['/en/insights', '/en/data/', '/en/pricing']) {
+    await expect(page.locator(`.nav-wrap .nav-links a[href="${h}"]`)).toHaveCount(0);
+    await expect(page.locator(`.kira-footer a[href="${h}"]`)).toHaveCount(1);
+  }
+  await expect(page.locator('.kira-footer a[href="/en/market-maps"]')).toHaveCount(1);
+  await expect(page.locator('.kira-footer a[href="/en/data/moves"]')).toHaveCount(1);
+  await expect(page.locator('.kira-footer a[href="/en/markets"]')).toHaveCount(0);   // merged into Market data
 });
 
 // ── Market maps (off by default: noindex, not in nav, no buy button) ──

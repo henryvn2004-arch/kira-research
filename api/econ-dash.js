@@ -3,7 +3,7 @@
 // Public. Kira Data dashboard (/<locale>/data/ and /<locale>/data/<country>): everything the charts need, in one
 // cached reply. Only sources marked public in data_sources are served.
 //   GET /api/econ-dash → {
-//     countries[{code,name,slug}],
+//     countries[{code,name,slug,facts}],
 //     compare { CODE: { indicator_key: [[year, value], ...] } }   annual World Bank set since 2010 (no forecasts)
 //     units   { indicator_key: {label, unit} }
 //     invest  [{ src, host, investor, product, freq, currency, out, points[[period, value]] }]
@@ -43,6 +43,7 @@ async function sbAll(path) {
     if (page.length < 1000) return out;
   }
 }
+import { listHubs } from './_lib/geo.js';
 const slugOf = (name) => String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const ym = (d) => d.toISOString().slice(0, 7);
 
@@ -167,9 +168,12 @@ export default async function handler(req, res) {
 
     const used = new Set([...(fx.length ? ['ecb'] : []), ...rows.map(() => 'worldbank_wdi'), ...invest.map((s) => s.src), ...tradeOut.map((s) => s.src), ...visitors.map((s) => s.src),
       ...pulseRows.map((r) => (pulseInd.length ? r.source_key : null)).filter(Boolean)]);
+    // facts = the market facts country page exists (same test as api/geo renderCountry: at least one hub for the country)
+    let hubCodes = new Set();
+    try { hubCodes = new Set((await listHubs()).map((h) => h.code)); } catch { /* no link rather than a dead one */ }
     res.setHeader('Cache-Control', 'public, s-maxage=21600, stale-while-revalidate=604800');
     return res.status(200).json({
-      countries: countries.map((c) => ({ code: c.code, name: c.name, slug: slugOf(c.name) })),
+      countries: countries.map((c) => ({ code: c.code, name: c.name, slug: slugOf(c.name), facts: hubCodes.has(c.code) })),
       compare,
       units: Object.fromEntries(indicators.map((i) => [i.key, { label: i.label, unit: i.unit }])),
       invest,

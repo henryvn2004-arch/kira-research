@@ -438,6 +438,12 @@ export function renderDocument(S, C, opts = {}) {
 export const BANDS = [['u100', 'Under 100', 0, 99], ['b100', '100 to 299', 100, 299], ['b300', '300 to 500 ($49)', 300, 500], ['o500', 'Over 500 ($99)', 501, Infinity]];
 const bandOf = (n) => (BANDS.find((b) => n >= b[2] && n <= b[3]) || BANDS[0])[0];
 
+const EMPTY = {
+  en: { h: 'Company lists are being prepared', p: 'The first lists for each country and segment will appear here soon. In the meantime, our research reports are open to read.', a: 'Explore the library →' },
+  ja: { h: '企業リストを準備中です', p: '国・セグメント別の最初のリストを近日中に掲載します。それまでは、リサーチレポートをご覧いただけます。', a: 'ライブラリを見る →' },
+  ko: { h: '기업 리스트를 준비하고 있습니다', p: '국가·세그먼트별 첫 리스트가 곧 게시됩니다. 그동안 리서치 보고서를 읽어 보실 수 있습니다.', a: '라이브러리 보기 →' },
+  zh: { h: '企业名单筹备中', p: '各国家和细分领域的首批名单即将上线。在此期间，欢迎先阅读我们的研究报告。', a: '浏览报告库 →' },
+};
 export function renderHub(items, opts = {}) {
   const canonical = opts.canonical || `${BASE}/en/market-maps`;
   const groups = [
@@ -457,6 +463,8 @@ export function renderHub(items, opts = {}) {
   }).join('');
   const rows = items.map((i) => `<tr data-country="${esc(i.country_name)}" data-family="${esc(i.l2_family || 'Other segments')}" data-kind="${i.kind === 'service' ? 'services' : 'goods'}" data-band="${bandOf(i.companies)}" data-n="${i.companies}" data-built="${esc(i.built)}" data-name="${esc(`${i.title} ${i.country_name}`.toLowerCase())}" data-text="${esc(`${i.title} ${i.country_name} ${i.l2_family || ''}`.toLowerCase())}">
 <td><a href="/en/market-maps/${esc(i.slug)}"><b>${esc(i.title)}</b></a><div class="k">${esc(i.l2_family || '')}</div></td><td>${esc(i.country_name)}</td><td class="n">${nf(i.companies)}</td><td class="n">${i.phone_pct == null ? '-' : `${i.phone_pct}%`}</td><td class="n">${i.email_pct == null ? '-' : `${i.email_pct}%`}</td><td class="n">$${i.price}</td><td>${esc(i.built)}</td></tr>`).join('');
+  const loc = ['en', 'ja', 'ko', 'zh'].includes(opts.loc) ? opts.loc : 'en';
+  const E = EMPTY[loc];
   const body = `<main class="mm" id="mm-root">
 <div class="crumb">Company lists</div>
 <h1>Company lists: every company in a segment, by country</h1>
@@ -464,7 +472,7 @@ export function renderHub(items, opts = {}) {
 ${items.length ? `<div class="lib2"><aside class="lib2-side" aria-label="Refine by"><div class="lib2-side-head"><h2>Refine by</h2><button type="button" class="r-link" id="mm-clear" hidden>Clear all</button></div><div class="lib2-filters">${filterHtml}</div></aside>
 <section class="lib2-main" aria-live="polite"><div class="hubbar"><input type="search" id="mm-q" placeholder="Search segment, country or industry" aria-label="Search company lists"><label class="k">Sort <select id="mm-sort"><option value="n">Most companies</option><option value="built">Newest</option><option value="name">Segment A to Z</option></select></label><span class="k" id="mm-count"></span></div>
 <div class="scroll top"><table id="mm-table"><thead><tr><th>Segment</th><th>Country</th><th class="n">Companies</th><th class="n">With phone</th><th class="n">With email</th><th class="n">Price</th><th>Built</th></tr></thead><tbody>${rows}</tbody></table></div><p class="k" id="mm-none" hidden style="margin-top:12px">No list matches these filters.</p></section></div>`
-  : '<p class="dek" style="margin-top:24px">No company lists are published yet.</p>'}
+  : `<div class="mm-empty" style="margin-top:24px;padding:28px 24px;border:1px solid var(--border,#e5e7eb);border-radius:12px;max-width:640px"><p style="margin:0 0 8px;font-size:20px;font-weight:600">${esc(E.h)}</p><p class="dek" style="margin:0 0 16px">${esc(E.p)}</p><a href="/${loc}/library" style="font-weight:600">${esc(E.a)}</a></div>`}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
 </main>
 <script>(function(){var t=document.getElementById('mm-table');if(!t)return;var tb=t.tBodies[0],rs=[].slice.call(tb.rows),q=document.getElementById('mm-q'),so=document.getElementById('mm-sort'),cl=document.getElementById('mm-clear'),ct=document.getElementById('mm-count'),no=document.getElementById('mm-none');

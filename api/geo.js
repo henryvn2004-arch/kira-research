@@ -293,6 +293,7 @@ async function renderCountry(req, res, loc, countrySlug) {
   const h1 = L.countryH1(cName);
   const content = '<!--SSR-->' + crumbs([{ name: L.library, href: `/${vl}/library` }, { name: L.marketsH1, href: `/${vl}/markets` }, { name: cName }]) +
     `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.countryMeta(list.length))}</p>` +
+    `<p class="geo-note"><a href="/${vl}/data/${countrySlug}">${esc(L.dataCLink(cName))}</a></p>` +
     [...groups.values()].sort((a, b) => a.name.localeCompare(b.name)).map(({ name: g, items }) =>
       `<section><h2>${esc(g)}</h2><ul class="geo-list">${items.sort((a, b) => (b.lvl1 - a.lvl1) || a.name.localeCompare(b.name)).map(({ h, name }) => `<li><a href="/${vl}/markets/${countrySlug}/${esc(h.segment)}">${esc(name)}</a> · ${esc(L.answersN(h.counts[vl]))}</li>`).join('')}</ul></section>`).join('') +
     '<!--/SSR-->';
@@ -318,6 +319,7 @@ async function renderMarkets(req, res, loc) {
   const path = `/${vl}/markets`;
   const content = '<!--SSR-->' + crumbs([{ name: L.library, href: `/${vl}/library` }, { name: L.marketsH1 }]) +
     `<h1>${esc(L.marketsH1)}</h1><p class="geo-meta">${esc(L.marketsMeta(list.length))}</p>` +
+    `<p class="geo-note"><a href="/${vl}/data/">${esc(L.dataLink)}</a></p>` +
     `<ul class="geo-list">${list.map(({ c, n }) => `<li><a href="/${vl}/markets/${slugOf(c.name)}">${esc(countryName(c, vl))}</a> · ${esc(L.industriesN(n))}</li>`).join('')}</ul><!--/SSR-->`;
   const editions = LOCALES.filter((l) => okFor(l).length);
   await shell(req, res, {
