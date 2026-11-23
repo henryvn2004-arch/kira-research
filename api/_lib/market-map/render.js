@@ -194,7 +194,7 @@ export function titles(S) {
       : `${lc(f.top_stage.stage)} is the largest ${ax} at ${f.top_stage.pct}% of companies; ${f.large_pct}% of all companies are Large`,
     heatmap: hm ? `The densest cell is ${lc(hm.sub_category)} x ${lc(hm.stage)}: ${hm.n} companies (${hm.pct}% of the list)` : '',
     stacked: !best ? '' : `${best.stage} has the highest share of Large companies (${best.Large.pct}%); ${low.stage} the lowest (${low.Large.pct}%)`,
-    brands: b0 ? `${b0.brand} is the most-listed brand, carried by ${b0.companies} companies` : '',
+    brands: b0 ? `Brands carried by companies in this list: ${b0.brand} leads, named by ${b0.companies} companies` : '',
     channels: S.channels && S.channels[0] ? `${S.channels[0].name} is the most-cited sales channel (${S.channels[0].n} companies)` : '',
     region: f.top_province ? `${f.top_province.name} alone holds ${f.top_province.pct}% of mapped companies (${f.top_province.n})` : '',
     concentration: `${f.small_pct}% of companies are Small; only ${f.large_pct}% are Large`,
@@ -325,7 +325,8 @@ export function renderBody(S, C, opts = {}) {
   const brandsTbl = `<table><tr><th>Brand</th><th class="n">Companies</th>${ownCol ? '<th>Owner or carrier</th>' : ''}</tr>${brands.map((b) =>
     `<tr><td>${esc(b.brand)}</td><td class="n">${b.companies}</td>${ownCol ? `<td>${b.owner_listed ? `Owner listed: ${esc(b.owner_name)}` : 'No company named after the brand in the list'}${b.carried_by_distributors_or_retail ? ` (${b.carried_by_distributors_or_retail} distributors / retail)` : ''}</td>` : ''}</tr>`).join('')}</table>`;
   const tiersCap = TIERS.map((t) => `${t} ${S.tiers[t].n} (${S.tiers[t].pct}%)`).join(' · ');
-  const top = S.top20.map((r) => `<tr><td class="n">${r.rank}</td><td>${esc(r.company)}</td><td>${esc(r.stage)}</td><td>${esc(r.region)}</td><td>${esc(r.scale)}</td></tr>`).join('');
+  const topProd = S.top20.some((r) => r.products && r.products.length);
+  const top = S.top20.map((r) => `<tr><td class="n">${r.rank}</td><td>${esc(r.company)}</td><td>${esc(r.stage)}</td><td>${esc(r.region)}</td><td>${esc(r.scale)}</td>${topProd ? `<td>${esc((r.products || []).join('; '))}</td>` : ''}</tr>`).join('');
   const prev = S.preview.map((r) => `<tr><td class="n">${r.rank}</td><td>${esc(r.company)}</td><td>${esc(r.stage)}</td><td>${esc(r.sub_category)}</td><td>${esc(r.region)}</td><td>${esc(r.scale)}</td><td>${esc((r.products || []).join('; '))}</td><td>${esc(r.website)}</td></tr>`).join('');
   const provCap = (S.provinces || []).filter((g) => g.n > 0).map((g) => `${g.macro_region}: ${g.provinces.map((x) => `${x.name} ${x.n}`).join(', ')}`).join(' · ');
 
@@ -344,7 +345,7 @@ ${M.y_title === 'Scale tier' || !(S.tiers_by_stage && S.tiers_by_stage.length) ?
   const showBrands = show(S, 'brands'), showCh = show(S, 'channels'), showReg = show(S, 'region');
   const sec3 = (showCh || showBrands) ? `<section><h2>${num()}${showCh && showBrands ? 'Channels and brands' : showCh ? 'Channels' : 'Brands'}</h2><div class="grid">
 ${showCh ? `<figure><h3 class="at">${esc(Ti.channels)}</h3><div class="sub">Sales channels the companies name on their own websites (similar wordings grouped)</div>${ranked(S.channels.map((c) => [c.name, c.n]), 'companies')}<figcaption>${esc(S.channels.map((c) => `${c.name} ${c.n}`).join(' · '))}.${esc(based(S, 'channels', 'a stated channel'))}</figcaption>${so('channels')}</figure>` : ''}
-${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">Top ${brands.length} brands by number of companies carrying them</div>${ranked(brands.map((b) => [b.brand, b.companies]), 'companies')}<div class="scroll">${brandsTbl}</div><figcaption>${esc(based(S, 'brands', 'a listed brand').trim())}</figcaption>${so('brands')}</figure>` : ''}
+${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">Brands named anywhere on these companies' websites; not limited to this product line.</div>${ranked(brands.map((b) => [b.brand, b.companies]), 'companies')}<div class="scroll">${brandsTbl}</div><figcaption>${esc(based(S, 'brands', 'a listed brand').trim())}</figcaption>${so('brands')}</figure>` : ''}
 </div></section>` : '';
   const sec3b = showReg ? `<section><h2>${num()}Geography</h2><div class="grid"><figure class="wide"><h3 class="at">${esc(Ti.region)}</h3><div class="sub">Main provinces by region; tile width = companies</div>${provinces(S)}<figcaption>${esc(provCap)}.${esc(based(S, 'region', 'a stated region'))}</figcaption>${so('region')}</figure></div></section>` : '';
   let sec4 = '';
@@ -356,7 +357,7 @@ ${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">To
     }
     sec4 += '</div></section>';
   }
-  const sec5 = !S.top20.length ? '' : `<section><h2>${num()}Leading companies by relative scale</h2><div class="scroll top"><table><tr><th class="n">#</th><th>Company</th><th>${esc(cap1(ax))}</th><th>Region</th><th>Scale</th></tr>${top}</table></div></section>`;
+  const sec5 = !S.top20.length ? '' : `<section><h2>${num()}Leading companies by relative scale</h2><div class="scroll top"><table><tr><th class="n">#</th><th>Company</th><th>${esc(cap1(ax))}</th><th>Region</th><th>Scale</th>${topProd ? `<th>${S.item_noun === 'service' ? 'Services' : 'Products'}</th>` : ''}</tr>${top}</table></div></section>`;
   const impl = C && Array.isArray(C.implications) && C.implications.length
     ? `<section data-slot="implications"><h2>${num()}Implications for a foreign company looking for partners</h2><div class="impl"><ul>${C.implications.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div></section>` : '';
   const sec7 = !S.preview.length ? '' : `<section><h2>${num()}Preview of the Excel list (10 of ${n} rows, contacts hidden)</h2><div class="scroll top"><table><tr><th class="n">Rank</th><th>Company</th><th>${esc(cap1(ax))}</th><th>Sub-category</th><th>Region</th><th>Scale</th><th>${S.item_noun === 'service' ? 'Services' : 'Products'}</th><th>Website</th></tr>${prev}</table></div></section>`;
