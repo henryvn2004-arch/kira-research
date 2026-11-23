@@ -13,6 +13,8 @@
 //   segment, country, built, companies, price_usd, groups[], left_out_roles[], definition_extra, item_noun,
 //   meta{country_code,country_slug,segment_key,slug,kind,l2_family,axis,axis_title,stage_labels[],region_labels[]},
 //   kpis[], stages[], regions[], marimekko[], heatmap|null, tiers_by_stage[], tiers{}, brands[], certifications[],
+//   meta.definition{country,group_keys[],roles[],...} = the BizDirect segment definition the page counted; the paid list is built from it (api/_lib/lists.js).
+//   A map without it still loads (draft) but cannot be bought: api/list-buy.js answers list_unavailable.
 //   origins[], channels[], provinces[]|null, regions[]|null (null = fewer than thresholds.region of companies state a region: the
 //   region block is hidden), coverage{field:{n_filled,share_filled}}, thresholds{}, top20[], preview[] (10 rows, no contacts),
 //   contacts{with_phone_pct,with_email_pct}, findings{}; meta.mekko{x_title,y_title,y_labels[]}; marimekko[].cells[]{label,n,...}
@@ -48,6 +50,9 @@ function check(base, S) {
   if (missing.length) throw new Error(`${base}: stats missing ${missing.join(', ')}`);
   for (const k of ['country_slug', 'segment_key', 'slug', 'stage_labels', 'region_labels']) if (!S.meta[k]) throw new Error(`${base}: meta.${k} missing`);
   if (S.meta.slug !== `${S.meta.country_slug}/${S.meta.segment_key}`) throw new Error(`${base}: meta.slug must be country_slug/segment_key`);
+  const D = S.meta.definition;
+  if (D === undefined || D === null) console.warn(`${base}: warning, meta.definition missing; the list for this map cannot be sold`);
+  else if (typeof D !== 'object' || D.country !== S.meta.country_slug || !Array.isArray(D.group_keys) || !D.group_keys.length) throw new Error(`${base}: meta.definition must have country = meta.country_slug and group_keys[]`);
   if (S.preview.length > 10) throw new Error(`${base}: preview has more than 10 rows`);
   if (S.top20.length > 20) throw new Error(`${base}: top20 has more than 20 rows`);
   for (const t of strings(S)) {
