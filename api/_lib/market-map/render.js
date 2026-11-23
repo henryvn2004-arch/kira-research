@@ -73,12 +73,18 @@ function marimekko(S) {
   const W = 520, x0 = 38, x1 = 514, y0 = 70, y1 = 350, pw = x1 - x0, ph = y1 - y0, n = S.companies, M = S.meta.mekko;
   const b = [];
   for (const t of [0, 50, 100]) b.push(T(x0 - 6, y1 - ph * t / 100 + 4, `${t}%`, 'ax', 'end'));
-  let x = x0;
+  let x = x0; const narrowKey = [];
   for (const col of S.marimekko) {
     const w = pw * col.n / n;
-    const lines = wrap(short(col.stage), w - 4, 11).slice(0, 3);
-    lines.forEach((ln, i) => b.push(T(x + w / 2, 14 + i * 13, ln, 'hd', 'middle')));
-    b.push(T(x + w / 2, 14 + lines.length * 13 + 2, `${col.n} cos.`, 'ax', 'middle'));
+    const narrow = w < pw * 0.08;   // header labels would collide: letter tag here, name in the key below the chart
+    if (narrow) {
+      const tag = String.fromCharCode(65 + narrowKey.length); narrowKey.push([tag, short(col.stage)]);
+      b.push(T(x + w / 2, 14, tag, 'hd', 'middle'));
+    } else {
+      const lines = wrap(short(col.stage), w - 4, 11).slice(0, 3);
+      lines.forEach((ln, i) => b.push(T(x + w / 2, 14 + i * 13, ln, 'hd', 'middle')));
+      b.push(T(x + w / 2, 14 + lines.length * 13 + 2, `${col.n} cos.`, 'ax', 'middle'));
+    }
     let y = y0;
     for (const c of col.cells) {
       const h = col.n ? ph * c.n / col.n : 0;
@@ -100,6 +106,7 @@ function marimekko(S) {
     b.push(`<rect x="${f1(lx)}" y="${ly}" width="11" height="11" class="f-${yc(S, g)}"/>`); b.push(T(lx + 16, ly + 10, g, 'ax'));
     lx += need;
   }
+  if (narrowKey.length) { ly += 17; b.push(T(x0, ly + 10, narrowKey.map(([t, nm]) => `${t} = ${nm}`).join('   '), 'ax')); }
   return svg(W, ly + 18, b.join(''), `Companies by ${AXIS(S)} and ${lc(M.y_title)}`, `Column width = companies in the ${AXIS(S)}; height = share by ${lc(M.y_title)}. Numbers in the table next to it.`);
 }
 
@@ -266,7 +273,7 @@ export const MM_CSS = `
 // ── buy box ──────────────────────────────────────────────
 function buyBox(S, opts) {
   const n = S.companies, p = S.price_usd, b = opts.buy || {};
-  const cols = `<div class="cols"><div>Company, legal name, website, region</div><div>${esc(AXIS_TITLE(S))}, sub-category, matched ${S.item_noun === 'service' ? 'services' : 'products'}, scale tier</div><div>${S.item_noun === 'service' ? 'Services' : 'Products'}, brands, channels, sourcing origins, certifications</div><div>Company phone (${S.contacts.with_phone_pct}% of rows) and email (${S.contacts.with_email_pct}% of rows), no named persons</div><div>Founded, employees, branches, description, social pages</div><div>Profile link and source line, dated ${esc(S.built)}</div></div>`;
+  const cols = `<div class="cols"><div>Company, legal name, website, region</div><div>${esc(AXIS_TITLE(S))}, sub-category, matched ${S.item_noun === 'service' ? 'services' : 'products'}, scale tier</div><div>${S.item_noun === 'service' ? 'Services' : 'Products'}, brands, channels, sourcing origins, certifications</div><div>Company phone (up to ${S.contacts.with_phone_pct}% of rows) and email (up to ${S.contacts.with_email_pct}% of rows), no named persons</div><div>Founded, employees, branches, description, social pages</div><div>Profile link and source line, dated ${esc(S.built)}</div></div>`;
   const keyword = `List: ${S.country} ${S.segment}`.slice(0, 80);
   if (b.enabled) {
     return `<div class="buy" id="buy"><b style="font-size:20px">Excel list: ${n} companies, $${p}</b>${cols}
@@ -283,6 +290,13 @@ function buyBox(S, opts) {
 
 // ── page body ────────────────────────────────────────────
 export function renderBody(S, C, opts = {}) {
+  { // one sub-category holding 90%+ of the companies: single-colour mekko and heatmap say nothing, so show the stage bar alone
+    const M0 = S.meta.mekko, rows = S.marimekko || [];
+    if (M0 && M0.y_title === 'Sub-category' && rows.length && S.companies) {
+      const share = Math.max(...M0.y_labels.map((l) => rows.reduce((a, c) => a + ((c.cells.find((x) => x.label === l) || {}).n || 0), 0))) / S.companies;
+      if (share >= 0.9) S = { ...S, marimekko: null, heatmap: null };
+    }
+  }
   const n = S.companies, cn = S.country, seg = S.segment, Ti = titles(S), ax = AXIS(S), axT = AXIS_TITLE(S);
   const hubPath = opts.hubPath || '/en/market-maps';
   const so = (k) => (C && C.so_what && C.so_what[k] ? `<p class="sowhat" data-slot="so_what.${k}"><b>So what</b>${esc(C.so_what[k])}</p>` : '');
