@@ -8,6 +8,7 @@
 //   GET /api/sitemap?locale=ja        → full urlset for JA
 //   GET /api/sitemap?locale=ko        → full urlset for KO
 //   GET /api/sitemap?locale=zh        → full urlset for ZH (Simplified Chinese)
+//   GET /api/sitemap?type=market-maps → market-map hub + country hubs + indexable maps (EN; empty while the switch is off)
 //
 // Wired up via vercel.json rewrites:
 //   /sitemap.xml         → /api/sitemap
@@ -15,6 +16,7 @@
 //   /sitemap-ja.xml      → /api/sitemap?locale=ja
 //   /sitemap-ko.xml      → /api/sitemap?locale=ko
 //   /sitemap-zh.xml      → /api/sitemap?locale=zh
+//   /sitemap-market-maps.xml → /api/sitemap?type=market-maps
 //
 // Each <url> entry in a per-locale sitemap carries <xhtml:link rel="alternate"
 // hreflang="..."> annotations pointing to the equivalent URL in the other
@@ -27,7 +29,6 @@
 
 import { coverage, countryIndexable, pairIndexable } from './_lib/econ/coverage.js';
 import { getConfig } from './_lib/config.js';
-import { isIndexable } from './_lib/market-map/gate.js';
 import { INVESTOR_SLUG, HOST_SLUG } from './_lib/moves/alerts.js';
 import { listHubs, tradeIndex, tradeTopicIndexable, topicSlug, countries, slugOf } from './_lib/geo.js';
 
@@ -114,7 +115,7 @@ function setXmlHeaders(res) {
 }
 
 // ── Sitemap index (default, no locale param) ──
-function buildIndex() {
+function buildIndex(withMaps = false) {
   const today = new Date().toISOString().slice(0, 10);
   const entries = LOCALES.map(loc => [
     '  <sitemap>',
@@ -122,12 +123,15 @@ function buildIndex() {
     `    <lastmod>${today}</lastmod>`,
     '  </sitemap>'
   ].join('\n')).join('\n');
+  // Market maps: its own file (about 3,000 URLs), listed only while marketmaps.indexing_enabled is on.
+  const mm = withMaps ? ['  <sitemap>', `    <loc>${ORIGIN}/sitemap-market-maps.xml</loc>`, `    <lastmod>${today}</lastmod>`, '  </sitemap>'].join('\n') : '';
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     entries,
+    mm || null,
     '</sitemapindex>'
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 }
 
 // Every row of a query (PostgREST answers at most 1,000 rows at a time): pages of 1,000, stable order by id.
@@ -290,22 +294,7 @@ async function buildLocale(locale) {
     console.error('[sitemap] geo pages skipped:', err.message);
   }
 
-  // 3f) Market maps (migration 070): English only, only while setting marketmaps.indexing_enabled is on, only
-  //     published rows that pass the index gate. Off by default, so nothing appears before launch.
-  if (locale === 'en') {
-    try {
-      if (await getConfig('marketmaps.indexing_enabled')) {
-        const { rows: maps } = await sb('market_maps?status=eq.published&indexable=eq.true&select=slug,updated_at,stats&order=slug.asc&limit=1000');
-        const ok = maps.filter((m) => isIndexable(m.stats));
-        if (ok.length) urls.push(urlEntry({ subPath: 'market-maps', locale, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
-        for (const m of ok) {
-          urls.push(urlEntry({ subPath: `market-maps/${m.slug}`, locale, lastmod: m.updated_at ? m.updated_at.slice(0, 10) : null, changefreq: 'monthly', priority: '0.6', noAlternates: true }));
-        }
-      }
-    } catch (err) {
-      console.error('[sitemap] market maps skipped:', err.message);
-    }
-  }
+  // 3f) Market maps: their own file, /sitemap-market-maps.xml (see buildMarketMaps), referenced from the sitemap index.
 
   // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)
   //    Only include EN locale to avoid duplicate sitemap entries for the same content.
@@ -339,6 +328,30 @@ async function buildLocale(locale) {
   ].join('\n');
 }
 
+// ── Market maps sitemap (migration 070): English only, only while setting marketmaps.indexing_enabled is on ──
+// Lists the hub, every country hub that has at least one indexable map, and every indexable map. The stats JSON is not
+// read here (3,000 blobs): the loader's `indexable` column (same gate as api/_lib/market-map/gate.js) plus >= 50
+// companies decide; the page itself still re-checks the full gate and sets robots on its own.
+async function buildMarketMaps() {
+  const urls = [];
+  if (await getConfig('marketmaps.indexing_enabled')) {
+    const { rows } = await sbPaged('market_maps?status=eq.published&indexable=eq.true&n_companies=gte.50&select=slug,country,updated_at');
+    const countries = new Map();
+    for (const m of rows) {
+      if (!m.slug || !m.country) continue;
+      const t = countries.get(m.country) || '';
+      countries.set(m.country, m.updated_at && m.updated_at > t ? m.updated_at : t);
+    }
+    if (rows.length) urls.push(urlEntry({ subPath: 'market-maps', locale: 'en', changefreq: 'weekly', priority: '0.7', noAlternates: true }));
+    for (const [c, lm] of [...countries.entries()].sort()) urls.push(urlEntry({ subPath: `market-maps/${c}`, locale: 'en', lastmod: lm ? lm.slice(0, 10) : null, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    for (const m of rows) {
+      if (!m.slug) continue;
+      urls.push(urlEntry({ subPath: `market-maps/${m.slug}`, locale: 'en', lastmod: m.updated_at ? m.updated_at.slice(0, 10) : null, changefreq: 'monthly', priority: '0.6', noAlternates: true }));
+    }
+  }
+  return ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">', urls.join('\n'), '</urlset>'].filter((x) => x !== '').join('\n');
+}
+
 // ── Handler ──
 export default async function handler(req, res) {
   // Accept GET and HEAD — Vercel's CDN probes and many crawlers issue HEAD
@@ -355,8 +368,14 @@ export default async function handler(req, res) {
   setXmlHeaders(res);
 
   try {
+    if (url.searchParams.get('type') === 'market-maps') {
+      res.status(200).send(await buildMarketMaps());
+      return;
+    }
     if (!locale) {
-      res.status(200).send(buildIndex());
+      let withMaps = false;
+      try { withMaps = !!(await getConfig('marketmaps.indexing_enabled')); } catch { /* index without it */ }
+      res.status(200).send(buildIndex(withMaps));
       return;
     }
     if (!SUPPORTED.has(locale)) {

@@ -3,7 +3,11 @@
 // KIRA RESEARCH — scripts/load-market-maps.mjs
 // Upserts market-map stats (and optional commentary) JSON files into table market_maps (migration 070).
 //
-//   node scripts/load-market-maps.mjs <dir> [--dry-run] [--publish]
+//   node scripts/load-market-maps.mjs <dir> [--dry-run] [--publish] [--commentary-only]
+//
+// --commentary-only: for every <base>.commentary.json without a <base>.commentary.loaded marker, PATCH only commentary +
+// commentary_built_at (and status=published with --publish) onto the existing row; stats and every other column stay as they are.
+// The marker file is written after a successful save. Rows that do not exist are an error (nothing is created).
 //
 // <dir> holds, per map, a stats file and an optional commentary file with the same base name:
 //   <base>.stats.json        written by the private pipeline (market_mapping/pilot/page_v2.py <segment> --stats-only)
@@ -25,13 +29,14 @@
 // Safety: a file is refused when any text in it looks like an email address or a phone number, because
 // the page data must never hold contacts (the paid list lives only in the private pipeline).
 // ============================================================
-import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { isIndexable } from '../api/_lib/market-map/gate.js';
 
 const args = process.argv.slice(2);
 const dry = args.includes('--dry-run');
 const publish = args.includes('--publish');
+const commentaryOnly = args.includes('--commentary-only');
 const dir = args.find((a) => !a.startsWith('--'));
 if (!dir) { console.error('usage: load-market-maps.mjs <dir> [--dry-run] [--publish]'); process.exit(2); }
 
@@ -58,6 +63,33 @@ function check(base, S) {
   for (const t of strings(S)) {
     if (EMAIL.test(t) || PHONE.test(t)) throw new Error(`${base}: refused, looks like a contact: "${t.slice(0, 40)}"`);
   }
+}
+
+if (commentaryOnly) {
+  const cfs = readdirSync(dir).filter((f) => f.endsWith('.commentary.json') && !existsSync(path.join(dir, f.replace(/\.commentary\.json$/, '.commentary.loaded')))).sort();
+  const U = process.env.SUPABASE_URL, K = process.env.SUPABASE_SERVICE_KEY;
+  if (!dry && (!U || !K)) { console.error('SUPABASE_URL and SUPABASE_SERVICE_KEY are required (or use --dry-run)'); process.exit(2); }
+  let done = 0;
+  for (const f of cfs) {
+    const base = f.replace(/\.commentary\.json$/, '');
+    const sf = path.join(dir, `${base}.stats.json`);
+    if (!existsSync(sf)) { console.error(`${base}: no stats file next to the commentary`); process.exit(1); }
+    const S = JSON.parse(readFileSync(sf, 'utf8'));
+    const C = JSON.parse(readFileSync(path.join(dir, f), 'utf8'));
+    for (const t of strings(C)) if (EMAIL.test(t) || PHONE.test(t)) throw new Error(`${base}: commentary refused, looks like a contact`);
+    const patch = { commentary: C, commentary_built_at: new Date().toISOString() };
+    if (publish) patch.status = 'published';
+    if (dry) { console.log(`[dry-run] ${S.meta.slug}: would set commentary`); continue; }
+    const res = await fetch(`${U}/rest/v1/market_maps?country=eq.${encodeURIComponent(S.meta.country_slug)}&segment_key=eq.${encodeURIComponent(S.meta.segment_key)}`, {
+      method: 'PATCH', headers: { apikey: K, Authorization: `Bearer ${K}`, 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify(patch) });
+    const body = res.ok ? await res.json() : await res.text();
+    if (!res.ok) { console.error(`${S.meta.slug}: ${res.status} ${body}`); process.exit(1); }
+    if (!body.length) { console.error(`${S.meta.slug}: no such row in market_maps`); process.exit(1); }
+    writeFileSync(path.join(dir, `${base}.commentary.loaded`), new Date().toISOString());
+    done++; console.log(`commentary saved ${S.meta.slug}`);
+  }
+  console.log(`${dry ? '[dry-run] ' : ''}${done || cfs.length} commentary file(s)`);
+  process.exit(0);
 }
 
 const files = readdirSync(dir).filter((f) => f.endsWith('.stats.json')).sort();

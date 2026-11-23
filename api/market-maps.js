@@ -3,7 +3,9 @@
 // Market mapping: free overview page per (country x segment), server-rendered from the stats JSON in table
 // `market_maps` (migration 070) by api/_lib/market-map/render.js.
 //   GET /api/market-maps?type=hub&loc=en                              /<loc>/market-maps  (the "Company lists" library table)
-//   GET /api/market-maps?type=list                                    the same table as JSON { items: [...] }
+//   GET /api/market-maps?type=list                                    the same table as JSON { items, total, page, pages, page_size }
+//   Hub params (hub and list): country=<slug>&industry=<family>&kind=goods|services&size=u100|b100|b300|o500&q=<words>&page=<n>, 50 rows a page
+//   GET /api/market-maps?type=country&loc=en&country=vietnam          /<loc>/market-maps/<country> (every map of the country, grouped by industry)
 //   GET /api/market-maps?type=map&loc=en&country=vietnam&segment=soft-drinks   /<loc>/market-maps/<country>/<segment>
 // English only: ja/ko/zh paths serve the English page with the English canonical and noindex.
 // Robots: noindex everywhere unless setting `marketmaps.indexing_enabled` is on AND the row is indexable
@@ -13,7 +15,8 @@
 // ============================================================
 import { getConfig } from './_lib/config.js';
 import { BASE, LOCALES } from './_lib/ssr.js';
-import { renderDocument, renderHub } from './_lib/market-map/render.js';
+import { renderDocument, renderHub, renderCountryHub } from './_lib/market-map/render.js';
+import { getIndex, parseParams, isFiltered, hubModel, countryModel, hubHref } from './_lib/market-map/hub.js';
 import { isIndexable } from './_lib/market-map/gate.js';
 import { listPrice } from './_lib/pricing.js';
 
@@ -28,6 +31,27 @@ async function sb(path) {
     if (!r.ok) { console.warn('[market-maps] supabase', r.status); return []; }
     return await r.json();
   } catch (err) { console.warn('[market-maps]', err.message); return []; }
+}
+
+// One slice of a query (PostgREST answers at most 1,000 rows at a time) plus the total from Content-Range. Throws on any
+// error, so a half-read index is never cached; the handler turns that into "no maps".
+async function fetchRange(path, from, to) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return { rows: [], total: 0 };
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Range-Unit': 'items', Range: `${from}-${to}`, Prefer: 'count=exact' } });
+  if (!r.ok) throw new Error(`supabase ${r.status}`);
+  const total = Number(String(r.headers.get('content-range') || '').split('/')[1]);
+  return { rows: await r.json(), total: Number.isFinite(total) ? total : 0 };
+}
+async function loadIndex() {
+  try { return await getIndex(fetchRange); } catch (err) { console.warn('[market-maps] index', err.message); return { items: [] }; }
+}
+// Phone / email shares and the build date sit in the stats JSON: read for the 50 rows of a page only.
+async function enrich(items) {
+  if (!items.length) return items;
+  const list = items.map((i) => `"${i.slug}"`).join(',');
+  const rows = await sb(`market_maps?status=eq.published&slug=in.(${encodeURIComponent(list)})&select=slug,phone_pct:stats->contacts->>with_phone_pct,email_pct:stats->contacts->>with_email_pct,built:stats->>built&limit=${items.length}`);
+  const by = new Map(rows.map((r) => [r.slug, r]));
+  return items.map((i) => { const r = by.get(i.slug); return { ...i, phone_pct: r && r.phone_pct != null ? Number(r.phone_pct) : null, email_pct: r && r.email_pct != null ? Number(r.email_pct) : null, built: (r && r.built) || i.built }; });
 }
 
 function send(res, html, { status = 200, index = false, cache = true } = {}) {
@@ -51,16 +75,26 @@ export default async function handler(req, res) {
   const buy = { enabled: await getConfig('checkout.list_enabled') };
 
   if (q.type === 'hub' || q.type === 'list') {
-    // Only the few fields the table needs are read from the stats JSON (PostgREST path operators), not the whole blob.
-    const rows = await sb('market_maps?status=eq.published&select=country,segment_key,slug,title,l2_family,n_companies,indexable,built_at,kind:stats->meta->>kind,phone_pct:stats->contacts->>with_phone_pct,email_pct:stats->contacts->>with_email_pct,country_name:stats->>country,built:stats->>built&order=l2_family.asc,country.asc,title.asc&limit=1000');
-    const items = rows.map((r) => ({
-      slug: r.slug, country: r.country, country_name: r.country_name || r.country, segment_key: r.segment_key, title: r.title, l2_family: r.l2_family,
-      kind: r.kind || 'goods', companies: r.n_companies, phone_pct: r.phone_pct == null ? null : Number(r.phone_pct), email_pct: r.email_pct == null ? null : Number(r.email_pct),
-      price: listPrice(r.n_companies), built: r.built || String(r.built_at || '').slice(0, 10),
-    }));
-    if (q.type === 'list') { res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400'); res.status(200).json({ items }); return; }
-    const index = indexingOn && loc === 'en' && rows.some((r) => r.indexable);
-    send(res, renderHub(items, { loc, canonical: `${BASE}/en/market-maps`, robots: index ? 'index,follow' : 'noindex,follow' }), { index });
+    const p = parseParams(q);
+    const model = hubModel(await loadIndex(), p);
+    model.items = await enrich(model.items);
+    if (q.type === 'list') {
+      res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400');
+      res.status(200).json({ items: model.items.map((i) => ({ slug: i.slug, country: i.country, country_name: i.country_name, segment_key: i.segment_key, title: i.title, l2_family: i.l2_family, kind: i.kind, companies: i.companies, phone_pct: i.phone_pct, email_pct: i.email_pct, price: i.price, built: i.built })), total: model.total, page: model.page, pages: model.pages, page_size: model.pageSize });
+      return;
+    }
+    // Only the clean first page is a search landing page; filtered views and later pages are noindex (crawlers still follow them).
+    const index = indexingOn && loc === 'en' && model.anyIndexable && !isFiltered(p) && model.page === 1;
+    send(res, renderHub(model, p, { loc, canonical: `${BASE}${hubHref(p, { page: model.page })}`, robots: index ? 'index,follow' : 'noindex,follow' }), { index });
+    return;
+  }
+
+  if (q.type === 'country') {
+    const slug = String(q.country || '');
+    const c = SLUG.test(slug) ? countryModel(await loadIndex(), slug) : null;
+    if (!c) { notFound(res); return; }
+    const index = indexingOn && loc === 'en' && c.indexableCount > 0;
+    send(res, renderCountryHub(c, { canonical: `${BASE}/en/market-maps/${c.slug}`, robots: index ? 'index,follow' : 'noindex,follow' }), { index });
     return;
   }
 
