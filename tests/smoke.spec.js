@@ -1382,3 +1382,36 @@ test('footer Research column has Market facts', async ({ page }) => {
   await page.goto('/en/');
   await expect(page.locator('.kira-footer a[href="/en/markets"]')).toHaveCount(1);
 });
+
+// ── Market maps (off by default: noindex, not in nav, no buy button) ──
+test.describe('market maps', () => {
+  test('hub loads with noindex while indexing is off', async ({ page }) => {
+    const res = await page.goto('/en/market-maps', { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    await expect(page.locator('.nav-wrap .logo-mark')).toBeVisible();
+    await expect(page.locator('h1').first()).toBeVisible();
+    expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('noindex');
+  });
+
+  test('an unknown map is a noindex 404', async ({ request }) => {
+    const r = await request.get('/en/market-maps/nowhere/nothing');
+    expect(r.status()).toBe(404);
+    expect(await r.text()).toContain('noindex');
+  });
+
+  test('a published map returns 200, noindex, no contacts and a request form (skipped when none is published)', async ({ page, request }) => {
+    const hub = await (await request.get('/en/market-maps')).text();
+    const m = hub.match(/href="(\/en\/market-maps\/[a-z0-9-]+\/[a-z0-9-]+)"/);
+    test.skip(!m, 'no market map published yet');
+    const res = await page.goto(m[1], { waitUntil: 'domcontentloaded' });
+    expect(res.status()).toBe(200);
+    expect(await page.locator('meta[name="robots"]').getAttribute('content')).toContain('noindex');
+    await expect(page.locator('h1').first()).toBeVisible();
+    await expect(page.locator('#mm-req')).toBeVisible();           // request form while checkout.list_enabled is off
+    expect(await page.locator('#mm-root').innerText()).not.toMatch(/[^\s@]+@[^\s@]+\.[a-z]{2,}/i);   // no contacts in the page
+  });
+
+  test('order endpoint is a 501 stub', async ({ request }) => {
+    expect((await request.post('/api/market-map-order', { data: { slug: 'x/y' } })).status()).toBe(501);
+  });
+});

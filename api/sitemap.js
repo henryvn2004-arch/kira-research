@@ -26,6 +26,8 @@
 // ============================================================
 
 import { coverage, countryIndexable, pairIndexable } from './_lib/econ/coverage.js';
+import { getConfig } from './_lib/config.js';
+import { isIndexable } from './_lib/market-map/gate.js';
 import { INVESTOR_SLUG, HOST_SLUG } from './_lib/moves/alerts.js';
 import { listHubs, tradeIndex, tradeTopicIndexable, topicSlug, countries, slugOf } from './_lib/geo.js';
 
@@ -286,6 +288,23 @@ async function buildLocale(locale) {
     }
   } catch (err) {
     console.error('[sitemap] geo pages skipped:', err.message);
+  }
+
+  // 3f) Market maps (migration 070): English only, only while setting marketmaps.indexing_enabled is on, only
+  //     published rows that pass the index gate. Off by default, so nothing appears before launch.
+  if (locale === 'en') {
+    try {
+      if (await getConfig('marketmaps.indexing_enabled')) {
+        const { rows: maps } = await sb('market_maps?status=eq.published&indexable=eq.true&select=slug,updated_at,stats&order=slug.asc&limit=1000');
+        const ok = maps.filter((m) => isIndexable(m.stats));
+        if (ok.length) urls.push(urlEntry({ subPath: 'market-maps', locale, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+        for (const m of ok) {
+          urls.push(urlEntry({ subPath: `market-maps/${m.slug}`, locale, lastmod: m.updated_at ? m.updated_at.slice(0, 10) : null, changefreq: 'monthly', priority: '0.6', noAlternates: true }));
+        }
+      }
+    } catch (err) {
+      console.error('[sitemap] market maps skipped:', err.message);
+    }
   }
 
   // 4) Company pages — EN-only URL pattern (JA/KO rewrites to same _view template)
