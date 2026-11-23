@@ -24,7 +24,7 @@ const FILE_TIMEOUT_MS = 60000;
 const MAX_ATTEMPTS = 4;
 const ORDER_RE = /^[A-Za-z0-9_.:-]{3,120}$/;
 // BizDirect cuts a build at this many rows (docs/kira_segments_api.md, D). It raises it later; the env value follows it.
-const rowCap = () => Number(process.env.KIRA_LIST_ROW_CAP) || 5000;
+const rowCap = () => Number(process.env.KIRA_LIST_ROW_CAP) || 40000; // BizDirect per-order cap (LMC v164, 2026-11-23)
 
 export class ListSourceError extends Error {
   constructor(message, { code = 'list_source_error', status = null, retryable = false } = {}) {
