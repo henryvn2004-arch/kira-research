@@ -11,8 +11,9 @@
 //
 // Selling is switched by config `checkout.list_enabled` (/en/admin/config → Checkout, default off). The price
 // always comes from the server (the map's company count). After capture the purchase is recorded at once; the file
-// is built by the partner build API through api/_lib/list-source.js (not available yet: the purchase then stays
-// pending, the receipt says so, and the build can be retried). The link lives 7 days and allows 5 downloads.
+// is built by the BizDirect partner API through api/_lib/list-source.js with the segment definition stored in the map
+// (stats.meta.definition). If the build fails the purchase is 'failed' (receipt says the file is being prepared) and
+// the build can be retried. The link lives 7 days and allows 5 downloads.
 // ============================================================
 import { getConfig } from './_lib/config.js';
 import { listPrice } from './_lib/pricing.js';
@@ -53,8 +54,9 @@ export default async function handler(req, res) {
       const slug = body.slug;
       if (typeof slug !== 'string' || !SLUG_RE.test(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
       if (!(await getConfig('checkout.list_enabled'))) { res.status(403).json({ error: 'checkout_closed' }); return; }
-      const rows = await sb(`market_maps?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=id,slug,n_companies&limit=1`);
+      const rows = await sb(`market_maps?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=id,slug,n_companies,definition:stats->meta->definition&limit=1`);
       if (!rows[0]) { res.status(404).json({ error: 'list_not_found' }); return; }
+      if (!rows[0].definition) { res.status(409).json({ error: 'list_unavailable' }); return; }   // no segment definition: the file could not be built
       const amount = listPrice(rows[0].n_companies).toFixed(2);
       const token = await getPayPalToken();
       const orderRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {

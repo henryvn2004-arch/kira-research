@@ -25,8 +25,9 @@ export default async function handler(req, res) {
     if (!bumped || !bumped.length) { res.status(409).json({ error: 'try_again' }); return; }
     const f = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${p.file_path}`, { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } });
     if (!f.ok) { await sb(`list_purchases?id=eq.${p.id}`, 'PATCH', { download_count: p.download_count }); res.status(502).json({ error: 'file_unavailable' }); return; }
-    const name = `${(p.market_maps?.title || p.slug).replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '')}_company-list.xlsx`;
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    const csv = p.file_path.endsWith('.csv');
+    const name = `${(p.market_maps?.title || p.slug).replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '')}_company-list.${csv ? 'csv' : 'xlsx'}`;
+    res.setHeader('Content-Type', csv ? 'text/csv; charset=utf-8' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename="${name}"`);
     res.status(200).send(Buffer.from(await f.arrayBuffer()));
   } catch (err) {
