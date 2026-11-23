@@ -152,7 +152,7 @@ export const CONFIG = {
   'checkout.list_enabled': {
     group: 'Checkout', type: 'bool', default: false,
     label: 'Sell market-map company lists (Excel, $49 or $99)',
-    help: 'Off: every market map shows a "Request this list" form (the email goes to the same request list as the coming-soon pages) and nothing can be bought. On: the map shows the price and a "Get the list" button. The order flow itself is not connected yet, so the button only answers that ordering opens soon; leave this off until it is.'
+    help: 'Off: every market map shows a "Request this list" form (the email goes to the same request list as the coming-soon pages) and nothing can be bought. On: the map shows the price and a "Get the list" button (sign-in, PayPal, then a download link valid 7 days for up to 5 downloads; it also appears under My Library). The file is built by the BizDirect partner build API, which is not connected yet: until it is, a purchase stays pending and the buyer is told the file is being prepared. Leave this off until the build API works.'
   },
   'marketmaps.indexing_enabled': {
     group: 'Market maps', type: 'bool', default: false,

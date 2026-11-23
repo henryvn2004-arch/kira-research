@@ -13,7 +13,9 @@
 //   segment, country, built, companies, price_usd, groups[], left_out_roles[], definition_extra, item_noun,
 //   meta{country_code,country_slug,segment_key,slug,kind,l2_family,axis,axis_title,stage_labels[],region_labels[]},
 //   kpis[], stages[], regions[], marimekko[], heatmap|null, tiers_by_stage[], tiers{}, brands[], certifications[],
-//   origins[], provinces[], top20[], preview[] (10 rows, no contacts), contacts{with_phone_pct,with_email_pct}, findings{}
+//   origins[], channels[], provinces[]|null, regions[]|null (null = fewer than thresholds.region of companies state a region: the
+//   region block is hidden), coverage{field:{n_filled,share_filled}}, thresholds{}, top20[], preview[] (10 rows, no contacts),
+//   contacts{with_phone_pct,with_email_pct}, findings{}; meta.mekko{x_title,y_title,y_labels[]}; marimekko[].cells[]{label,n,...}
 //
 // Default: new rows are saved as draft and an existing row keeps its status; --publish sets status=published.
 // `indexable` is always recomputed here with the same gate the route uses (>= 50 companies, >= 2 stages with 5+).

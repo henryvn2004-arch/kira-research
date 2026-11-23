@@ -25,8 +25,29 @@ const SHORT = {
 };
 const short = (s) => SHORT[s] || s;
 const TC = { Large: 'c1', 'Mid-size': 'c2', Small: 'c3', 'Not rated': 'c4' };
+// colour class of a mekko row label: first four labels c1,c2,c3,c5(amber); "Other", "Not rated" and "Not stated" are grey (c4)
+const yc = (S, g) => {
+  const L = S.meta?.mekko?.y_labels || [];
+  if (['Other', 'Not rated', 'Not stated'].includes(g)) return 'c4';
+  const i = L.filter((x) => !['Other', 'Not rated', 'Not stated'].includes(x)).indexOf(g);
+  return ['c1', 'c2', 'c3', 'c5'][Math.max(0, Math.min(3, i))];
+};
+// coverage gates: an optional exhibit is hidden when too few companies have the field
+const TH_DEFAULT = { region: 0.8, channels: 0.5, brands_min_n: 5, certifications_min_n: 5, origins_min_n: 5 };
+const cov = (S, f) => S.coverage?.[f] || null;
+const th = (S) => ({ ...TH_DEFAULT, ...(S.thresholds || {}) });
+export function show(S, f) {
+  const c = cov(S, f), t = th(S);
+  if (f === 'region') return !!(S.regions && S.provinces && (!c || c.share_filled >= t.region));
+  if (f === 'channels') return !!(S.channels && S.channels.length && c && c.share_filled >= t.channels);
+  if (f === 'brands') return !!(S.brands || []).filter((b) => b.companies >= 2).length && (!c || c.n_filled >= t.brands_min_n);
+  if (f === 'certifications') return !!(S.certifications && S.certifications.length) && (!c || c.n_filled >= t.certifications_min_n);
+  if (f === 'origins') return !!(S.origins && S.origins.length) && (!c || c.n_filled >= t.origins_min_n);
+  return true;
+}
+// "based on N companies" line under every optional chart
+const based = (S, f, what) => { const c = cov(S, f); return c ? ` Based on ${nf(c.n_filled)} companies with ${what} (${Math.round(c.share_filled * 100)}% of the ${nf(S.companies)} mapped).` : ''; };
 const rc = (S, g) => (g === 'Not stated' ? 'c4' : `c${Math.min(4, Math.max(1, (S.meta?.region_labels || ['North', 'Central', 'South', 'Not stated']).indexOf(g) + 1))}`);
-const REGION_LABELS = (S) => S.meta?.region_labels || S.regions.map((r) => r.region);
 const AXIS = (S) => S.meta?.axis || 'stage';
 const AXIS_TITLE = (S) => S.meta?.axis_title || 'Value-chain stage';
 const lc = (s) => String(s || '').toLowerCase();
@@ -49,7 +70,7 @@ const T = (x, y, s, cls = '', anchor = 'start') => `<text x="${f1(x)}" y="${f1(y
 const svg = (w, h, body, title, desc) => `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(title)}" xmlns="http://www.w3.org/2000/svg"><title>${esc(title)}</title><desc>${esc(desc)}</desc>${body}</svg>`;
 
 function marimekko(S) {
-  const W = 520, H = 410, x0 = 38, x1 = 514, y0 = 70, y1 = 350, pw = x1 - x0, ph = y1 - y0, n = S.companies;
+  const W = 520, x0 = 38, x1 = 514, y0 = 70, y1 = 350, pw = x1 - x0, ph = y1 - y0, n = S.companies, M = S.meta.mekko;
   const b = [];
   for (const t of [0, 50, 100]) b.push(T(x0 - 6, y1 - ph * t / 100 + 4, `${t}%`, 'ax', 'end'));
   let x = x0;
@@ -62,8 +83,8 @@ function marimekko(S) {
     for (const c of col.cells) {
       const h = col.n ? ph * c.n / col.n : 0;
       if (h <= 0) continue;
-      const k = rc(S, c.region);
-      b.push(`<rect x="${f1(x)}" y="${f1(y)}" width="${f1(Math.max(w - 1.5, 0))}" height="${f1(Math.max(h - 1.5, 0))}" class="f-${k}"><title>${esc(col.stage)}, ${esc(c.region)}: ${c.n} companies (${c.pct_of_stage}% of ${AXIS(S)}, ${c.pct_of_all}% of all)</title></rect>`);
+      const k = yc(S, c.label);
+      b.push(`<rect x="${f1(x)}" y="${f1(y)}" width="${f1(Math.max(w - 1.5, 0))}" height="${f1(Math.max(h - 1.5, 0))}" class="f-${k}"><title>${esc(col.stage)}, ${esc(c.label)}: ${c.n} companies (${c.pct_of_stage}% of ${AXIS(S)}, ${c.pct_of_all}% of all)</title></rect>`);
       if (c.pct_of_all >= 5) {
         b.push(T(x + w / 2, y + h / 2 + (h > 34 ? -2 : 4), String(c.n), `cl on-${k}`, 'middle'));
         if (h > 34) b.push(T(x + w / 2, y + h / 2 + 11, `${c.pct_of_stage}%`, `cs on-${k}`, 'middle'));
@@ -72,12 +93,14 @@ function marimekko(S) {
     }
     x += w;
   }
-  let lx = x0;
-  for (const g of REGION_LABELS(S)) {
-    b.push(`<rect x="${f1(lx)}" y="378" width="11" height="11" class="f-${rc(S, g)}"/>`); b.push(T(lx + 16, 388, g, 'ax'));
-    lx += 16 + g.length * 6.5 + 18;
+  let lx = x0, ly = 378;
+  for (const g of M.y_labels) {
+    const need = 16 + g.length * 6.5 + 18;
+    if (lx + need > W) { lx = x0; ly += 15; }
+    b.push(`<rect x="${f1(lx)}" y="${ly}" width="11" height="11" class="f-${yc(S, g)}"/>`); b.push(T(lx + 16, ly + 10, g, 'ax'));
+    lx += need;
   }
-  return svg(W, H, b.join(''), `Companies by ${AXIS(S)} and region`, 'Column width = companies in the group; height = share by region. Numbers in the table next to it.');
+  return svg(W, ly + 18, b.join(''), `Companies by ${AXIS(S)} and ${lc(M.y_title)}`, `Column width = companies in the ${AXIS(S)}; height = share by ${lc(M.y_title)}. Numbers in the table next to it.`);
 }
 
 function stacked(S) {
@@ -150,19 +173,23 @@ function concentration(S) {
 
 // ── text helpers: action titles and fallbacks, all from the numbers ──
 export function titles(S) {
-  const f = S.findings, ax = AXIS(S);
+  const f = S.findings, ax = AXIS(S), M = S.meta.mekko;
   const byLarge = S.tiers_by_stage.slice();
   const best = byLarge.reduce((a, r) => (r.Large.pct > a.Large.pct ? r : a), byLarge[0]);
   const pool = byLarge.filter((r) => r.n >= 10);
   const low = (pool.length ? pool : byLarge).reduce((a, r) => (r.Large.pct < a.Large.pct ? r : a), (pool.length ? pool : byLarge)[0]);
   const b0 = S.brands && S.brands[0];
   const hm = S.heatmap && S.heatmap.densest;
+  const goods = M.y_title === 'Sub-category';
   return {
-    marimekko: `${f.top_region.region} holds ${f.top_region.pct}% of mapped companies, and ${lc(f.top_stage.stage)} is the largest ${ax} at ${f.top_stage.pct}%`,
+    marimekko: goods
+      ? `${lc(f.top_stage.stage)} is the largest ${ax} at ${f.top_stage.pct}%, and ${lc(f.top_sub.name)} is the largest sub-category at ${f.top_sub.pct}% of companies`
+      : `${lc(f.top_stage.stage)} is the largest ${ax} at ${f.top_stage.pct}% of companies; ${f.large_pct}% of all companies are Large`,
     heatmap: hm ? `The densest cell is ${lc(hm.sub_category)} x ${lc(hm.stage)}: ${hm.n} companies (${hm.pct}% of the list)` : '',
     stacked: `${best.stage} has the highest share of Large companies (${best.Large.pct}%); ${low.stage} the lowest (${low.Large.pct}%)`,
     brands: b0 ? `${b0.brand} is the most-listed brand, carried by ${b0.companies} companies` : '',
-    region: `${f.top_province.name} alone holds ${f.top_province.pct}% of mapped companies (${f.top_province.n})`,
+    channels: S.channels && S.channels[0] ? `${S.channels[0].name} is the most-cited sales channel (${S.channels[0].n} companies)` : '',
+    region: f.top_province ? `${f.top_province.name} alone holds ${f.top_province.pct}% of mapped companies (${f.top_province.n})` : '',
     concentration: `${f.small_pct}% of companies are Small; only ${f.large_pct}% are Large`,
     certs: S.certifications && S.certifications[0] ? `${S.certifications[0].name} is the most-cited certification (${S.certifications[0].n} companies)` : '',
     origins: S.origins && S.origins[0] ? `${S.origins[0].name} is the most-cited sourcing origin (${S.origins[0].n} companies)` : '',
@@ -170,21 +197,22 @@ export function titles(S) {
 }
 
 export function fallbackTakeaway(S) {
-  const f = S.findings;
+  const f = S.findings, geo = show(S, 'region') && f.top_region;
   return [
     `We map ${S.companies} ${lc(S.segment)} companies in ${S.country}.`,
-    `${f.top_region.region} holds ${f.top_region.pct}% of them and ${lc(f.top_stage.stage)} is the largest ${AXIS(S)} at ${f.top_stage.pct}%.`,
+    `${cap1(lc(f.top_stage.stage))} is the largest ${AXIS(S)} at ${f.top_stage.pct}%${S.meta.mekko.y_title === 'Sub-category' ? ` and ${lc(f.top_sub.name)} the largest sub-category at ${f.top_sub.pct}%` : ''}.`,
+    geo ? `${f.top_region.region} holds ${f.top_region.pct}% of them.` : '',
     `${f.small_pct}% of companies are Small and ${f.large_pct}% are Large by website footprint.`,
-  ].join(' ');
+  ].filter(Boolean).join(' ');
 }
 
 // ── CSS: every rule lives under .mm so it can sit next to kira.css and the shared nav ──
 export const MM_CSS = `
-:root{--mm-c1:#0F3D91;--mm-c2:#1A66F0;--mm-c3:#9CC0FF;--mm-c4:#CBD2D9;--mm-on-c1:#FFFFFF;--mm-on-c2:#FFFFFF;--mm-on-c3:#0F172A;--mm-on-c4:#0F172A}
+:root{--mm-c1:#0F3D91;--mm-c2:#1A66F0;--mm-c3:#9CC0FF;--mm-c4:#CBD2D9;--mm-c5:#C98A12;--mm-on-c5:#0F172A;--mm-on-c1:#FFFFFF;--mm-on-c2:#FFFFFF;--mm-on-c3:#0F172A;--mm-on-c4:#0F172A}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B0D10;--surface:#14181D;--surface-2:#1B2027;--text:#E6E9EE;--muted:#9AA6B5;--muted-dim:#8793A3;--border:#262D36;--border-strong:#39434F;--primary:#6EA2FF;--primary-dim:#8DB6FF;
---mm-c1:#B7D0FF;--mm-c2:#6EA2FF;--mm-c3:#2F5FB8;--mm-c4:#3A4350;--mm-on-c1:#0B0D10;--mm-on-c2:#0B0D10;--mm-on-c3:#FFFFFF;--mm-on-c4:#E6E9EE}}
+--mm-c1:#B7D0FF;--mm-c2:#6EA2FF;--mm-c3:#2F5FB8;--mm-c4:#3A4350;--mm-c5:#E8B65A;--mm-on-c5:#0B0D10;--mm-on-c1:#0B0D10;--mm-on-c2:#0B0D10;--mm-on-c3:#FFFFFF;--mm-on-c4:#E6E9EE}}
 :root[data-theme="dark"]{--bg:#0B0D10;--surface:#14181D;--surface-2:#1B2027;--text:#E6E9EE;--muted:#9AA6B5;--muted-dim:#8793A3;--border:#262D36;--border-strong:#39434F;--primary:#6EA2FF;--primary-dim:#8DB6FF;
---mm-c1:#B7D0FF;--mm-c2:#6EA2FF;--mm-c3:#2F5FB8;--mm-c4:#3A4350;--mm-on-c1:#0B0D10;--mm-on-c2:#0B0D10;--mm-on-c3:#FFFFFF;--mm-on-c4:#E6E9EE}
+--mm-c1:#B7D0FF;--mm-c2:#6EA2FF;--mm-c3:#2F5FB8;--mm-c4:#3A4350;--mm-c5:#E8B65A;--mm-on-c5:#0B0D10;--mm-on-c1:#0B0D10;--mm-on-c2:#0B0D10;--mm-on-c3:#FFFFFF;--mm-on-c4:#E6E9EE}
 .mm{max-width:1120px;margin:0 auto;padding:20px 16px 56px;display:block}
 .mm .crumb{margin-top:6px;font-size:12px;color:var(--primary);letter-spacing:.14em;text-transform:uppercase;font-weight:700}
 .mm .crumb a:hover{text-decoration:underline}.mm .crumb i{font-style:normal;color:var(--muted-dim);margin:0 6px}
@@ -205,8 +233,8 @@ export const MM_CSS = `
 .mm .sub{font-size:12px;color:var(--muted-dim);margin-bottom:10px}
 .mm figure svg{display:block;width:100%;height:auto;max-width:560px}
 .mm svg text{fill:var(--text);font-family:inherit}.mm svg .ax{font-size:11px;fill:var(--muted-dim)}.mm svg .hd{font-size:11px;font-weight:600}.mm svg .cl{font-size:12px;font-weight:700}.mm svg .cs{font-size:10px}
-.mm .f-c1{fill:var(--mm-c1)}.mm .f-c2{fill:var(--mm-c2)}.mm .f-c3{fill:var(--mm-c3)}.mm .f-c4{fill:var(--mm-c4)}
-.mm svg text.on-c1{fill:var(--mm-on-c1)}.mm svg text.on-c2{fill:var(--mm-on-c2)}.mm svg text.on-c3{fill:var(--mm-on-c3)}.mm svg text.on-c4{fill:var(--mm-on-c4)}
+.mm .f-c1{fill:var(--mm-c1)}.mm .f-c2{fill:var(--mm-c2)}.mm .f-c3{fill:var(--mm-c3)}.mm .f-c4{fill:var(--mm-c4)}.mm .f-c5{fill:var(--mm-c5)}
+.mm svg text.on-c1{fill:var(--mm-on-c1)}.mm svg text.on-c2{fill:var(--mm-on-c2)}.mm svg text.on-c3{fill:var(--mm-on-c3)}.mm svg text.on-c4{fill:var(--mm-on-c4)}.mm svg text.on-c5{fill:var(--mm-on-c5)}
 .mm figcaption{font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:8px;margin-top:8px}
 .mm .sowhat{margin-top:8px;font-size:13px;border-left:3px solid var(--primary);padding:2px 0 2px 10px}
 .mm .sowhat b{color:var(--primary);font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-right:6px}
@@ -228,10 +256,9 @@ export const MM_CSS = `
 .mm .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 22px;margin-top:8px;font-size:13px;color:var(--muted)}
 .mm .method{display:grid;grid-template-columns:1fr 1fr;gap:24px}.mm .method h3{font-size:13px;border-top:2px solid var(--primary);padding-top:8px;margin-bottom:6px}.mm .method p,.mm .method li{font-size:12px;color:var(--muted)}.mm .method ul{padding-left:16px}
 .mm .foot{margin-top:30px;border-top:2px solid var(--text);padding-top:10px;font-size:11px;color:var(--muted-dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.mm .hubfam{margin-top:30px}.mm .hubfam h2{font-size:18px}
-.mm .hubgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
-.mm .hubcard{display:block;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}.mm .hubcard:hover{border-color:var(--primary)}
-.mm .hubcard b{display:block;font-size:15px}.mm .hubcard span{font-size:12px;color:var(--muted)}
+.mm .lib2{padding-block:20px 0}.mm .lib2-side{background:var(--surface)}.mm .fgrp-head{color:var(--text)}
+.mm .hubbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.mm .hubbar input[type=search]{flex:1 1 220px;min-width:0;padding:10px 12px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}.mm .hubbar select{padding:6px 8px;border:1px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font:inherit}
+.mm .k{font-size:12px;color:var(--muted-dim)}.mm tr[hidden]{display:none}.mm td a:hover{text-decoration:underline}
 @media (max-width:860px){.mm .grid,.mm .method{grid-template-columns:1fr}.mm .wide{grid-column:auto}.mm .take{grid-template-columns:1fr;gap:6px}.mm .kpis{grid-template-columns:1fr 1fr}.mm .kpi:nth-child(2){border-right:0;margin-right:0}.mm .kpi{border-bottom:1px solid var(--border)}}
 @media (max-width:480px){.mm{padding:16px 16px 44px}.mm .kpi b{font-size:26px}.mm h2{font-size:18px}.mm .big b{font-size:28px}}
 `;
@@ -243,9 +270,8 @@ function buyBox(S, opts) {
   const keyword = `List: ${S.country} ${S.segment}`.slice(0, 80);
   if (b.enabled) {
     return `<div class="buy" id="buy"><b style="font-size:20px">Excel list: ${n} companies, $${p}</b>${cols}
-<button class="btn" type="button" id="mm-buy" data-slug="${esc(S.meta?.slug || '')}">Get the list, $${p}</button><div class="msg" id="mm-msg" role="status"></div>
-<div class="sub" style="margin-top:8px">One file, one-time purchase, a snapshot of ${esc(S.built)}. Up to 500 companies $49, above 500 $99.</div></div>
-<script>(function(){var b=document.getElementById('mm-buy'),m=document.getElementById('mm-msg');if(!b)return;b.addEventListener('click',function(){b.disabled=true;fetch('/api/market-map-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:b.getAttribute('data-slug')})}).then(function(r){return r.json().catch(function(){return{}})}).then(function(j){m.textContent=(j&&j.message)||'Ordering opens soon.';b.disabled=false}).catch(function(){m.textContent='Something went wrong. Please try again.';b.disabled=false})})})();</script>`;
+<button class="btn" type="button" id="mm-buy">Get the list, $${p}</button><div class="msg" id="mm-msg" role="status"></div>
+<div class="sub" style="margin-top:8px">One file, one-time purchase, a snapshot of ${esc(S.built)}. Up to 500 companies $49, above 500 $99. Download link valid 7 days, up to 5 downloads; the list is also kept under My Library.</div></div>`;
   }
   return `<div class="buy" id="buy"><b style="font-size:20px">Excel list: ${n} companies</b>${cols}
 <form id="mm-req" novalidate><label class="hp" aria-hidden="true">Leave empty<input type="text" name="hp" tabindex="-1" autocomplete="off"></label>
@@ -261,7 +287,7 @@ export function renderBody(S, C, opts = {}) {
   const hubPath = opts.hubPath || '/en/market-maps';
   const so = (k) => (C && C.so_what && C.so_what[k] ? `<p class="sowhat" data-slot="so_what.${k}"><b>So what</b>${esc(C.so_what[k])}</p>` : '');
   const tk = C && C.takeaway ? C.takeaway : fallbackTakeaway(S);
-  const RL = REGION_LABELS(S), stages = S.stages.map((s) => s.stage);
+  const M = S.meta.mekko, stages = S.stages.map((s) => s.stage);
   const kpis = (S.kpis && S.kpis.length ? S.kpis : [
     { value: String(n), label: 'companies mapped' },
     { value: String(S.stages[0].n), label: 'manufacturers / brand owners' },
@@ -269,7 +295,7 @@ export function renderBody(S, C, opts = {}) {
     { value: `${S.contacts.with_phone_pct}%`, label: 'with a company phone in the Excel list' },
   ]).map((k) => `<div class="kpi"><b class="num">${esc(k.value)}</b><span>${esc(k.label)}</span></div>`).join('');
 
-  const mt = `<table><tr><th>${esc(cap1(ax))}</th><th class="n">Cos.</th>${RL.map((g) => `<th class="n">${esc(g)}</th>`).join('')}</tr>${S.marimekko.map((c) =>
+  const mt = `<table><tr><th>${esc(cap1(ax))}</th><th class="n">Cos.</th>${M.y_labels.map((g) => `<th class="n">${esc(g)}</th>`).join('')}</tr>${S.marimekko.map((c) =>
     `<tr><td>${esc(short(c.stage))}</td><td class="n">${c.n}</td>${c.cells.map((x) => `<td class="n">${x.n} (${x.pct_of_stage}%)</td>`).join('')}</tr>`).join('')}</table>`;
 
   let heat = '';
@@ -286,30 +312,32 @@ export function renderBody(S, C, opts = {}) {
   const tiersCap = TIERS.map((t) => `${t} ${S.tiers[t].n} (${S.tiers[t].pct}%)`).join(' · ');
   const top = S.top20.map((r) => `<tr><td class="n">${r.rank}</td><td>${esc(r.company)}</td><td>${esc(r.stage)}</td><td>${esc(r.region)}</td><td>${esc(r.scale)}</td></tr>`).join('');
   const prev = S.preview.map((r) => `<tr><td class="n">${r.rank}</td><td>${esc(r.company)}</td><td>${esc(r.stage)}</td><td>${esc(r.sub_category)}</td><td>${esc(r.region)}</td><td>${esc(r.scale)}</td><td>${esc((r.products || []).join('; '))}</td><td>${esc(r.website)}</td></tr>`).join('');
-  const provCap = S.provinces.filter((g) => g.n > 0).map((g) => `${g.macro_region}: ${g.provinces.map((x) => `${x.name} ${x.n}`).join(', ')}`).join(' · ');
+  const provCap = (S.provinces || []).filter((g) => g.n > 0).map((g) => `${g.macro_region}: ${g.provinces.map((x) => `${x.name} ${x.n}`).join(', ')}`).join(' · ');
 
   let no = 0; const num = () => `<i>${String(++no).padStart(2, '0')}</i>`;
   const sec1 = `<section><h2>${num()}Structure of the mapped company base</h2><div class="grid">
-<figure class="wide"><h3 class="at">${esc(Ti.marimekko)}</h3><div class="sub">Column width = companies in the ${esc(ax)}; height = share of the ${esc(ax)} by region; cells of 5% of all companies or more are labelled</div>
+<figure class="wide"><h3 class="at">${esc(Ti.marimekko)}</h3><div class="sub">Column width = companies in the ${esc(ax)}; height = share of the ${esc(ax)} by ${esc(lc(M.y_title))}; cells of 5% of all companies or more are labelled. Based on all ${nf(n)} mapped companies.</div>
 <div class="grid" style="gap:16px 28px;align-items:start">${marimekko(S)}<div class="scroll">${mt}</div></div>${so('marimekko')}</figure>
-${heat ? `<figure class="wide"><h3 class="at">${esc(Ti.heatmap)}</h3><div class="sub">Companies by main sub-category (product group with most matched products) and ${esc(ax)}</div><div class="scroll">${heat}</div>${so('heatmap')}</figure>` : ''}
+${heat ? `<figure class="wide"><h3 class="at">${esc(Ti.heatmap)}</h3><div class="sub">Companies by main sub-category (product group with most matched products) and ${esc(ax)}. Based on all ${nf(n)} mapped companies.</div><div class="scroll">${heat}</div>${so('heatmap')}</figure>` : ''}
 </div></section>`;
   const f = S.findings;
   const sec2 = `<section><h2>${num()}Scale and concentration</h2><div class="grid">
-<figure><h3 class="at">${esc(Ti.stacked)}</h3><div class="sub">Scale tier within each ${esc(ax)}, % of the ${esc(ax)}'s companies</div>${stacked(S)}<figcaption>${esc(S.tiers_by_stage.map((r) => `${r.stage}: ${TIERS.map((t) => `${t} ${r[t].pct}%`).join(', ')}`).join(' · '))}</figcaption>${so('stacked')}</figure>
+${M.y_title === 'Scale tier' ? '' : `<figure><h3 class="at">${esc(Ti.stacked)}</h3><div class="sub">Scale tier within each ${esc(ax)}, % of the ${esc(ax)}'s companies. Based on all ${nf(n)} mapped companies.</div>${stacked(S)}<figcaption>${esc(S.tiers_by_stage.map((r) => `${r.stage}: ${TIERS.map((t) => `${t} ${r[t].pct}%`).join(', ')}`).join(' · '))}</figcaption>${so('stacked')}</figure>`}
 <figure><h3 class="at">${esc(Ti.concentration)}</h3><div class="sub">All ${n} companies, relative scale from website footprint (not revenue)</div>
 <div class="big"><div><b class="num">${f.small_pct}%</b><span>Small</span></div><div><b class="num">${S.tiers['Mid-size'].pct}%</b><span>Mid-size</span></div><div><b class="num">${f.large_pct}%</b><span>Large</span></div></div>${concentration(S)}<figcaption>${esc(tiersCap)}. Large = top 25% of companies in the country by website footprint, Small = below the 40th point of the 0-99 scale; relative, not revenue.</figcaption>${so('concentration')}</figure>
 </div></section>`;
-  const sec3 = `<section><h2>${num()}Geography${brands.length ? ' and brands' : ''}</h2><div class="grid">
-<figure><h3 class="at">${esc(Ti.region)}</h3><div class="sub">Main provinces by region; tile width = companies</div>${provinces(S)}<figcaption>${esc(provCap)}</figcaption>${so('region')}</figure>
-${brands.length ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">Top ${brands.length} brands by number of companies carrying them</div>${ranked(brands.map((b) => [b.brand, b.companies]), 'companies')}<div class="scroll">${brandsTbl}</div>${so('brands')}</figure>` : ''}
-</div></section>`;
+  const showBrands = show(S, 'brands'), showCh = show(S, 'channels'), showReg = show(S, 'region');
+  const sec3 = (showCh || showBrands) ? `<section><h2>${num()}${showCh && showBrands ? 'Channels and brands' : showCh ? 'Channels' : 'Brands'}</h2><div class="grid">
+${showCh ? `<figure><h3 class="at">${esc(Ti.channels)}</h3><div class="sub">Sales channels the companies name on their own websites (similar wordings grouped)</div>${ranked(S.channels.map((c) => [c.name, c.n]), 'companies')}<figcaption>${esc(S.channels.map((c) => `${c.name} ${c.n}`).join(' · '))}.${esc(based(S, 'channels', 'a stated channel'))}</figcaption>${so('channels')}</figure>` : ''}
+${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">Top ${brands.length} brands by number of companies carrying them</div>${ranked(brands.map((b) => [b.brand, b.companies]), 'companies')}<div class="scroll">${brandsTbl}</div><figcaption>${esc(based(S, 'brands', 'a listed brand').trim())}</figcaption>${so('brands')}</figure>` : ''}
+</div></section>` : '';
+  const sec3b = showReg ? `<section><h2>${num()}Geography</h2><div class="grid"><figure class="wide"><h3 class="at">${esc(Ti.region)}</h3><div class="sub">Main provinces by region; tile width = companies</div>${provinces(S)}<figcaption>${esc(provCap)}.${esc(based(S, 'region', 'a stated region'))}</figcaption>${so('region')}</figure></div></section>` : '';
   let sec4 = '';
-  if ((S.certifications && S.certifications.length) || (S.origins && S.origins.length)) {
+  const showC = show(S, 'certifications'), showO = show(S, 'origins');
+  if (showC || showO) {
     sec4 = `<section><h2>${num()}Capability and sourcing signals</h2><div class="grid">`;
-    for (const [k, items, ttl, sub] of [['certs', S.certifications, 'Certifications cited', 'Companies citing each certification; a company can cite several'], ['origins', S.origins, 'Sourcing origins cited', 'Companies naming each country as a source']]) {
-      if (items && items.length) sec4 += `<figure><h3 class="at">${esc(Ti[k])}</h3><div class="sub">${esc(sub)}</div>${ranked(items.map((i) => [i.name, i.n]), 'companies')}<figcaption>${esc(items.map((i) => `${i.name} ${i.n}`).join(' · '))}</figcaption>${so(k)}</figure>`;
-      void ttl;
+    for (const [k, f, items, sub, what] of [['certs', 'certifications', S.certifications, 'Companies citing each certification; a company can cite several', 'a certification'], ['origins', 'origins', S.origins, 'Companies naming each country as a source', 'a sourcing origin']]) {
+      if (f === 'certifications' ? showC : showO) sec4 += `<figure><h3 class="at">${esc(Ti[k])}</h3><div class="sub">${esc(sub)}</div>${ranked(items.map((i) => [i.name, i.n]), 'companies')}<figcaption>${esc(items.map((i) => `${i.name} ${i.n}`).join(' · '))}.${esc(based(S, f, what))}</figcaption>${so(k)}</figure>`;
     }
     sec4 += '</div></section>';
   }
@@ -319,10 +347,10 @@ ${brands.length ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub"
   const sec7 = `<section><h2>${num()}Preview of the Excel list (10 of ${n} rows, contacts hidden)</h2><div class="scroll top"><table><tr><th class="n">Rank</th><th>Company</th><th>${esc(cap1(ax))}</th><th>Sub-category</th><th>Region</th><th>Scale</th><th>${S.item_noun === 'service' ? 'Services' : 'Products'}</th><th>Website</th></tr>${prev}</table></div></section>`;
   const groups = dedupe(S.groups.join(', '));
   const left = (S.left_out_roles || []).length ? ` Companies whose main role is ${esc(S.left_out_roles.join(' or '))} are left out because they serve the ${esc(S.item_noun)} rather than supply it.` : '';
-  const notStated = (S.regions.find((r) => r.region === 'Not stated') || { pct: 0 }).pct;
+  const regCov = cov(S, 'region');
   const sec8 = `<section><h2>${num()}Scope and method</h2><div class="method">
 <div><h3>Definition</h3><p>Companies in ${esc(cn)} whose own website lists at least one specific ${esc(S.item_noun)} in these groups: ${esc(groups)}. ${esc(S.definition_extra || '')}${left}</p></div>
-<div><h3>Method and limits</h3><ul><li>Source: company websites read by BizDirect Asia, built ${esc(S.built)}; scale tier is a BizDirect estimate from website footprint, not revenue.</li><li>${esc(cap1(ax))} comes from the company's main ${S.meta?.kind === 'service' ? 'service' : 'role'}; region from its stated location (${notStated}% not stated).</li><li>Only companies BizDirect has read are counted; small or offline-only businesses are under-represented.</li></ul></div></div></section>`;
+<div><h3>Method and limits</h3><ul><li>Source: company websites read by BizDirect Asia, built ${esc(S.built)}; scale tier is a BizDirect estimate from website footprint, not revenue.</li><li>${esc(cap1(ax))} comes from the company's main ${S.meta?.kind === 'service' ? 'service' : 'role'}${showReg && regCov ? `; region from its stated location (${Math.round(regCov.share_filled * 100)}% of companies state one)` : ''}.</li><li>Only companies BizDirect has read are counted; small or offline-only businesses are under-represented.</li></ul></div></div></section>`;
 
   return `<main class="mm" id="mm-root" data-slug="${esc(S.meta?.slug || '')}">
 <div class="crumb"><a href="${esc(hubPath)}">Market maps</a><i>/</i>${esc(cn)}<i>/</i>${esc(seg)}</div>
@@ -330,7 +358,7 @@ ${brands.length ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub"
 <p class="dek">A company-level map of ${esc(lc(seg))} companies in ${esc(cn)}, compiled from company websites by ${esc(lc(axT))}, region and relative scale. Snapshot ${esc(S.built)}.</p>
 <div class="kpis">${kpis}</div>
 <div class="take" data-slot="takeaway"><div class="lab">Executive takeaway</div><p>${esc(tk)}</p></div>
-${sec1}${sec2}${sec3}${sec4}${sec5}${impl}${sec7}
+${sec1}${sec2}${sec3}${sec3b}${sec4}${sec5}${impl}${sec7}
 ${buyBox(S, opts)}
 ${sec8}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com) · snapshot ${esc(S.built)}</span></div>
@@ -338,7 +366,7 @@ ${sec8}
 }
 
 // ── document shell: head, JSON-LD, shared chrome (nav.js builds the header and footer) ──
-function shell({ title, description, canonical, robots, ld, body }) {
+function shell({ title, description, canonical, robots, ld, body, buyScripts = '', researchCss = false }) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
@@ -350,12 +378,12 @@ function shell({ title, description, canonical, robots, ld, body }) {
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/css/kira.css">
-<style>${MM_CSS}</style>
+${researchCss ? '<link rel="stylesheet" href="/css/research.css">\n' : ''}<style>${MM_CSS}</style>
 ${(ld || []).map((l) => `<script type="application/ld+json" id="${l.id}">${ldJson(l.data)}</script>`).join('\n')}
 </head><body>
 <!-- nav + footer injected by /js/nav.js -->
 ${body}
-<script src="/js/nav.js" defer></script>
+${buyScripts}<script src="/js/nav.js" defer></script>
 </body></html>`;
 }
 
@@ -383,29 +411,55 @@ export function renderDocument(S, C, opts = {}) {
         { '@type': 'ListItem', position: 3, name: `${S.country} ${lc(S.segment)}`, item: canonical },
       ] } },
   ];
-  return shell({ title: mapTitle(S), description: mapDescription(S, !!(opts.buy && opts.buy.enabled)), canonical, robots: opts.robots || 'noindex,follow', ld, body: renderBody(S, C, opts) });
+  return shell({ title: mapTitle(S), description: mapDescription(S, !!(opts.buy && opts.buy.enabled)), canonical, robots: opts.robots || 'noindex,follow', ld, body: renderBody(S, C, opts),
+    buyScripts: opts.buy && opts.buy.enabled ? '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/auth.js"></script><script src="/js/market-map-buy.js" defer></script>\n' : '' });
 }
 
-// rows: [{ country, segment_key, title, l2_family, n_companies, stats }] (published). Grouped by L2 family, then country.
-export function renderHub(rows, opts = {}) {
+// items: [{ slug, country, country_name, segment_key, title, l2_family, kind, companies, phone_pct, email_pct, price, built }]
+// The hub is a library table in the layout of the report library (research.css: lib2, fgrp, fopt): filters on the left,
+// search + sort above a table. It is rendered whole on the server (so it reads without JavaScript) and the small
+// script at the end only hides rows.
+export const BANDS = [['u100', 'Under 100', 0, 99], ['b100', '100 to 299', 100, 299], ['b300', '300 to 500 ($49)', 300, 500], ['o500', 'Over 500 ($99)', 501, Infinity]];
+const bandOf = (n) => (BANDS.find((b) => n >= b[2] && n <= b[3]) || BANDS[0])[0];
+
+export function renderHub(items, opts = {}) {
   const canonical = opts.canonical || `${BASE}/en/market-maps`;
-  const fams = new Map();
-  for (const r of rows) {
-    const k = r.l2_family || 'Other segments';
-    if (!fams.has(k)) fams.set(k, []);
-    fams.get(k).push(r);
-  }
-  const cname = (r) => r.stats?.country || cap1(r.country);
+  const groups = [
+    ['country', 'Country', (i) => i.country_name, (i) => i.country_name],
+    ['family', 'Industry', (i) => i.l2_family || 'Other segments', (i) => i.l2_family || 'Other segments'],
+    ['kind', 'Goods or services', (i) => (i.kind === 'service' ? 'services' : 'goods'), (i) => (i.kind === 'service' ? 'Services' : 'Goods')],
+    ['band', 'Number of companies', (i) => bandOf(i.companies), (i) => BANDS.find((b) => b[0] === bandOf(i.companies))[1]],
+  ];
+  const filterHtml = groups.map(([k, label, val, name]) => {
+    const m = new Map();
+    for (const i of items) { const v = val(i); m.set(v, { name: name(i), n: (m.get(v)?.n || 0) + 1 }); }
+    let opts2 = [...m.entries()];
+    opts2 = k === 'band' ? BANDS.filter((b) => m.has(b[0])).map((b) => [b[0], m.get(b[0])]) : opts2.sort((a, b) => a[1].name.localeCompare(b[1].name));
+    if (!opts2.length) return '';
+    return `<div class="fgrp" data-group="${k}"><button type="button" class="fgrp-head" aria-expanded="true">${esc(label)}</button><div class="fgrp-body">${opts2.map(([v, o]) =>
+      `<label class="fopt"><input type="checkbox" data-filter="${k}" value="${esc(v)}"><span class="lbl">${esc(o.name)}</span><span class="n">${o.n}</span></label>`).join('')}</div></div>`;
+  }).join('');
+  const rows = items.map((i) => `<tr data-country="${esc(i.country_name)}" data-family="${esc(i.l2_family || 'Other segments')}" data-kind="${i.kind === 'service' ? 'services' : 'goods'}" data-band="${bandOf(i.companies)}" data-n="${i.companies}" data-built="${esc(i.built)}" data-name="${esc(`${i.title} ${i.country_name}`.toLowerCase())}" data-text="${esc(`${i.title} ${i.country_name} ${i.l2_family || ''}`.toLowerCase())}">
+<td><a href="/en/market-maps/${esc(i.slug)}"><b>${esc(i.title)}</b></a><div class="k">${esc(i.l2_family || '')}</div></td><td>${esc(i.country_name)}</td><td class="n">${nf(i.companies)}</td><td class="n">${i.phone_pct == null ? '-' : `${i.phone_pct}%`}</td><td class="n">${i.email_pct == null ? '-' : `${i.email_pct}%`}</td><td class="n">$${i.price}</td><td>${esc(i.built)}</td></tr>`).join('');
   const body = `<main class="mm" id="mm-root">
-<div class="crumb">Market maps</div>
-<h1>Market maps: who is in each market, by country and segment</h1>
-<p class="dek">Each map shows the companies in one segment of one country, compiled from company websites, split by ${'value-chain stage or service type'}, region and relative scale. The overview is free; the full company list is an Excel file.</p>
-${rows.length ? [...fams.keys()].sort().map((fam) => `<div class="hubfam"><h2>${esc(fam)}</h2><div class="hubgrid">${fams.get(fam).sort((a, b) => cname(a).localeCompare(cname(b)) || a.title.localeCompare(b.title)).map((r) =>
-    `<a class="hubcard" href="/en/market-maps/${esc(r.country)}/${esc(r.segment_key)}"><b>${esc(cname(r))}: ${esc(r.title)}</b><span>${nf(r.n_companies)} companies mapped</span></a>`).join('')}</div></div>`).join('')
-  : '<p class="dek" style="margin-top:24px">No market maps are published yet.</p>'}
+<div class="crumb">Company lists</div>
+<h1>Company lists: every company in a segment, by country</h1>
+<p class="dek">Each list covers the companies of one segment in one country, compiled from company websites. The overview of each list is free; the Excel file with company-level phone and email is $49 up to 500 companies, $99 above.</p>
+${items.length ? `<div class="lib2"><aside class="lib2-side" aria-label="Refine by"><div class="lib2-side-head"><h2>Refine by</h2><button type="button" class="r-link" id="mm-clear" hidden>Clear all</button></div><div class="lib2-filters">${filterHtml}</div></aside>
+<section class="lib2-main" aria-live="polite"><div class="hubbar"><input type="search" id="mm-q" placeholder="Search segment, country or industry" aria-label="Search company lists"><label class="k">Sort <select id="mm-sort"><option value="n">Most companies</option><option value="built">Newest</option><option value="name">Segment A to Z</option></select></label><span class="k" id="mm-count"></span></div>
+<div class="scroll top"><table id="mm-table"><thead><tr><th>Segment</th><th>Country</th><th class="n">Companies</th><th class="n">With phone</th><th class="n">With email</th><th class="n">Price</th><th>Built</th></tr></thead><tbody>${rows}</tbody></table></div><p class="k" id="mm-none" hidden style="margin-top:12px">No list matches these filters.</p></section></div>`
+  : '<p class="dek" style="margin-top:24px">No company lists are published yet.</p>'}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
-</main>`;
+</main>
+<script>(function(){var t=document.getElementById('mm-table');if(!t)return;var tb=t.tBodies[0],rs=[].slice.call(tb.rows),q=document.getElementById('mm-q'),so=document.getElementById('mm-sort'),cl=document.getElementById('mm-clear'),ct=document.getElementById('mm-count'),no=document.getElementById('mm-none');
+function sel(){var o={};[].forEach.call(document.querySelectorAll('input[data-filter]:checked'),function(c){(o[c.getAttribute('data-filter')]=o[c.getAttribute('data-filter')]||[]).push(c.value)});return o}
+function run(){var o=sel(),w=q.value.trim().toLowerCase().split(/\s+/).filter(Boolean),k=so.value,shown=0;
+rs.sort(function(a,b){return k==='n'?b.dataset.n-a.dataset.n:k==='built'?(b.dataset.built>a.dataset.built?1:-1):(a.dataset.name>b.dataset.name?1:-1)}).forEach(function(r){tb.appendChild(r)});
+rs.forEach(function(r){var ok=w.every(function(x){return r.dataset.text.indexOf(x)>-1});for(var g in o){if(o[g].indexOf(r.dataset[g])<0)ok=false}r.hidden=!ok;if(ok)shown++});
+ct.textContent=shown+' of '+rs.length+' lists';no.hidden=shown>0;cl.hidden=!(w.length||Object.keys(o).length)}
+document.addEventListener('change',function(e){if(e.target.matches&&e.target.matches('input[data-filter]'))run()});q.addEventListener('input',run);so.addEventListener('change',run);
+cl.addEventListener('click',function(){[].forEach.call(document.querySelectorAll('input[data-filter]'),function(c){c.checked=false});q.value='';run()});run()})();</script>`;
   const ld = [{ id: 'ld-breadcrumb', data: { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Kira Research', item: `${BASE}/` }, { '@type': 'ListItem', position: 2, name: 'Market maps', item: canonical }] } }];
-  return shell({ title: 'Market maps: companies by country and segment | KIRA Research', description: 'Company-level maps of segments across 15 Asia-Pacific markets: who is in the market, where they sit and how big they are. Free overview, Excel list on request.', canonical, robots: opts.robots || 'noindex,follow', ld, body });
+    { '@type': 'ListItem', position: 1, name: 'Kira Research', item: `${BASE}/` }, { '@type': 'ListItem', position: 2, name: 'Company lists', item: canonical }] } }];
+  return shell({ title: 'Company lists by country and segment | KIRA Research', description: 'Company lists for segments across 15 Asia-Pacific markets: who is in the market, where they sit and how big they are. Free overview, Excel list for sale.', canonical, robots: opts.robots || 'noindex,follow', ld, body, researchCss: true });
 }

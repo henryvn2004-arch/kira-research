@@ -63,8 +63,29 @@ export default async function handler(req, res) {
       `&select=slug,locale,report_id,amount,currency,captured_at,created_at` +
       `&order=captured_at.desc.nullslast,created_at.desc`
     );
+    // Market-map company lists bought by this user (table list_purchases, migration 071). A missing table reads as none.
+    let lists = [];
+    try {
+      const lp = await sb(
+        `list_purchases?user_id=eq.${user.id}&status=eq.completed` +
+        `&select=id,slug,amount,currency,captured_at,build_status,download_token,expires_at,download_count,max_downloads,n_companies,market_maps(title,country)` +
+        `&order=captured_at.desc`
+      );
+      const APP = process.env.APP_URL || 'https://kiraresearch.com';
+      lists = (lp || []).map(p => {
+        const live = p.build_status === 'ready' && p.download_token && new Date(p.expires_at) > new Date() && p.download_count < p.max_downloads;
+        return {
+          id: p.id, slug: p.slug, title: p.market_maps ? p.market_maps.title : p.slug, country: p.market_maps ? p.market_maps.country : null,
+          companies: p.n_companies, amount: p.amount, currency: p.currency || 'USD', purchasedAt: p.captured_at,
+          status: p.build_status === 'ready' ? (live ? 'ready' : 'expired') : 'pending',
+          downloadUrl: live ? `${APP}/api/list-download?token=${p.download_token}` : null,
+          downloadsLeft: p.build_status === 'ready' ? Math.max(0, p.max_downloads - p.download_count) : null, expiresAt: p.expires_at || null
+        };
+      });
+    } catch (e) { console.warn('[library-my-purchases] lists skipped:', e.message); }
+
     if (!Array.isArray(purchases) || purchases.length === 0) {
-      res.status(200).json({ items: [], email: user.email });
+      res.status(200).json({ items: [], lists, email: user.email });
       return;
     }
 
@@ -115,7 +136,7 @@ export default async function handler(req, res) {
       };
     });
 
-    res.status(200).json({ items, email: user.email });
+    res.status(200).json({ items, lists, email: user.email });
   } catch (err) {
     console.error('[library-my-purchases] error:', err.message);
     res.status(500).json({ error: 'server_error' });

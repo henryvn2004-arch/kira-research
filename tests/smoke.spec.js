@@ -1411,7 +1411,39 @@ test.describe('market maps', () => {
     expect(await page.locator('#mm-root').innerText()).not.toMatch(/[^\s@]+@[^\s@]+\.[a-z]{2,}/i);   // no contacts in the page
   });
 
-  test('order endpoint is a 501 stub', async ({ request }) => {
-    expect((await request.post('/api/market-map-order', { data: { slug: 'x/y' } })).status()).toBe(501);
+  test('hub is a filterable table of lists', async ({ page }) => {
+    await page.goto('/en/market-maps', { waitUntil: 'domcontentloaded' });
+    // Empty library (nothing published yet) shows the plain message; otherwise the table with its filters and search.
+    const table = page.locator('#mm-table');
+    if (await table.count()) {
+      await expect(page.locator('#mm-q')).toBeVisible();
+      await expect(page.locator('.lib2-side .fgrp').first()).toBeVisible();
+      const heads = (await table.locator('th').allInnerTexts()).map((t) => t.toLowerCase());
+      expect(heads).toEqual(expect.arrayContaining(['segment', 'country', 'companies']));
+    } else {
+      await expect(page.getByText('No company lists are published yet')).toBeVisible();
+    }
+  });
+
+  test('the list JSON endpoint answers', async ({ request }) => {
+    const r = await request.get('/api/market-maps?type=list');
+    expect(r.status()).toBe(200);
+    expect(Array.isArray((await r.json()).items)).toBe(true);
+  });
+
+  test('buying a list is closed while checkout.list_enabled is off', async ({ request }) => {
+    const r = await request.post('/api/list-buy?action=create', { data: { slug: 'vietnam/soft-drinks' } });
+    expect(r.status()).toBe(403);
+    expect((await r.json()).error).toBe('checkout_closed');
+  });
+
+  test('download needs a valid token', async ({ request }) => {
+    expect((await request.get('/api/list-download?token=nope')).status()).toBe(404);
+  });
+
+  test('market-map modules load without parse errors', async () => {
+    for (const f of ['market-maps', 'list-buy', 'list-download', 'library-my-purchases', '_lib/market-map/render', '_lib/market-map/gate', '_lib/lists', '_lib/list-source']) {
+      await import(`../api/${f}.js`);
+    }
   });
 });

@@ -2,7 +2,8 @@
 // KIRA RESEARCH — api/market-maps.js
 // Market mapping: free overview page per (country x segment), server-rendered from the stats JSON in table
 // `market_maps` (migration 070) by api/_lib/market-map/render.js.
-//   GET /api/market-maps?type=hub&loc=en                              /<loc>/market-maps
+//   GET /api/market-maps?type=hub&loc=en                              /<loc>/market-maps  (the "Company lists" library table)
+//   GET /api/market-maps?type=list                                    the same table as JSON { items: [...] }
 //   GET /api/market-maps?type=map&loc=en&country=vietnam&segment=soft-drinks   /<loc>/market-maps/<country>/<segment>
 // English only: ja/ko/zh paths serve the English page with the English canonical and noindex.
 // Robots: noindex everywhere unless setting `marketmaps.indexing_enabled` is on AND the row is indexable
@@ -14,6 +15,7 @@ import { getConfig } from './_lib/config.js';
 import { BASE, LOCALES } from './_lib/ssr.js';
 import { renderDocument, renderHub } from './_lib/market-map/render.js';
 import { isIndexable } from './_lib/market-map/gate.js';
+import { listPrice } from './_lib/pricing.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -48,10 +50,17 @@ export default async function handler(req, res) {
   const indexingOn = await getConfig('marketmaps.indexing_enabled');
   const buy = { enabled: await getConfig('checkout.list_enabled') };
 
-  if (q.type === 'hub') {
-    const rows = await sb('market_maps?status=eq.published&select=country,segment_key,title,l2_family,n_companies,indexable,stats&order=l2_family.asc,country.asc,title.asc&limit=1000');
-    const index = indexingOn && loc === 'en' && rows.some((r) => r.indexable && isIndexable(r.stats));
-    send(res, renderHub(rows.map((r) => ({ ...r, stats: { country: r.stats?.country } })), { canonical: `${BASE}/en/market-maps`, robots: index ? 'index,follow' : 'noindex,follow' }), { index });
+  if (q.type === 'hub' || q.type === 'list') {
+    // Only the few fields the table needs are read from the stats JSON (PostgREST path operators), not the whole blob.
+    const rows = await sb('market_maps?status=eq.published&select=country,segment_key,slug,title,l2_family,n_companies,indexable,built_at,kind:stats->meta->>kind,phone_pct:stats->contacts->>with_phone_pct,email_pct:stats->contacts->>with_email_pct,country_name:stats->>country,built:stats->>built&order=l2_family.asc,country.asc,title.asc&limit=1000');
+    const items = rows.map((r) => ({
+      slug: r.slug, country: r.country, country_name: r.country_name || r.country, segment_key: r.segment_key, title: r.title, l2_family: r.l2_family,
+      kind: r.kind || 'goods', companies: r.n_companies, phone_pct: r.phone_pct == null ? null : Number(r.phone_pct), email_pct: r.email_pct == null ? null : Number(r.email_pct),
+      price: listPrice(r.n_companies), built: r.built || String(r.built_at || '').slice(0, 10),
+    }));
+    if (q.type === 'list') { res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400'); res.status(200).json({ items }); return; }
+    const index = indexingOn && loc === 'en' && rows.some((r) => r.indexable);
+    send(res, renderHub(items, { canonical: `${BASE}/en/market-maps`, robots: index ? 'index,follow' : 'noindex,follow' }), { index });
     return;
   }
 
@@ -61,6 +70,7 @@ export default async function handler(req, res) {
   const row = rows[0];
   if (!row || !row.stats || !row.stats.meta) { notFound(res); return; }
   const index = indexingOn && loc === 'en' && row.indexable === true && isIndexable(row.stats);
+  row.stats.price_usd = listPrice(row.n_companies);   // the price is always the server rule, whatever the stats file says
   const html = renderDocument(row.stats, row.commentary || null, {
     canonical: `${BASE}/en/market-maps/${row.slug}`, robots: index ? 'index,follow' : 'noindex,follow', buy,
   });
