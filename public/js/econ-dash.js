@@ -38,6 +38,7 @@
       capMatrix: 'Pick a country under "Investing from" to see its trend in each market. Red = more money left than came in.',
       hLensLine: (i) => `${i}: net direct investment into each ASEAN market`, hOut: (i, b) => `${i}'s own statistics: investment into each market, 12 months to ${b}`,
       hOutYtd: (i, b) => `${i}'s own statistics: investment into each market, year to ${b}`,
+      factsC: (c) => `${c}: market facts by industry →`, factsAll: 'Market facts by country →',
       qMoves: 'Who just moved in', hMoves: (h, i) => 'Latest company moves' + (h ? ' into ' + h : '') + (i ? ' from ' + i : ''), allMoves: 'All company moves →',
       qTrade: 'Trade momentum', hTrade: (c) => `${c}: trade with its largest partners, monthly`, hTradeLens: (c, i) => `${i} ↔ ${c}: monthly trade`,
       imports: (c) => `Imports into ${c}`, exports: (c) => `Exports from ${c}`, exTo: (c, p) => `${c} exports to ${p}`, imFrom: (c, p) => `${c} imports from ${p}`,
@@ -71,6 +72,7 @@
       capMatrix: '「投資元」で国を選ぶと、各市場への推移を表示します。赤＝流出超過。',
       hLensLine: (i) => `${i}：ASEAN各市場への直接投資（ネット）`, hOut: (i, b) => `${i}側の統計：各市場への投資、${b}までの12か月`,
       hOutYtd: (i, b) => `${i}側の統計：各市場への投資、${b}までの年初来`,
+      factsC: (c) => `${c}：業界別の市場ファクト →`, factsAll: '国別の市場ファクト →',
       qMoves: '最近進出した企業', hMoves: (h, i) => (i ? i + 'から' : '') + (h ? h + 'への' : '') + '最新の企業の動き', allMoves: '企業の動きをすべて見る →',
       qTrade: '貿易の勢い', hTrade: (c) => `${c}：主要相手国との貿易（月次）`, hTradeLens: (c, i) => `${i} ↔ ${c}：月次貿易`,
       imports: (c) => `${c}の輸入`, exports: (c) => `${c}の輸出`, exTo: (c, p) => `${c}から${p}への輸出`, imFrom: (c, p) => `${c}の${p}からの輸入`,
@@ -104,6 +106,7 @@
       capMatrix: '"투자국"에서 국가를 고르면 시장별 추이를 보여 줍니다. 빨간색 = 순유출.',
       hLensLine: (i) => `${i}: 아세안 시장별 직접투자(순)`, hOut: (i, b) => `${i} 측 통계: 시장별 투자, ${b}까지 12개월`,
       hOutYtd: (i, b) => `${i} 측 통계: 시장별 투자, ${b}까지 연초 누계`,
+      factsC: (c) => `${c}: 산업별 시장 팩트 →`, factsAll: '국가별 시장 팩트 →',
       qMoves: '최근 진출한 기업', hMoves: (h, i) => (i ? i + '발 ' : '') + (h ? h + ' ' : '') + '최신 기업 동향', allMoves: '기업 동향 전체 보기 →',
       qTrade: '무역 흐름', hTrade: (c) => `${c}: 주요 교역국과의 무역(월간)`, hTradeLens: (c, i) => `${i} ↔ ${c}: 월간 무역`,
       imports: (c) => `${c} 수입`, exports: (c) => `${c} 수출`, exTo: (c, p) => `${c}의 ${p} 수출`, imFrom: (c, p) => `${c}의 ${p}산 수입`,
@@ -137,6 +140,7 @@
       capMatrix: '在"投资来源"中选择国家，可查看其在各市场的趋势。红色＝净流出。',
       hLensLine: (i) => `${i}：对东盟各市场的直接投资净额`, hOut: (i, b) => `${i}方统计：对各市场的投资，截至${b}的12个月`,
       hOutYtd: (i, b) => `${i}方统计：对各市场的投资，截至${b}的年内累计`,
+      factsC: (c) => `${c}：按行业的市场事实 →`, factsAll: '各国市场事实 →',
       qMoves: '谁刚刚进入', hMoves: (h, i) => (i ? i + '企业' : '') + (h ? '进入' + h + '的' : '') + '最新动态', allMoves: '查看全部企业动态 →',
       qTrade: '贸易势头', hTrade: (c) => `${c}：与主要伙伴的贸易（月度）`, hTradeLens: (c, i) => `${i} ↔ ${c}：月度贸易`,
       imports: (c) => `${c}进口`, exports: (c) => `${c}出口`, exTo: (c, p) => `${c}对${p}出口`, imFrom: (c, p) => `${c}自${p}进口`,
@@ -358,6 +362,7 @@
         h += sec(T.qWho, (/_YTD$/.test(own[0].product) ? T.hOutYtd : T.hOut)(nm(lens), per(w.last)), box('dd-own'), esc(T.srcLbl(SRC[own[0].src] || own[0].src, per(w.last))));
       }
     }
+    h += '<div class="ed-links"><a class="r-btn r-btn-outline" href="/' + L + '/markets">' + esc(T.factsAll) + '</a></div>';
     h += '<div id="dd-moves"></div>' + credits();
     el.innerHTML = h;
     el.querySelectorAll('.dd-league tbody tr').forEach((tr, i) => tr.addEventListener('click', (e) => { if (e.target.tagName !== 'A') location.href = href(rows[i].c.slug); }));
@@ -531,6 +536,7 @@
     if (lens && CORRIDOR[lens] && lens !== code) {
       h += '<div class="ed-links"><a class="r-btn r-btn-outline" href="/' + L + '/data/' + CORRIDOR[lens] + '-in-' + (D.countries.find((x) => x.code === code) || {}).slug + '">' + esc(T.corridor(nm(lens), C)) + '</a></div>';
     }
+    { const cc = D.countries.find((x) => x.code === code); if (cc) h += '<div class="ed-links"><a class="r-btn r-btn-outline" href="/' + L + '/markets/' + esc(cc.slug) + '">' + esc(T.factsC(C)) + '</a></div>'; }
     h += '<div id="dd-moves"></div>';
     el.innerHTML = h;
     if (setup()) draws.forEach((f) => f());

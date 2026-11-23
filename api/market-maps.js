@@ -60,7 +60,7 @@ export default async function handler(req, res) {
     }));
     if (q.type === 'list') { res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400'); res.status(200).json({ items }); return; }
     const index = indexingOn && loc === 'en' && rows.some((r) => r.indexable);
-    send(res, renderHub(items, { canonical: `${BASE}/en/market-maps`, robots: index ? 'index,follow' : 'noindex,follow' }), { index });
+    send(res, renderHub(items, { loc, canonical: `${BASE}/en/market-maps`, robots: index ? 'index,follow' : 'noindex,follow' }), { index });
     return;
   }
 
