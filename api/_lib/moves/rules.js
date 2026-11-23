@@ -18,7 +18,7 @@ const COUNTRIES = {
   MM: { name: ['myanmar', 'burma'], dem: ['myanmar-based', 'burmese'], ko: ['미얀마'], ja: ['ミャンマー'] },
   BN: { name: ['brunei'], dem: ['bruneian'], ko: ['브루나이'], ja: ['ブルネイ'] },
   JP: { name: ['japan'], dem: ['japanese'], ko: ['일본'], ja: [] },
-  KR: { name: ['south korea', 'korea'], dem: ['korean', 'south korean'], ko: [], ja: ['韓国'] },
+  KR: { name: ['south korea', 'korea'], not: ['north korea'], dem: ['korean', 'south korean'], ko: [], ja: ['韓国'] },
   CN: { name: ['china'], dem: ['chinese'], ko: [], ja: [] },
   HK: { name: ['hong kong'], dem: ['hong kong-based'], ko: [], ja: [] },
   US: { name: ['united states', 'u.s.', 'usa'], dem: ['american', 'us-based', 'u.s.-based'], ko: [], ja: [] },
@@ -27,6 +27,7 @@ const COUNTRIES = {
   FR: { name: ['france'], dem: ['french'], ko: [], ja: [] },
   GB: { name: ['britain', 'united kingdom', 'uk'], dem: ['british', 'uk-based'], ko: [], ja: [] }
 };
+export const COUNTRY_CODES = Object.keys(COUNTRIES);
 export const HOSTS = ['VN', 'TH', 'ID', 'MY', 'PH', 'SG', 'TW', 'AU', 'NZ', 'KH', 'LA', 'MM', 'BN', 'JP', 'KR'];
 export const HOST_NAME = { VN: 'Vietnam', TH: 'Thailand', ID: 'Indonesia', MY: 'Malaysia', PH: 'Philippines', SG: 'Singapore', TW: 'Taiwan',
   AU: 'Australia', NZ: 'New Zealand', KH: 'Cambodia', LA: 'Laos', MM: 'Myanmar', BN: 'Brunei', JP: 'Japan', KR: 'South Korea' };
@@ -38,8 +39,8 @@ const TYPES = {
     ['jv', /\b(joint venture|jv)\b/],
     ['acquisition', /\b(acquir\w*|acquisitions?|takeover|take over|buyout|buys?|bought|merger|merges?)\b/],
     ['stake', /\bstakes?\b/],
-    ['plant', /\b(factory|factories|plants?|manufacturing (facility|base|site|hub)|production (base|line|facility))\b/],
-    ['subsidiary', /\b(subsidiar\w*|sets? up|establish\w*|opens? (an? |its )?(office|branch|store|hub|headquarters)|enters?|entry into|launch\w* in)\b/],
+    ['plant', /\b(factory|factories|(?<!(power|virtual|nuclear|treatment|solar|wind) )plants?|manufacturing (facility|base|site|hub)|production (base|line|facility))\b/],
+    ['subsidiary', /\b(subsidiar\w*|sets? up|establish\w*|opens? (\w+ ){0,3}(offices?|branch(es)?|stores?|hub|headquarters|showroom)|enters?|entry into|launch\w* in|inaugurat\w*|breaks? ground|unveils? (an? |its )?(new )?(office|plant|factory|hub))\b/],
     ['expansion', /\bexpan\w*\b/],
     ['investment', /\b(invest\w*|injection|injects?|pours?|commits? .{0,20}(million|billion))\b/]
   ],
@@ -53,6 +54,8 @@ const wordRe = (w) => new RegExp(`(^|[^a-z0-9])${esc(w)}(?=$|[^a-z0-9])`, 'g');
 function mentions(text) {
   const out = [];
   for (const [code, c] of Object.entries(COUNTRIES)) {
+    // "North Korea" is not "Korea": blank those words out first so the market name inside them does not count
+    if (c.not) for (const w of c.not) text = text.split(w).join(' '.repeat(w.length));
     for (const [kind, words] of [['dem', c.dem], ['name', c.name]]) {
       for (const w of words) {
         for (const m of text.matchAll(wordRe(w))) {
