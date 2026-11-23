@@ -15,10 +15,11 @@ import { classify, sameStory } from './rules.js';
 
 const ADAPTERS = { gdelt, opendart, edinet };
 
-export async function collect({ sources = [], recent = [], log = null } = {}) {
+export async function collect({ sources = [], recent = [], log = null, preloaded = null } = {}) {   // preloaded: raw items from a local backfill (adapters are skipped)
   const envOf = Object.fromEntries(sources.map((s) => [s.key, s.env_key]));
   const raw = [], errors = [], waiting = [];
-  for (const [key, ad] of Object.entries(ADAPTERS)) {
+  if (preloaded) raw.push(...preloaded);
+  else for (const [key, ad] of Object.entries(ADAPTERS)) {
     if (envOf[key] && !process.env[envOf[key]]) { waiting.push(key); continue; }
     try {
       const got = await ad.items({ env: process.env[envOf[key]], log });

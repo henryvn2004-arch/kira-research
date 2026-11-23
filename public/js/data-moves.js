@@ -16,8 +16,8 @@
 
   const T = {
     en: {
-      feedH1: 'Company moves into Asia-Pacific markets', feedLead: 'Investments, acquisitions, new plants and subsidiaries in the 15 markets KIRA covers, checked by our analysts before they appear here.',
-      corrH1: (i, h) => `${i} in ${h}: investment and company moves`, corrLead: (i, h) => `Direct investment, trade and the latest company moves from ${i} into ${h}.`,
+      feedH1: 'Company moves: who is entering', feedLead: 'Investments, acquisitions, new plants and subsidiaries in the 15 markets KIRA covers, checked by our analysts before they appear here.',
+      corrH1: (i, h) => `Company moves: ${i} entering ${h}`, corrLead: (i, h) => `Direct investment, trade and the latest company moves from ${i} into ${h}.`,
       all: 'All', host: 'Market', investor: 'From', typeCol: 'Type', more: 'Show older moves', none: 'No moves published here yet. We add them as they happen.',
       moves: 'Latest company moves', links: 'Investment, trade and visitors', also: (n) => `also reported by ${n} more`, hostData: (h) => `Market data for ${h}`, reports: (h) => `KIRA reports on ${h}`,
       allMoves: 'All company moves', win: (b) => `12 months to ${b}`, winQ: (b) => `4 quarters to ${b}`, ytd: (a, b) => `${a} – ${b}`, ofYear: (y) => `${y}`, quarter: (y, q) => `Q${q} ${y}`, change: 'vs. year before', loadFail: 'Could not load the data. Please retry in a moment.',
@@ -35,8 +35,8 @@
       extra: { CN: 'China', HK: 'Hong Kong', US: 'United States', IN: 'India', DE: 'Germany', FR: 'France', GB: 'United Kingdom' }, unknown: 'Unknown'
     },
     ja: {
-      feedH1: 'アジア太平洋市場への企業の動き', feedLead: 'KIRAが対象とする15市場への投資、買収、工場新設、子会社設立。アナリストが確認したものだけを掲載しています。',
-      corrH1: (i, h) => `${i}→${h}：投資と企業の動き`, corrLead: (i, h) => `${i}から${h}への直接投資、貿易、最新の企業の動き。`,
+      feedH1: '企業の動き：誰が進出しているか', feedLead: 'KIRAが対象とする15市場への投資、買収、工場新設、子会社設立。アナリストが確認したものだけを掲載しています。',
+      corrH1: (i, h) => `企業の動き：${i}の${h}進出`, corrLead: (i, h) => `${i}から${h}への直接投資、貿易、最新の企業の動き。`,
       all: 'すべて', host: '市場', investor: '投資元', typeCol: '種類', more: 'さらに表示', none: 'まだ掲載された動きはありません。発生し次第追加します。',
       moves: '最新の企業の動き', links: '投資・貿易・訪問者', also: (n) => `ほか${n}件の報道`, hostData: (h) => `${h}の市場データ`, reports: (h) => `${h}に関するKIRAレポート`,
       allMoves: '企業の動き一覧', win: (b) => `${b}までの12か月`, winQ: (b) => `${b}までの4四半期`, ytd: (a, b) => `${a}～${b}`, ofYear: (y) => `${y}年`, quarter: (y, q) => `${y}年第${q}四半期`, change: '前年比', loadFail: 'データを読み込めませんでした。しばらくしてから再度お試しください。',
@@ -54,8 +54,8 @@
       extra: { CN: '中国', HK: '香港', US: '米国', IN: 'インド', DE: 'ドイツ', FR: 'フランス', GB: '英国' }, unknown: '不明'
     },
     ko: {
-      feedH1: '아시아·태평양 시장의 기업 동향', feedLead: 'KIRA가 다루는 15개 시장으로의 투자, 인수, 공장 신설, 법인 설립. 애널리스트가 확인한 건만 싣습니다.',
-      corrH1: (i, h) => `${i}→${h}: 투자와 기업 동향`, corrLead: (i, h) => `${i}에서 ${h}로의 직접투자, 무역, 최신 기업 동향.`,
+      feedH1: '기업 동향: 누가 진출하나', feedLead: 'KIRA가 다루는 15개 시장으로의 투자, 인수, 공장 신설, 법인 설립. 애널리스트가 확인한 건만 싣습니다.',
+      corrH1: (i, h) => `기업 동향: ${i}의 ${h} 진출`, corrLead: (i, h) => `${i}에서 ${h}로의 직접투자, 무역, 최신 기업 동향.`,
       all: '전체', host: '시장', investor: '투자국', typeCol: '유형', more: '이전 동향 더 보기', none: '아직 게시된 동향이 없습니다. 발생하는 대로 추가합니다.',
       moves: '최신 기업 동향', links: '투자·무역·방문객', also: (n) => `외 ${n}건 보도`, hostData: (h) => `${h} 시장 데이터`, reports: (h) => `${h} 관련 KIRA 보고서`,
       allMoves: '기업 동향 전체', win: (b) => `${b}까지 12개월`, winQ: (b) => `${b}까지 4개 분기`, ytd: (a, b) => `${a}~${b}`, ofYear: (y) => `${y}년`, quarter: (y, q) => `${y}년 ${q}분기`, change: '전년 대비', loadFail: '데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
@@ -73,8 +73,8 @@
       extra: { CN: '중국', HK: '홍콩', US: '미국', IN: '인도', DE: '독일', FR: '프랑스', GB: '영국' }, unknown: '미상'
     },
     zh: {
-      feedH1: '企业进入亚太市场动态', feedLead: 'KIRA覆盖的15个市场中的投资、收购、新建工厂和设立子公司，经分析师核实后发布。',
-      corrH1: (i, h) => `${i}→${h}：投资与企业动态`, corrLead: (i, h) => `${i}对${h}的直接投资、贸易及最新企业动态。`,
+      feedH1: '企业动态：谁在进入', feedLead: 'KIRA覆盖的15个市场中的投资、收购、新建工厂和设立子公司，经分析师核实后发布。',
+      corrH1: (i, h) => `企业动态：${i}进入${h}`, corrLead: (i, h) => `${i}对${h}的直接投资、贸易及最新企业动态。`,
       all: '全部', host: '市场', investor: '投资来源', typeCol: '类型', more: '查看更早动态', none: '暂无已发布的动态，有新动态时会及时添加。',
       moves: '最新企业动态', links: '投资、贸易与访客', also: (n) => `另有${n}家媒体报道`, hostData: (h) => `${h}市场数据`, reports: (h) => `KIRA关于${h}的报告`,
       allMoves: '全部企业动态', win: (b) => `截至${b}的12个月`, winQ: (b) => `截至${b}的4个季度`, ytd: (a, b) => `${a}至${b}`, ofYear: (y) => `${y}年`, quarter: (y, q) => `${y}年第${q}季度`, change: '同比', loadFail: '无法加载数据，请稍后重试。',
