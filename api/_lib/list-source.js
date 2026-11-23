@@ -18,7 +18,7 @@
 import { createHmac } from 'node:crypto';
 import { createRequire } from 'node:module';
 
-const BUILD_TIMEOUT_MS = 120000;   // BizDirect's build route may run up to 300 s; our window is 60-300 s (vercel.json)
+const BUILD_TIMEOUT_MS = 180000;   // BizDirect measured 42 s for 28,016 rows, worst case ~135 s with the MX check (2026-11-23); route maxDuration 300 s
 const CALL_TIMEOUT_MS = 30000;
 const FILE_TIMEOUT_MS = 60000;
 const MAX_ATTEMPTS = 4;
