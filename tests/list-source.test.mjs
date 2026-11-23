@@ -86,10 +86,10 @@ test('503 on every attempt gives up after 4 tries', async () => {
 });
 
 test('cap: an explicit cap error, and a silently short file, both become row_cap', async () => {
-  mock(() => j(422, { error: { code: 'too_many_rows', message: 'order cap is 5000 rows' } }));
+  mock(() => j(422, { error: { code: 'too_many_rows', message: 'order cap is 40000 rows' } }));
   await assert.rejects(buildList({ orderId: 'ORD12345', definition: DEF }), (e) => e.code === 'row_cap');
-  mock((url) => url.endsWith('/build') ? j(200, { rows: 5000, download_url: '/d' }) : file());
-  await assert.rejects(buildList({ orderId: 'ORD12345', definition: DEF, nCompanies: 7000 }), (e) => e.code === 'row_cap');
+  mock((url) => url.endsWith('/build') ? j(200, { rows: 40000, download_url: '/d' }) : file());
+  await assert.rejects(buildList({ orderId: 'ORD12345', definition: DEF, nCompanies: 45000 }), (e) => e.code === 'row_cap');
 });
 
 test('a download link on another host is refused', async () => {

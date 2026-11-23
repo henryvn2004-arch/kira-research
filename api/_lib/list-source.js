@@ -18,13 +18,13 @@
 import { createHmac } from 'node:crypto';
 import { createRequire } from 'node:module';
 
-const BUILD_TIMEOUT_MS = 120000;   // BizDirect's build route may run up to 300 s; our window is 60-300 s (vercel.json)
+const BUILD_TIMEOUT_MS = 180000;   // BizDirect measured 42 s for 28,016 rows, worst case ~135 s with the MX check (2026-11-23); route maxDuration 300 s
 const CALL_TIMEOUT_MS = 30000;
 const FILE_TIMEOUT_MS = 60000;
 const MAX_ATTEMPTS = 4;
 const ORDER_RE = /^[A-Za-z0-9_.:-]{3,120}$/;
 // BizDirect cuts a build at this many rows (docs/kira_segments_api.md, D). It raises it later; the env value follows it.
-const rowCap = () => Number(process.env.KIRA_LIST_ROW_CAP) || 5000;
+const rowCap = () => Number(process.env.KIRA_LIST_ROW_CAP) || 40000; // BizDirect per-order cap (LMC v164, 2026-11-23)
 
 export class ListSourceError extends Error {
   constructor(message, { code = 'list_source_error', status = null, retryable = false } = {}) {
