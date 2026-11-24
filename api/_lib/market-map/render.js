@@ -16,7 +16,7 @@
 // Nothing here ever prints a phone number, an email or a named person: the stats hold none.
 // ============================================================
 import { BASE, esc, ldJson } from '../ssr.js';
-import { BANDS, isFiltered, hubHref } from './hub.js';
+import { BANDS, SORTS, isFiltered, hubHref } from './hub.js';
 
 const TIERS = ['Large', 'Mid-size', 'Small', 'Not rated'];
 const SHORT = {
@@ -267,13 +267,13 @@ export const MM_CSS = `
 .mm .method{display:grid;grid-template-columns:1fr 1fr;gap:24px}.mm .method h3{font-size:13px;border-top:2px solid var(--primary);padding-top:8px;margin-bottom:6px}.mm .method p,.mm .method li{font-size:12px;color:var(--muted)}.mm .method ul{padding-left:16px}
 .mm .foot{margin-top:30px;border-top:2px solid var(--text);padding-top:10px;font-size:11px;color:var(--muted-dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .mm.r-container{max-width:1240px;padding:0 24px 40px}.mm .lib2{padding-block:28px 24px}
-.mm .lrow .chip{max-width:100%}.mm .lrow .go .r-btn{white-space:nowrap}.mm .lrow .meta b{color:var(--text);font-weight:600}.mm .mm-ico{width:52px;height:52px;border-radius:12px;background:var(--primary-soft,#EAF1FE);color:var(--primary);display:flex;align-items:center;justify-content:center;flex:none}.mm .mm-ico svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.mm .lrow .chip{max-width:100%}.mm .lrow{grid-template-columns:52px minmax(0,1fr) auto}.mm .lrow::after{content:"View list →";border:1px solid var(--primary);color:var(--primary);border-radius:8px;padding:9px 16px;font-size:14px;font-weight:600;white-space:nowrap}.mm .lrow:hover::after{background:var(--primary);color:#fff}.mm .mm-sort{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}.mm .mm-sort a{white-space:nowrap;padding:4px 10px;border:1px solid var(--border-strong);border-radius:999px;color:var(--text)}.mm .mm-sort a.on{background:var(--primary);border-color:var(--primary);color:#fff}.mm .mm-bycountry{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:14px}.mm .mm-bycountry b{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.mm .mm-bycountry a{color:var(--primary)}.mm .lrow .meta b{color:var(--text);font-weight:600}.mm .mm-ico{width:52px;height:52px;border-radius:12px;background:var(--primary-soft,#EAF1FE);color:var(--primary);display:flex;align-items:center;justify-content:center;flex:none}.mm .mm-ico svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .mm .mm-fdet>summary{list-style:none;cursor:default}.mm .mm-fdet>summary::-webkit-details-marker{display:none}.mm .mm-fdet>summary a{pointer-events:auto}
 .mm .lib2-side-head h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;border:0;padding:0;margin:0;line-height:1.4}.mm .lib2-count strong{font-weight:700}
 .mm .lib2-bar .k{font-size:13px}.mm .lib2-bar select{display:none}
 @media (min-width:961px){.mm .mm-fdet>summary{pointer-events:none}}
 @media (max-width:960px){.mm .lib2-side{display:block}.mm .lib2-bar{display:flex}.mm .mm-fdet>summary{cursor:pointer;border-bottom:1px solid var(--border)}.mm .mm-fdet:not([open])>summary{border-bottom:0}.mm .mm-fdet>summary::after{content:"+";font-size:18px;color:var(--primary);margin-left:auto;padding-left:12px}.mm .mm-fdet[open]>summary::after{content:"−"}.mm .lib2-side-head{gap:10px}.mm .lib2-side-head h2{margin-right:auto}}
-@media (max-width:640px){.mm.r-container{padding:0 16px 32px}.mm .lrow .go{display:none}.mm .lrow{grid-template-columns:52px minmax(0,1fr)}}
+@media (max-width:640px){.mm.r-container{padding:0 16px 32px}.mm .lrow::after{display:none}.mm .lrow{grid-template-columns:52px minmax(0,1fr)}.mm .lib2-bar{flex-wrap:wrap;gap:8px 12px}.mm .mm-sort span{display:none}}
 .mm .fgrp-body .fopt{cursor:pointer}.mm .fopt input{pointer-events:none}
 .mm .hubbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.mm .hubbar input[type=search]{flex:1 1 220px;min-width:0;padding:10px 12px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}.mm .hubbar select{padding:6px 8px;border:1px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font:inherit}
 .mm a.fopt{text-decoration:none}.mm a.fopt:hover .lbl{text-decoration:underline}.mm a.fopt.on .lbl{font-weight:700;color:var(--primary)}
@@ -288,6 +288,10 @@ export const MM_CSS = `
 @media (max-width:860px){.mm .grid,.mm .method{grid-template-columns:1fr}.mm .wide{grid-column:auto}.mm .take{grid-template-columns:1fr;gap:6px}.mm .kpis{grid-template-columns:1fr 1fr}.mm .kpi:nth-child(2){border-right:0;margin-right:0}.mm .kpi{border-bottom:1px solid var(--border)}}
 @media (max-width:480px){.mm{padding:16px 16px 44px}.mm .kpi b{font-size:26px}.mm h2{font-size:18px}.mm .big b{font-size:28px}}
 `;
+
+// The hub and the country hubs do not draw charts, KPI rows, tables or the buy box: they get the stylesheet without those rules.
+const MAP_ONLY_CSS = ['.mm .crumb', '.mm h1', '.mm .kpi', '.mm .take', '.mm .lab', '.mm .grid', '.mm figure', '.mm .at', '.mm .sub', '.mm svg', '.mm .f-c1', '.mm figcaption', '.mm .sowhat', '.mm .scroll', '.mm table', '.mm th', '.mm .num', '.mm td.n', '.mm .heat', '.mm .top', '.mm .big', '.mm .impl', '.mm .buy', '.mm .cols', '.mm .method', '@media (max-width:860px)'];
+export const MM_HUB_CSS = MM_CSS.split('\n').filter((l) => !MAP_ONLY_CSS.some((x) => l.startsWith(x))).join('\n');
 
 // ── buy box ──────────────────────────────────────────────
 function buyBox(S, opts) {
@@ -414,7 +418,7 @@ function shell({ title, description, canonical, robots, ld, body, buyScripts = '
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/css/kira.css">
-${researchCss ? '<link rel="stylesheet" href="/css/research.css">\n' : ''}<style>${MM_CSS}</style>
+${researchCss ? '<link rel="stylesheet" href="/css/research.css">\n' : ''}<style>${researchCss ? MM_HUB_CSS : MM_CSS}</style>
 ${(ld || []).map((l) => `<script type="application/ld+json" id="${l.id}">${ldJson(l.data)}</script>`).join('\n')}
 </head><body>
 <!-- nav + footer injected by /js/nav.js -->
@@ -503,9 +507,10 @@ export function renderHub(model, params, opts = {}) {
     grp('kind', 'Goods or services', F.kinds.map((c) => opt(c.name, c.n, p.kind === c.key, { kind: c.key }, { kind: '' })).join('')),
     grp('band', 'Number of companies', F.sizes.map((c) => opt(c.name, c.n, p.size === c.key, { size: c.key }, { size: '' })).join('')),
   ].join('');
-  const rows = m.items.map((i) => `<a class="lrow" href="/en/market-maps/${esc(i.slug)}"><div class="mm-ico" aria-hidden="true"><svg><use href="#i-${iconOf(i)}"/></svg></div><div class="lrow-body"><div class="lrow-chips"><span class="chip">${esc(i.l2_family || 'List')}</span>${i.kind === 'service' ? '<span class="chip">Services</span>' : ''}</div><h3>${esc(i.title)}</h3><div class="meta"><span>${nf(i.companies)} companies</span>${i.phone_pct == null ? '' : `<span>${i.phone_pct}% phone</span>`}${i.email_pct == null ? '' : `<span>${i.email_pct}% email</span>`}<span>$${i.price}</span><span>${esc(i.built)}</span></div></div><div class="go"><span class="r-btn r-btn-outline">View list &rarr;</span></div></a>`).join('');
+  const rows = m.items.map((i) => `<a class="lrow" href="/en/market-maps/${esc(i.slug)}"><div class="mm-ico" aria-hidden="true"><svg><use href="#i-${iconOf(i)}"/></svg></div><div class="lrow-body"><div class="lrow-chips"><span class="chip">${esc(i.l2_family || 'List')}</span>${i.kind === 'service' ? '<span class="chip">Services</span>' : ''}</div><h3>${esc(i.title)}</h3><div class="meta">${[`${nf(i.companies)} companies`, i.phone_pct == null ? '' : `${i.phone_pct}% phone`, i.email_pct == null ? '' : `${i.email_pct}% email`, `$${i.price}`, esc(i.built)].filter(Boolean).join(' · ')}</div></div></a>`).join('');
+  const sortBar = m.total > 1 ? `<nav class="mm-sort" aria-label="Sort"><span>Sort</span>${SORTS.map(([k, name]) => `<a href="${link({ sort: k })}"${(p.sort || '') === k ? ' class="on" aria-current="true"' : ''}>${name}</a>`).join('')}</nav>` : '';
   const from = m.total ? (m.page - 1) * m.pageSize + 1 : 0;
-  const hidden = ['country', 'industry', 'kind', 'size'].filter((k) => p[k]).map((k) => `<input type="hidden" name="${k}" value="${esc(p[k])}">`).join('');
+  const hidden = ['country', 'industry', 'kind', 'size', 'sort'].filter((k) => p[k]).map((k) => `<input type="hidden" name="${k}" value="${esc(p[k])}">`).join('');
   const band = `<header class="r-band"><div class="r-container">
 ${crumbs([['MARKET MAP']])}
 <h1>Company lists: every company in a segment, by country</h1>
@@ -515,8 +520,9 @@ ${m.all ? `<form class="r-search" method="get" action="/en/market-maps#lists" ro
   const body = `${band}
 <main class="mm r-container" id="mm-root">
 ${m.all ? `${SPRITE}<div class="lib2" id="lists"><aside class="lib2-side" aria-label="Refine by"><details class="mm-fdet" open><summary class="lib2-side-head"><h2>Refine by</h2>${filtered ? `<a class="r-link" href="/en/market-maps#lists">Clear all</a>` : ''}</summary><div class="lib2-filters">${filterHtml}</div></details></aside>
-<section class="lib2-main"><div class="lib2-bar"><div class="lib2-count" id="mm-count">${m.total ? `<strong>${nf(m.total)} lists</strong> <span class="pg">(${nf(from)}-${nf(from + m.items.length - 1)}, largest first)</span>` : '<strong>0 lists</strong>'}</div></div>
+<section class="lib2-main"><div class="lib2-bar"><div class="lib2-count" id="mm-count">${m.total ? `<strong>${nf(m.total)} lists</strong> <span class="pg">(${nf(from)}-${nf(from + m.items.length - 1)}, ${esc((SORTS.find((x) => x[0] === p.sort) || SORTS[0])[2])})</span>` : '<strong>0 lists</strong>'}</div>${sortBar}</div>
 ${m.total ? `<div class="lib2-rows" id="mm-table">${rows}</div>${pager(m, p)}` : '<div class="r-empty" id="mm-none"><h3>No list matches these filters</h3><p>Try removing a filter or searching for another segment.</p><div class="acts"><a class="r-btn r-btn-primary" href="/en/market-maps#lists">Clear filters</a></div></div>'}</section></div>
+<nav class="mm-bycountry" aria-label="Browse by country"><b>Browse by country</b>${m.countries.map((c) => `<a href="/en/market-maps/${esc(c.slug)}">${esc(c.name)}</a>`).join('')}</nav>
 <script>if(window.matchMedia&&matchMedia("(max-width:960px)").matches){var d=document.querySelector(".mm-fdet");if(d)d.open=false}</script>`
   : `<div class="mm-empty" style="margin-top:24px;padding:28px 24px;border:1px solid var(--border,#e5e7eb);border-radius:12px;max-width:640px"><p style="margin:0 0 8px;font-size:20px;font-weight:600">${esc(E.h)}</p><p class="dek" style="margin:0 0 16px">${esc(E.p)}</p><a href="/${loc}/library" style="font-weight:600">${esc(E.a)}</a></div>`}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>

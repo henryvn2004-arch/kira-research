@@ -3,7 +3,7 @@
 // Data layer of the market-map hub and the country hubs: one light index of every published row (no stats blob),
 // kept in memory for 10 minutes, and the pure functions that filter, count and page it. The hub is a small landing page
 // (search, sidebar filters, 50 rows a page); everything else is reached through query parameters
-//   ?country=<slug>&industry=<family>&kind=goods|services&size=u100|b100|b300|o500&q=<words>&page=<n>
+//   ?country=<slug>&industry=<family>&kind=goods|services&size=u100|b100|b300|o500&q=<words>&sort=small|az&page=<n>
 // and plain <a href> links, so a crawler can follow every page. No model, no per-request scan of the stats JSON.
 // ============================================================
 import { listPrice } from '../pricing.js';
@@ -12,6 +12,7 @@ export const PAGE_SIZE = 50;
 export const BANDS = [['u100', 'Under 100', 0, 99], ['b100', '100 to 299', 100, 299], ['b300', '300 to 500 ($49)', 300, 500], ['o500', 'Over 500 ($99)', 501, Infinity]];
 export const bandOf = (n) => (BANDS.find((b) => n >= b[2] && n <= b[3]) || BANDS[0])[0];
 export const TOP_FAMILIES = 12;
+export const SORTS = [['', 'Largest', 'largest first'], ['small', 'Smallest', 'smallest first'], ['az', 'A–Z', 'A to Z']];
 const TTL_MS = 10 * 60 * 1000;
 const SLUG = /^[a-z0-9][a-z0-9-]{0,80}$/;
 
@@ -31,16 +32,17 @@ export function parseParams(q = {}) {
     kind: kind === 'goods' || kind === 'services' ? kind : '',
     size: BANDS.some((b) => b[0] === size) ? size : '',
     q: s(q.q, 60),
+    sort: ['small', 'az'].includes(s(q.sort, 6).toLowerCase()) ? s(q.sort, 6).toLowerCase() : '',
     page: Number.isFinite(page) && page > 0 ? Math.min(page, 500) : 1,
   };
 }
-export const isFiltered = (p) => !!(p.country || p.industry || p.kind || p.size || p.q);
+export const isFiltered = (p) => !!(p.country || p.industry || p.kind || p.size || p.q || p.sort);
 
 // Query string in a fixed order; page 1 is left out. Returns '' when nothing is set.
 export function queryString(p, over = {}) {
   const m = { ...p, ...over };
   const out = [];
-  for (const k of ['country', 'industry', 'kind', 'size', 'q']) if (m[k]) out.push(`${k}=${encodeURIComponent(m[k])}`);
+  for (const k of ['country', 'industry', 'kind', 'size', 'q', 'sort']) if (m[k]) out.push(`${k}=${encodeURIComponent(m[k])}`);
   if (m.page > 1) out.push(`page=${m.page}`);
   return out.length ? `?${out.join('&')}` : '';
 }
@@ -79,16 +81,20 @@ export function buildFacets(items, p) {
 
 // Largest lists first, then A to Z (stable, so a page boundary never moves between requests).
 export const bySize = (a, b) => b.companies - a.companies || (a.slug < b.slug ? -1 : 1);
+const bySmall = (a, b) => a.companies - b.companies || (a.slug < b.slug ? -1 : 1);
+const byName = (a, b) => a.title.localeCompare(b.title) || (a.slug < b.slug ? -1 : 1);
+export const sorter = (sort) => (sort === 'small' ? bySmall : sort === 'az' ? byName : bySize);
 
 export function hubModel(index, p) {
   const all = index.items;
-  const filtered = applyFilters(all, p).sort(bySize);
+  const filtered = applyFilters(all, p).sort(sorter(p.sort));
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const page = Math.min(p.page, pages);
   return {
     total: filtered.length, all: all.length, page, pages, pageSize: PAGE_SIZE,
     items: filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
     facets: buildFacets(all, p),
+    countries: [...new Map(all.map((i) => [i.country, i.country_name]))].map(([slug, name]) => ({ slug, name })).sort((a, b) => a.name.localeCompare(b.name)),
     anyIndexable: all.some((i) => i.indexable),
   };
 }

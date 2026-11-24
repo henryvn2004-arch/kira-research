@@ -4,7 +4,7 @@
 // `market_maps` (migration 070) by api/_lib/market-map/render.js.
 //   GET /api/market-maps?type=hub&loc=en                              /<loc>/market-maps  (the "Company lists" library table)
 //   GET /api/market-maps?type=list                                    the same table as JSON { items, total, page, pages, page_size }
-//   Hub params (hub and list): country=<slug>&industry=<family>&kind=goods|services&size=u100|b100|b300|o500&q=<words>&page=<n>, 50 rows a page
+//   Hub params (hub and list): country=<slug>&industry=<family>&kind=goods|services&size=u100|b100|b300|o500&q=<words>&sort=small|az&page=<n>, 50 rows a page (default sort: largest first)
 //   GET /api/market-maps?type=country&loc=en&country=vietnam          /<loc>/market-maps/<country> (every map of the country, grouped by industry)
 //   GET /api/market-maps?type=map&loc=en&country=vietnam&segment=soft-drinks   /<loc>/market-maps/<country>/<segment>
 // English only: ja/ko/zh paths serve the English page with the English canonical and noindex.
