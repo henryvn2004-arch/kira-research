@@ -16,6 +16,7 @@
 // Nothing here ever prints a phone number, an email or a named person: the stats hold none.
 // ============================================================
 import { BASE, esc, ldJson } from '../ssr.js';
+import { citeBlock, citationText } from '../cite.js';
 import { BANDS, SORTS, isFiltered, hubHref } from './hub.js';
 
 const TIERS = ['Large', 'Mid-size', 'Small', 'Not rated'];
@@ -285,6 +286,7 @@ export const MM_CSS = `
 .mm .fam{margin-top:26px}.mm .fam h2{font-size:17px;margin-bottom:10px}.mm .fam h2 i{font-style:normal;font-size:12px;color:var(--muted-dim);font-weight:400}
 .mm .mmlist{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 24px}.mm .mmlist li{font-size:14px;padding:3px 0;border-bottom:1px solid var(--border)}.mm .mmlist a{color:var(--primary);font-weight:600}.mm .mmlist a:hover{text-decoration:underline}
 .mm .k{font-size:12px;color:var(--muted-dim)}.mm tr[hidden]{display:none}.mm td a:hover{text-decoration:underline}
+.mm .kira-cite{margin-top:32px;border:1px solid var(--border);border-radius:10px;padding:16px}.mm .kira-cite h3{margin:0 0 6px;font-size:15px}.mm .kira-cite .rd-cite{margin:0 0 10px;font-size:13px;line-height:1.55;color:var(--muted);word-break:break-word}.mm .kira-cite button{font:inherit;font-size:12.5px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);cursor:pointer}
 @media (max-width:860px){.mm .grid,.mm .method{grid-template-columns:1fr}.mm .wide{grid-column:auto}.mm .take{grid-template-columns:1fr;gap:6px}.mm .kpis{grid-template-columns:1fr 1fr}.mm .kpi:nth-child(2){border-right:0;margin-right:0}.mm .kpi{border-bottom:1px solid var(--border)}}
 @media (max-width:480px){.mm{padding:16px 16px 44px}.mm .kpi b{font-size:26px}.mm h2{font-size:18px}.mm .big b{font-size:28px}}
 `;
@@ -310,6 +312,10 @@ function buyBox(S, opts) {
 <div class="sub" style="margin-top:8px">Leave your email and we write to you when the list is ready to order. One file, a snapshot of ${esc(S.built)}.</div></div>
 <script>(function(){var f=document.getElementById('mm-req'),m=document.getElementById('mm-msg');if(!f)return;f.addEventListener('submit',function(e){e.preventDefault();var em=f.elements.email.value.trim();if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(em)){m.textContent='Please enter a valid email address.';return}var btn=f.querySelector('button');btn.disabled=true;fetch('/api/topic-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,keyword:${JSON.stringify(keyword).replace(/</g, '\\u003c')},locale:'en',hp:f.elements.hp.value})}).then(function(r){if(!r.ok)throw 0;m.textContent='Thank you. We have your request and will email you.';f.reset();btn.disabled=false}).catch(function(){m.textContent='Something went wrong. Please try again.';btn.disabled=false})})})();</script>`;
 }
+
+// "Cite this page" box (English pages only): KIRA Research, <page title>, <Month YYYY>, <canonical URL>.
+const maxDate = (items) => (items || []).reduce((m, i) => (i && i.built && i.built > m ? i.built : m), '');
+const citeHtml = (title, date, url) => citeBlock({ heading: 'Cite this page', copy: 'Copy citation', copied: 'Copied', citation: citationText(title, date, url, 'en') });
 
 // ── page body ────────────────────────────────────────────
 export function renderBody(S, C, opts = {}) {
@@ -401,6 +407,7 @@ ${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">Br
 ${sec1}${sec2}${sec3}${sec3b}${sec4}${sec5}${impl}${sec7}
 ${buyBox(S, opts)}
 ${sec8}
+${citeHtml(`${seg} companies in ${cn}: market map`, S.built, opts.canonical || `${BASE}/en/market-maps/${S.meta?.slug}`)}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com) · snapshot ${esc(S.built)}</span></div>
 </main>`;
 }
@@ -424,6 +431,7 @@ ${(ld || []).map((l) => `<script type="application/ld+json" id="${l.id}">${ldJso
 <!-- nav + footer injected by /js/nav.js -->
 ${body}
 ${buyScripts}<script src="/js/nav.js" defer></script>
+<script src="/js/cite-copy.js" defer></script>
 </body></html>`;
 }
 
@@ -441,8 +449,9 @@ export function renderDocument(S, C, opts = {}) {
       description: mapDescription(S, !!(opts.buy && opts.buy.enabled)), url: canonical, dateModified: S.built, temporalCoverage: S.built,
       spatialCoverage: { '@type': 'Place', name: S.country }, isAccessibleForFree: true, inLanguage: 'en',
       variableMeasured: [AXIS_TITLE(S), 'Region', 'Relative scale tier'],
-      creator: { '@type': 'Organization', name: 'Kira Research', url: `${BASE}/` },
-      publisher: { '@type': 'Organization', name: 'Kira Research', url: `${BASE}/` },
+      citation: citationText(`${S.segment} companies in ${S.country}: market map`, S.built, canonical, 'en'),
+      creator: { '@type': 'Organization', name: 'KIRA Research', url: `${BASE}/` },
+      publisher: { '@type': 'Organization', name: 'KIRA Research', url: `${BASE}/` },
     } },
     { id: 'ld-breadcrumb', data: {
       '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -525,6 +534,7 @@ ${m.total ? `<div class="lib2-rows" id="mm-table">${rows}</div>${pager(m, p)}` :
 <nav class="mm-bycountry" aria-label="Browse by country"><b>Browse by country</b>${m.countries.map((c) => `<a href="/en/market-maps/${esc(c.slug)}">${esc(c.name)}</a>`).join('')}</nav>
 <script>if(window.matchMedia&&matchMedia("(max-width:960px)").matches){var d=document.querySelector(".mm-fdet");if(d)d.open=false}</script>`
   : `<div class="mm-empty" style="margin-top:24px;padding:28px 24px;border:1px solid var(--border,#e5e7eb);border-radius:12px;max-width:640px"><p style="margin:0 0 8px;font-size:20px;font-weight:600">${esc(E.h)}</p><p class="dek" style="margin:0 0 16px">${esc(E.p)}</p><a href="/${loc}/library" style="font-weight:600">${esc(E.a)}</a></div>`}
+${citeHtml('Company lists by country and segment', maxDate(m.items), canonical)}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
 </main>`;
   const ld = crumbLd([['Kira Research', `${BASE}/`], ['Market Map', `${BASE}/en/market-maps`]]);
@@ -554,6 +564,7 @@ ${crumbs([['MARKET MAP', '/en/market-maps'], [c.name]])}
 ${groups}
 <p class="k" style="margin-top:24px"><a href="/en/market-maps?country=${esc(c.slug)}#lists">Filter ${esc(c.name)} lists by size and type</a> · <a href="/en/market-maps">All countries</a></p></section></div>
 <script>if(window.matchMedia&&matchMedia("(max-width:960px)").matches){var d=document.querySelector(".mm-fdet");if(d)d.open=false}</script>
+${citeHtml(`${c.name} company lists by segment`, maxDate(c.items), canonical)}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
 </main>`;
   const ld = crumbLd([['Kira Research', `${BASE}/`], ['Market Map', `${BASE}/en/market-maps`], [c.name, canonical]]);

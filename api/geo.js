@@ -23,10 +23,13 @@ import {
 import { T, countryName } from './_lib/geo-i18n.js';
 import { logGeoHit } from './_lib/geo-hits.js';
 import { answerBlock, claimItem, modelledNote, whoDecidesHtml } from './_lib/geo-html.js';
+import { citeBlock, citationText } from './_lib/cite.js';
 
 const cut = (s, n) => { const t = plain(s); return t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t; };
 const day = (iso) => String(iso || '').slice(0, 10);
 const loc2 = (l) => (LOCALES.includes(l) ? l : 'en');
+// "Cite this page" box: KIRA Research, <page title>, <Month YYYY>, <canonical URL>.
+const citeFor = (L, vl, title, date, path) => citeBlock({ heading: L.citeThis, copy: L.copyCite, copied: L.copied, citation: citationText(title, date, BASE + path, vl) });
 const bdUrl = (u) => /^https:\/\/(www\.)?bizdirectasia\.com\//.test(u || '');
 
 function page(res, html, { status = 200, cache = true } = {}) {
@@ -141,7 +144,7 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   const content = '<!--SSR-->' +
     crumbs([{ name: L.library, href: `/${vl}/library` }, { name: cName }, { name: segName }]) +
     `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.metaHub(updated, rows.length))}</p>` +
-    qa + market + decide + trade + who + related + '<!--/SSR-->';
+    qa + market + decide + trade + who + related + citeFor(L, vl, h1, updated, path) + '<!--/SSR-->';
 
   const ld = [
     { id: 'ld-breadcrumb', data: crumbJson([
@@ -296,7 +299,7 @@ async function renderCountry(req, res, loc, countrySlug) {
     `<p class="geo-note"><a href="/${vl}/data/${countrySlug}">${esc(L.dataCLink(cName))}</a></p>` +
     [...groups.values()].sort((a, b) => a.name.localeCompare(b.name)).map(({ name: g, items }) =>
       `<section><h2>${esc(g)}</h2><ul class="geo-list">${items.sort((a, b) => (b.lvl1 - a.lvl1) || a.name.localeCompare(b.name)).map(({ h, name }) => `<li><a href="/${vl}/markets/${countrySlug}/${esc(h.segment)}">${esc(name)}</a> · ${esc(L.answersN(h.counts[vl]))}</li>`).join('')}</ul></section>`).join('') +
-    '<!--/SSR-->';
+    citeFor(L, vl, h1, hubs.reduce((m, h) => (h.updated > m ? h.updated : m), ''), path) + '<!--/SSR-->';
   const editions = LOCALES.filter((l) => okFor(l).length);
   await shell(req, res, {
     loc: vl, indexable: !fallback && list.length > 0, path, title: `${h1} — KIRA RESEARCH`, description: cut(L.countryMeta(list.length), 200),
@@ -320,7 +323,8 @@ async function renderMarkets(req, res, loc) {
   const content = '<!--SSR-->' + crumbs([{ name: L.library, href: `/${vl}/library` }, { name: L.marketsH1 }]) +
     `<h1>${esc(L.marketsH1)}</h1><p class="geo-meta">${esc(L.marketsMeta(list.length))}</p>` +
     `<p class="geo-note"><a href="/${vl}/data/">${esc(L.dataLink)}</a></p>` +
-    `<ul class="geo-list">${list.map(({ c, n }) => `<li><a href="/${vl}/markets/${slugOf(c.name)}">${esc(countryName(c, vl))}</a> · ${esc(L.industriesN(n))}</li>`).join('')}</ul><!--/SSR-->`;
+    `<ul class="geo-list">${list.map(({ c, n }) => `<li><a href="/${vl}/markets/${slugOf(c.name)}">${esc(countryName(c, vl))}</a> · ${esc(L.industriesN(n))}</li>`).join('')}</ul>` +
+    citeFor(L, vl, L.marketsH1, hubs.reduce((m, h) => (h.updated > m ? h.updated : m), ''), path) + '<!--/SSR-->';
   const editions = LOCALES.filter((l) => okFor(l).length);
   await shell(req, res, {
     loc: vl, indexable: !fallback && list.length > 0, path, title: `${L.marketsH1} — KIRA RESEARCH`, description: cut(L.marketsMeta(list.length), 200),

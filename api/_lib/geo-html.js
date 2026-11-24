@@ -5,6 +5,7 @@
 // L = interface strings (geo-i18n.js T[loc]); loc = language of the links.
 // ============================================================
 import { esc } from './ssr.js';
+import { monthYear } from './cite.js';
 
 export function sourceLine(a, titles, L, loc) {
   const ref = a.source_ref || {};
@@ -20,8 +21,13 @@ export function sourceLine(a, titles, L, loc) {
   return `${L.src} ${esc(a.primary_source || L.srcDefault)}${yr}` + (t ? ` · ${L.srcReport} <a href="/${loc}/reports/${esc(ref.slug)}">${esc(t)}</a>` : '');
 }
 
+// The name of the source as the source line prints it.
+const srcName = (a, L) => (a.source_kind === 'transcript' ? L.srcField : a.source_kind === 'econ' ? (a.primary_source || L.srcEcon) : (a.primary_source || L.srcDefault));
+
+// The answer opens with a sentence that names KIRA Research, the month of the figure and its source, so the
+// paragraph still says where it came from when an answer engine lifts it out of the page. Same facts as the source line.
 export const answerBlock = (a, titles, L, loc, tag = 'h3') =>
-  `<${tag}>${esc(a.question)}</${tag}><p>${esc(a.answer_short)}</p><p class="geo-src">${sourceLine(a, titles, L, loc)}</p>`;
+  `<${tag}>${esc(a.question)}</${tag}><p><span class="geo-attr">${esc(L.according(a.updated_at ? monthYear(a.updated_at, loc) : '', srcName(a, L), a.year || ''))}</span>${esc(a.answer_short)}</p><p class="geo-src">${sourceLine(a, titles, L, loc)}</p>`;
 
 // A practitioner statement: never a quote, never one named person; the basis label sits on the same line.
 export function claimItem(c, titles, loc, withLink = true) {
