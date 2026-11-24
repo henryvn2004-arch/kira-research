@@ -34,23 +34,24 @@ const TEMPLATE_URLS = {
 const cache = new Map();   // type → { at, html }
 const TTL = 5 * 60 * 1000;
 
-// The static template: from the function bundle (includeFiles), else from the site itself.
-export async function loadTemplate(type, req) {
-  const hit = cache.get(type);
+// A static page file: from the function bundle (includeFiles), else from the site itself.
+export async function loadStatic(key, file, urlPath, req) {
+  const hit = cache.get(key);
   if (hit && Date.now() - hit.at < TTL) return hit.html;
   let html = null;
-  try { html = await readFile(path.join(process.cwd(), TEMPLATE_FILES[type]), 'utf8'); } catch (_e) { /* not bundled */ }
+  try { html = await readFile(path.join(process.cwd(), file), 'utf8'); } catch (_e) { /* not bundled */ }
   if (!html) {
     const host = String(req.headers['x-forwarded-host'] || req.headers.host || '');
     const origin = /^(www\.)?kiraresearch\.com$|\.vercel\.app$|^localhost(:\d+)?$/.test(host)
       ? `${/^localhost/.test(host) ? 'http' : 'https'}://${host}` : BASE;
-    const r = await fetch(origin + TEMPLATE_URLS[type], { headers: { 'user-agent': 'kira-ssr' } });
-    if (!r.ok) throw new Error(`template ${type}: ${r.status}`);
+    const r = await fetch(origin + urlPath, { headers: { 'user-agent': 'kira-ssr' } });
+    if (!r.ok) throw new Error(`template ${key}: ${r.status}`);
     html = await r.text();
   }
-  cache.set(type, { at: Date.now(), html });
+  cache.set(key, { at: Date.now(), html });
   return html;
 }
+export const loadTemplate = (type, req) => loadStatic(type, TEMPLATE_FILES[type], TEMPLATE_URLS[type], req);
 
 // Replace one attribute of the <meta>/<link> tag that carries id="…".
 function setById(html, id, attr, value) {

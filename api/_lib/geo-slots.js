@@ -9,7 +9,7 @@
 import { esc } from './ssr.js';
 import {
   answersForDoc, answersForHub, docTitles, claimsForTranscript, countryByCode, segmentName, slugOf,
-  industrySlug, topicSlug, tradeIndex, tradeTopicIndexable, MIN_ANSWERS, ansLoc, claimLoc, sb,
+  industrySlug, topicSlug, tradeIndex, tradeTopicIndexable, MIN_ANSWERS, ansLoc, claimLoc, sb, crosswalk, bizdirectSummary,
 } from './geo.js';
 import { answerBlock, claimItem, modelledNote } from './geo-html.js';
 import { T, countryName } from './geo-i18n.js';
@@ -79,4 +79,33 @@ export async function keyPointsHtml(slug, loc = 'en') {
   }
   return `${CSS}<div class="r-container geo-slot" lang="${vl === 'zh' ? 'zh-Hans' : vl}"><h2>${esc(L.keyPoints)}</h2>${modelledNote(L, vl)}<ul class="geo-claims">${items}</ul>` +
     (links.length ? `<p class="geo-src">${links.slice(0, 5).join(' · ')}</p>` : '') + '</div>';
+}
+
+// "Companies in this market": links to the BizDirect Asia list pages of the report's / transcript's market and
+// segment (crosswalk + segment-summary, cached like the hubs). Both sites are ours, so plain links.
+// seg = { country_code, segment_key } or null. '' when nothing matches or BizDirect does not answer.
+export async function companiesHtml(seg, loc = 'en') {
+  if (!seg || !seg.country_code || !seg.segment_key) return '';
+  let bd = null;
+  try { bd = await bizdirectSummary(await crosswalk(seg.country_code, seg.segment_key)); } catch (_e) { bd = null; }
+  const segs = bd && Array.isArray(bd.segments) ? bd.segments.filter((x) => x && (x.companies > 0 || (x.pages || []).length)) : [];
+  const L = T[loc] || T.en;
+  const ok = (u) => /^https:\/\/(www\.)?bizdirectasia\.com\//.test(u || '');
+  const rows = segs.map((x) => {
+    const pages = (x.pages || []).filter((p) => p && ok(p.url));
+    if (!pages.length) return '';
+    return `<li><b>${esc(x.name || x.term)}</b>: ${esc(L.bdCompanies(Number(x.companies) || 0))} ` +
+      pages.slice(0, 4).map((p) => `<a href="${esc(p.url)}">${esc(L.bdList(p.role ? String(p.role).toLowerCase() : ''))}</a>`).join(' · ') + '</li>';
+  }).filter(Boolean);
+  if (!rows.length) return '';
+  return `${CSS}<div class="r-container geo-slot" lang="${loc === 'zh' ? 'zh-Hans' : loc}"><h2>${esc(L.companiesHere)}</h2><ul class="geo-claims">${rows.slice(0, 5).join('')}</ul><p class="geo-src">${esc(L.companyData)}</p></div>`;
+}
+
+export async function reportCompaniesHtml(slug, loc = 'en') {
+  const answers = await answersForDoc(slug, 15);
+  return companiesHtml(answers.find((a) => a.segment_key), loc);
+}
+export async function transcriptCompaniesHtml(slug, loc = 'en') {
+  const [seg] = await sb(`kira_answers?status=eq.published&source_ref->>slug=eq.${encodeURIComponent(slug)}&segment_key=not.is.null&select=country_code,segment_key&limit=1`);
+  return companiesHtml(seg, loc);
 }

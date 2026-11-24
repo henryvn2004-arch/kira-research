@@ -37,6 +37,7 @@ const JOBS = [
   { key: 'econ-refresh-us_census', label: 'Weekly US trade by product refresh (waits for CENSUS_API_KEY)', schedule: 'Fridays 04:10 UTC', max_gap_h: 192 },
   { key: 'geo-econ', label: 'Weekly Kira Data answers for the GEO hubs (code, no model)', schedule: 'Sundays 06:10 UTC', max_gap_h: 192 },
   { key: 'pipeline-watch', label: 'Check that the report, Experts and Insights pipelines are still producing (red = one is silent)', schedule: 'Every 6 hours', max_gap_h: 14 },
+  { key: 'indexnow', label: 'Daily ping to search engines (IndexNow) for pages published or updated in the last 26 h', schedule: 'Daily 03:40 UTC', max_gap_h: 30 },
   { key: 'topic-planner', label: 'Weekly topic planner (new topics for 15 countries)', schedule: 'Mondays 01:00 UTC (08:00 Vietnam)', max_gap_h: 192 }
 ];
 

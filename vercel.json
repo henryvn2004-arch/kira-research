@@ -121,6 +121,7 @@
       "destination": "/studio/:path*"
     },
 
+    { "source": "/indexnow.txt", "destination": "/api/indexnow-key" },
     { "source": "/sitemap.xml",     "destination": "/api/sitemap" },
     { "source": "/sitemap-en.xml",  "destination": "/api/sitemap?locale=en" },
     { "source": "/sitemap-ja.xml",  "destination": "/api/sitemap?locale=ja" },
@@ -128,6 +129,24 @@
     { "source": "/sitemap-zh.xml",  "destination": "/api/sitemap?locale=zh" },
     { "source": "/sitemap-market-maps.xml", "destination": "/api/sitemap?type=market-maps" },
 
+    { "source": "/en/library", "destination": "/api/listing?type=library&loc=en" },
+    { "source": "/en/library/", "destination": "/api/listing?type=library&loc=en" },
+    { "source": "/en/insights", "destination": "/api/listing?type=insights&loc=en" },
+    { "source": "/en/insights/", "destination": "/api/listing?type=insights&loc=en" },
+    { "source": "/ja/library", "destination": "/api/listing?type=library&loc=ja" },
+    { "source": "/ja/library/", "destination": "/api/listing?type=library&loc=ja" },
+    { "source": "/ja/insights", "destination": "/api/listing?type=insights&loc=ja" },
+    { "source": "/ja/insights/", "destination": "/api/listing?type=insights&loc=ja" },
+    { "source": "/ko/library", "destination": "/api/listing?type=library&loc=ko" },
+    { "source": "/ko/library/", "destination": "/api/listing?type=library&loc=ko" },
+    { "source": "/ko/insights", "destination": "/api/listing?type=insights&loc=ko" },
+    { "source": "/ko/insights/", "destination": "/api/listing?type=insights&loc=ko" },
+    { "source": "/zh/library", "destination": "/api/listing?type=library&loc=zh" },
+    { "source": "/zh/library/", "destination": "/api/listing?type=library&loc=zh" },
+    { "source": "/zh/insights", "destination": "/api/listing?type=insights&loc=zh" },
+    { "source": "/zh/insights/", "destination": "/api/listing?type=insights&loc=zh" },
+    { "source": "/en/experts/transcripts", "destination": "/api/listing?type=transcripts&loc=en" },
+    { "source": "/en/experts/transcripts/", "destination": "/api/listing?type=transcripts&loc=en" },
     { "source": "/en/reports/:slug", "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|WhatsApp|Discordbot|TelegramBot|SkypeUriPreview|Pinterestbot|redditbot|Embedly|Mastodon).*" }], "destination": "/api/report-og?locale=en&slug=:slug" },
     { "source": "/ja/reports/:slug", "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|WhatsApp|Discordbot|TelegramBot|SkypeUriPreview|Pinterestbot|redditbot|Embedly|Mastodon).*" }], "destination": "/api/report-og?locale=ja&slug=:slug" },
     { "source": "/ko/reports/:slug", "has": [{ "type": "header", "key": "user-agent", "value": ".*(facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|WhatsApp|Discordbot|TelegramBot|SkypeUriPreview|Pinterestbot|redditbot|Embedly|Mastodon).*" }], "destination": "/api/report-og?locale=ko&slug=:slug" },
@@ -228,7 +247,8 @@
     { "path": "/api/cron-moves", "schedule": "20 22 * * *" },
     { "path": "/api/cron-registry", "schedule": "40 21 * * *" },
     { "path": "/api/cron-geo-econ", "schedule": "10 6 * * 0" },
-    { "path": "/api/cron-pipeline-watch", "schedule": "17 */6 * * *" }
+    { "path": "/api/cron-pipeline-watch", "schedule": "17 */6 * * *" },
+    { "path": "/api/cron-indexnow", "schedule": "40 3 * * *" }
   ],
   "functions": {
     "api/inngest.js": {
@@ -243,6 +263,10 @@
     "api/ssr.js": {
       "maxDuration": 30,
       "includeFiles": "public/en/{reports,insights,experts/transcripts}/_view.html"
+    },
+    "api/listing.js": {
+      "maxDuration": 30,
+      "includeFiles": "public/**/_list.html"
     },
     "api/geo.js": {
       "maxDuration": 30,
