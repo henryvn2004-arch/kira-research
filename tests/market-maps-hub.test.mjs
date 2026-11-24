@@ -48,7 +48,7 @@ const robots = (html) => /<meta name="robots" content="([^"]+)"/.exec(html)[1];
 
 test('parseParams: bad values are dropped, page is clamped, order of the query string is fixed', () => {
   const p = hub.parseParams({ country: 'Vietnam', industry: ' Retail   banking ', kind: 'weird', size: 'b100', q: 'x'.repeat(200), page: '-3' });
-  assert.deepEqual({ ...p, q: p.q.length }, { country: 'vietnam', industry: 'Retail banking', kind: '', size: 'b100', q: 60, page: 1 });
+  assert.deepEqual({ ...p, q: p.q.length }, { country: 'vietnam', industry: 'Retail banking', kind: '', size: 'b100', q: 60, sort: '', page: 1 });
   assert.equal(hub.parseParams({ country: '../etc' }).country, '');
   assert.equal(hub.parseParams({ page: '99999' }).page, 500);
   assert.equal(hub.parseParams({ page: ['2', '3'] }).page, 2);
@@ -94,7 +94,7 @@ test('filters: country, industry, kind, size and q combine; facet counts match w
   assert.equal(hub.hubModel({ items }, hub.parseParams({ q: 'zzzzz' })).total, 0);
 });
 
-test('hub HTML: under 80 KB with 4,000 rows, prev/next are real links, tiles and chips link out', async () => {
+test('hub HTML: under 80 KB with 4,000 rows, prev/next are real links, rows carry an SVG icon, no tiles or chips', async () => {
   const { items } = await hub.getIndex();
   const p = hub.parseParams({ page: '3' });
   const m = hub.hubModel({ items }, p);
@@ -102,8 +102,8 @@ test('hub HTML: under 80 KB with 4,000 rows, prev/next are real links, tiles and
   assert.ok(Buffer.byteLength(html) < 80 * 1024, `hub is ${Buffer.byteLength(html)} bytes`);
   assert.match(html, /<a rel="prev" href="\/en\/market-maps\?page=2">/);
   assert.match(html, /<a rel="next" href="\/en\/market-maps\?page=4">/);
-  assert.match(html, /<a class="tile" href="\/en\/market-maps\/vietnam">/);
-  assert.match(html, /<a class="ichip" href="\/en\/market-maps\?industry=/);
+  assert.ok(!html.includes('class="tile"') && !html.includes('class="ichip"') && !html.includes('cover-thumb'));
+  assert.ok((html.match(/<use href="#i-[a-z]+"\/>/g) || []).length === 50 && html.includes('<symbol id="i-food"'));
   assert.equal((html.match(/<a class="lrow" href="\/en\/market-maps\//g) || []).length, 50);
   assert.ok(html.includes('id="mm-table"') && html.includes('id="mm-q"') && html.includes('class="fgrp"'));
   assert.ok(!/\bAI\b|Claude/.test(html.replace(/<style>[\s\S]*?<\/style>/, '')));
@@ -176,4 +176,23 @@ test('sitemap: its own file with hub, country hubs and indexable maps; index lis
   indexingOn = false; cfg.invalidateConfig();
   assert.doesNotMatch((await call(sitemap, {}, '/api/sitemap')).body, /sitemap-market-maps/);
   assert.equal((await call(sitemap, {}, '/api/sitemap?type=market-maps')).body.includes('<loc>'), false);
+});
+
+test('hub sort: smallest first and A-Z are plain links, default stays clean, sorted views are noindex, country links are on the page', async () => {
+  const { items } = await hub.getIndex();
+  assert.equal(hub.parseParams({ sort: 'zzz' }).sort, '');
+  assert.equal(hub.queryString(hub.parseParams({ sort: 'az', page: '2' })), '?sort=az&page=2');
+  const small = hub.hubModel({ items }, hub.parseParams({ sort: 'small' }));
+  assert.ok(small.items.every((r, n) => n === 0 || small.items[n - 1].companies <= r.companies));
+  const az = hub.hubModel({ items }, hub.parseParams({ sort: 'az' }));
+  assert.ok(az.items.every((r, n) => n === 0 || az.items[n - 1].title.localeCompare(r.title) <= 0));
+  assert.ok(hub.isFiltered(hub.parseParams({ sort: 'az' })) && !hub.isFiltered(hub.parseParams({})));
+  const p = hub.parseParams({ country: 'vietnam', sort: 'az' });
+  const html = renderHub(hub.hubModel({ items }, p), p, { loc: 'en' });
+  assert.match(html, /<nav class="mm-sort"/);
+  assert.match(html, /href="\/en\/market-maps\?country=vietnam&amp;sort=small"|href="\/en\/market-maps\?country=vietnam&sort=small"/);
+  assert.match(html, /<nav class="mm-bycountry"[^>]*><b>Browse by country<\/b><a href="\/en\/market-maps\/[a-z-]+">/);
+  assert.match(html, /name="sort" value="az"/);
+  const plain = renderHub(hub.hubModel({ items }, hub.parseParams({})), hub.parseParams({}), { loc: 'en' });
+  assert.ok(Buffer.byteLength(plain) < 40 * 1024, `hub is ${Buffer.byteLength(plain)} bytes`);
 });
