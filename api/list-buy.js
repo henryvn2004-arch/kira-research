@@ -1,6 +1,6 @@
 // ============================================================
 // KIRA RESEARCH — api/list-buy.js
-// PayPal checkout for one market-map company list (Excel), $49 up to 500 companies, $99 above (api/_lib/pricing.js).
+// PayPal checkout for one market-map company list (Excel), $36 up to 500 companies, $57 above (api/_lib/pricing.js).
 // Same shape as api/transcript-buy.js.
 //
 //   POST /api/list-buy?action=create   body { slug: '<country>/<segment>' }
