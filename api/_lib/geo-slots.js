@@ -12,7 +12,7 @@ import {
   industrySlug, topicSlug, tradeIndex, tradeTopicIndexable, MIN_ANSWERS, ansLoc, claimLoc, sb, crosswalk, bizdirectSummary,
 } from './geo.js';
 import { answerBlock, claimItem, modelledNote } from './geo-html.js';
-import { T, countryName } from './geo-i18n.js';
+import { T, countryName, companyDataHtml } from './geo-i18n.js';
 
 const CSS = '<style>.geo-slot{padding-block:8px 48px;max-width:860px}.geo-slot h2{font-size:22px;margin:32px 0 12px}.geo-slot h3{font-size:17px;line-height:1.35;margin:20px 0 6px}.geo-slot p{margin:0 0 6px;line-height:1.6}.geo-slot .geo-src,.geo-slot .geo-basis{color:var(--muted);font-size:13px}.geo-slot .geo-basis{display:block}.geo-slot .geo-claims{list-style:none;padding:0}.geo-slot .geo-claims li{margin:0 0 14px;line-height:1.6}</style>';
 
@@ -98,7 +98,7 @@ export async function companiesHtml(seg, loc = 'en') {
       pages.slice(0, 4).map((p) => `<a href="${esc(p.url)}">${esc(L.bdList(p.role ? String(p.role).toLowerCase() : ''))}</a>`).join(' · ') + '</li>';
   }).filter(Boolean);
   if (!rows.length) return '';
-  return `${CSS}<div class="r-container geo-slot" lang="${loc === 'zh' ? 'zh-Hans' : loc}"><h2>${esc(L.companiesHere)}</h2><ul class="geo-claims">${rows.slice(0, 5).join('')}</ul><p class="geo-src">${esc(L.companyData)}</p></div>`;
+  return `${CSS}<div class="r-container geo-slot" lang="${loc === 'zh' ? 'zh-Hans' : loc}"><h2>${esc(L.companiesHere)}</h2><ul class="geo-claims">${rows.slice(0, 5).join('')}</ul><p class="geo-src">${companyDataHtml(L)}</p></div>`;
 }
 
 export async function reportCompaniesHtml(slug, loc = 'en') {

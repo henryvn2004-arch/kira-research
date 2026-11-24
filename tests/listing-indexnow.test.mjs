@@ -88,3 +88,16 @@ test('home pages carry Organization + WebSite(SearchAction) JSON-LD in every loc
     assert.equal(w.potentialAction.target.urlTemplate, `https://kiraresearch.com/${l}/library?q={search_term_string}`);
   }
 });
+
+test('naver: token validation and meta injection', async () => {
+  const { naverToken, injectNaver } = await import('../api/_lib/naver.js');
+  assert.equal(naverToken({}), '');
+  assert.equal(naverToken({ NAVER_SITE_VERIFICATION: 'bad"><script>' }), '');
+  assert.equal(naverToken({ NAVER_SITE_VERIFICATION: ' abcDEF1234_-xyz ' }), 'abcDEF1234_-xyz');
+  const html = '<html><head><title>x</title></head><body></body></html>';
+  const out = injectNaver(html, 'abcDEF1234');
+  assert.ok(out.includes('<meta name="naver-site-verification" content="abcDEF1234" />\n</head>'));
+  assert.equal(injectNaver(html, ''), html);
+  assert.equal(injectNaver(out, 'abcDEF1234'), out);
+  assert.equal(injectNaver('<body></body>', 'abcDEF1234'), '<body></body>');
+});

@@ -19,6 +19,10 @@ import { BASE, esc, ldJson } from '../ssr.js';
 import { citeBlock, citationText } from '../cite.js';
 import { BANDS, SORTS, isFiltered, hubHref } from './hub.js';
 
+// "Company data: BizDirect Asia" with a link to the sister site (the pages are mostly English; the label follows opts.loc when given).
+const CD_LABEL = { en: 'Company data', ja: '企業データ', ko: '기업 데이터', zh: '企业数据' };
+const bdCredit = (loc) => `${CD_LABEL[loc] || CD_LABEL.en}: <a href="https://bizdirectasia.com/" rel="noopener">BizDirect Asia</a>`;
+
 const TIERS = ['Large', 'Mid-size', 'Small', 'Not rated'];
 const SHORT = {
   'Brand owner / manufacturer': 'Brand owner / mfr.',
@@ -396,7 +400,7 @@ ${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">Br
   const regCov = cov(S, 'region');
   const sec8 = `<section><h2>${num()}Scope and method</h2><div class="method">
 <div><h3>Definition</h3><p>Companies in ${esc(cn)} whose own website lists at least one specific ${esc(S.item_noun)} in these groups: ${esc(groups)}. ${esc(S.definition_extra || '')}${left}</p></div>
-<div><h3>Method and limits</h3><ul><li>Source: company websites read by BizDirect Asia, built ${esc(S.built)}; scale tier is a BizDirect estimate from website footprint, not revenue.</li><li>${esc(cap1(ax))} comes from the company's main ${S.meta?.kind === 'service' ? 'service' : 'role'}${showReg && regCov ? `; region from its stated location (${Math.round(regCov.share_filled * 100)}% of companies state one)` : ''}.</li><li>Only companies BizDirect has read are counted; small or offline-only businesses are under-represented.</li></ul></div></div></section>`;
+<div><h3>Method and limits</h3><ul><li>Source: company websites read by <a href="https://bizdirectasia.com/" rel="noopener">BizDirect Asia</a>, built ${esc(S.built)}; scale tier is a BizDirect estimate from website footprint, not revenue.</li><li>${esc(cap1(ax))} comes from the company's main ${S.meta?.kind === 'service' ? 'service' : 'role'}${showReg && regCov ? `; region from its stated location (${Math.round(regCov.share_filled * 100)}% of companies state one)` : ''}.</li><li>Only companies BizDirect has read are counted; small or offline-only businesses are under-represented.</li></ul></div></div></section>`;
 
   return `<main class="mm" id="mm-root" data-slug="${esc(S.meta?.slug || '')}">
 <div class="crumb"><a href="${esc(hubPath)}">Market Map</a><i>/</i><a href="${esc(countryPath)}">${esc(cn)}</a><i>/</i>${esc(seg)}</div>
@@ -408,7 +412,7 @@ ${sec1}${sec2}${sec3}${sec3b}${sec4}${sec5}${impl}${sec7}
 ${buyBox(S, opts)}
 ${sec8}
 ${citeHtml(`${seg} companies in ${cn}: market map`, S.built, opts.canonical || `${BASE}/en/market-maps/${S.meta?.slug}`)}
-<div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com) · snapshot ${esc(S.built)}</span></div>
+<div class="foot"><span>KIRA Research · Know first. Move first.</span><span>${bdCredit(opts.loc)} · snapshot ${esc(S.built)}</span></div>
 </main>`;
 }
 
@@ -535,7 +539,7 @@ ${m.total ? `<div class="lib2-rows" id="mm-table">${rows}</div>${pager(m, p)}` :
 <script>if(window.matchMedia&&matchMedia("(max-width:960px)").matches){var d=document.querySelector(".mm-fdet");if(d)d.open=false}</script>`
   : `<div class="mm-empty" style="margin-top:24px;padding:28px 24px;border:1px solid var(--border,#e5e7eb);border-radius:12px;max-width:640px"><p style="margin:0 0 8px;font-size:20px;font-weight:600">${esc(E.h)}</p><p class="dek" style="margin:0 0 16px">${esc(E.p)}</p><a href="/${loc}/library" style="font-weight:600">${esc(E.a)}</a></div>`}
 ${citeHtml('Company lists by country and segment', maxDate(m.items), canonical)}
-<div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
+<div class="foot"><span>KIRA Research · Know first. Move first.</span><span>${bdCredit(opts.loc)}</span></div>
 </main>`;
   const ld = crumbLd([['Kira Research', `${BASE}/`], ['Market Map', `${BASE}/en/market-maps`]]);
   const title = `Company lists by country and segment${m.page > 1 ? ` (page ${m.page})` : ''} | KIRA Research`;
@@ -565,7 +569,7 @@ ${groups}
 <p class="k" style="margin-top:24px"><a href="/en/market-maps?country=${esc(c.slug)}#lists">Filter ${esc(c.name)} lists by size and type</a> · <a href="/en/market-maps">All countries</a></p></section></div>
 <script>if(window.matchMedia&&matchMedia("(max-width:960px)").matches){var d=document.querySelector(".mm-fdet");if(d)d.open=false}</script>
 ${citeHtml(`${c.name} company lists by segment`, maxDate(c.items), canonical)}
-<div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
+<div class="foot"><span>KIRA Research · Know first. Move first.</span><span>${bdCredit(opts.loc)}</span></div>
 </main>`;
   const ld = crumbLd([['Kira Research', `${BASE}/`], ['Market Map', `${BASE}/en/market-maps`], [c.name, canonical]]);
   return shell({ title: `${c.name} company lists by segment | KIRA Research`, description: `${nf(c.items.length)} company lists for ${c.name}, grouped by industry: who is in each segment, where they sit and how big they are. Free overview, Excel list for sale.`, canonical, robots: opts.robots || 'noindex,follow', ld, body, researchCss: true });

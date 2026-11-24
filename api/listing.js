@@ -31,7 +31,10 @@ export default async function handler(req, res) {
     let out = html;
     try { out = injectList(html, type, listHtml(type, loc, await listItems(sb, type, loc))); } catch (e) { console.error('[listing]', type, e.message); }
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
+    // Browsers revalidate (vercel.json sets max-age=0 for every path and overrides Cache-Control here); the Vercel CDN keeps the
+    // page 1 hour and serves it stale for a day while it refreshes. Vercel-CDN-Cache-Control is not touched by vercel.json header rules.
+    res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    res.setHeader('Vercel-CDN-Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
     res.status(200).send(out);
   } catch (e) {
     console.error('[listing] template', type, e.message);

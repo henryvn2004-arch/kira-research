@@ -120,6 +120,8 @@ const zh = {
   topics: { buyer_roles: '采购角色', channel: '销售渠道', risk: '风险', competition: '竞争', pricing: '定价', decision_makers: '决策者', switching_triggers: '更换供应商的原因', margins: '利润率', regulation: '监管', payment_terms: '付款条件', lead_times: '交货周期', exclusivity: '独家协议' },
 };
 export const T = { en, ja, ko, zh };
+// The "Company data: BizDirect Asia (sister company)" line with the sister site's name linked.
+export const companyDataHtml = (L) => String(L.companyData).replace('BizDirect Asia', '<a href="https://bizdirectasia.com/" rel="noopener">BizDirect Asia</a>');
 
 // Country names by ISO code (tax_countries holds the English name only).
 const COUNTRY = {

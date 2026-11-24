@@ -20,7 +20,7 @@ import {
   countryBySlug, countryByCode, segmentName, answersForHub, docTitles, hubIndexable,
   publishedClaims, listHubs, countries, slugOf, crosswalk, bizdirectSummary, tradeIndex, tradeTopicIndexable,
 } from './_lib/geo.js';
-import { T, countryName } from './_lib/geo-i18n.js';
+import { T, countryName, companyDataHtml } from './_lib/geo-i18n.js';
 import { logGeoHit } from './_lib/geo-hits.js';
 import { answerBlock, claimItem, modelledNote, whoDecidesHtml } from './_lib/geo-html.js';
 import { citeBlock, citationText } from './_lib/cite.js';
@@ -118,7 +118,7 @@ async function renderHub(req, res, loc, countrySlug, segment) {
           (pages.length ? ' ' + pages.map((p) => `<a href="${esc(p.url)}" rel="noopener">${esc(L.bdList(p.role ? String(p.role).toLowerCase() : ''))}</a>`).join(' · ') : '') + '</p>' +
           (top.length ? `<ul class="geo-list">${top.map((c) => `<li>${esc(c.name)}${c.region ? ` (${esc(c.region)})` : ''}</li>`).join('')}</ul>` : '') +
           (regions.length ? `<p class="geo-note">${esc(L.topRegions)} ${regions.map((r) => `${esc(r.region)} (${esc(r.companies)})`).join(', ')}</p>` : '');
-      }).join('') + `<p class="geo-note">${esc(L.companyData)}</p></section>`;
+      }).join('') + `<p class="geo-note">${companyDataHtml(L)}</p></section>`;
     }
   } catch (_e) { who = ''; }
 
