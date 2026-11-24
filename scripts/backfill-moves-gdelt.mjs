@@ -10,7 +10,7 @@
 //   node scripts/backfill-moves-gdelt.mjs --since 2026-10-15 --until 2026-11-23 [--window 2] [--dry-run] [--state <file>]
 //
 // Dry run reads GDELT and classifies but writes nothing to Supabase (it still reads company_events to dedupe).
-// Resumable: the state file (default <tmpdir>/backfill-moves-state.json) lists the windows that finished with every query
+// Resumable: the state file (default ./.backfill-moves-state.json in the working directory, git-ignored, mode 0600) lists the windows that finished with every query
 // answered; a window where some queries failed (429 ...) is re-read on the next run (inserts are idempotent).
 // GDELT is paced by gdelt.js (one call per 6 s, back-off on 429). No proxy tricks: if https is unreachable from your network set
 // GDELT_API=http://api.gdeltproject.org/api/v2/doc/doc (same public service).
@@ -18,7 +18,6 @@
 // ---------------------------------------------------------------
 
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 import { items } from '../api/_lib/moves/gdelt.js';
 import { collect } from '../api/_lib/moves/index.js';
@@ -29,7 +28,7 @@ const arg = (n, d) => { const i = process.argv.indexOf(n); return i > 0 ? proces
 const DRY = process.argv.includes('--dry-run');
 const since = arg('--since'), until = arg('--until');
 const win = Math.max(1, Number(arg('--window', 2)));
-const stateFile = arg('--state', path.join(os.tmpdir(), 'backfill-moves-state.json'));
+const stateFile = arg('--state', path.resolve('.backfill-moves-state.json'));
 if (!since || !until || !/^\d{4}-\d{2}-\d{2}$/.test(since) || !/^\d{4}-\d{2}-\d{2}$/.test(until) || since > until) {
   console.error('usage: backfill-moves-gdelt.mjs --since YYYY-MM-DD --until YYYY-MM-DD [--window 2] [--dry-run] [--state file]'); process.exit(2);
 }
@@ -70,6 +69,7 @@ for (const [s, e] of windows) {
   const row = { window: key, scanned, added, repeats, failed_hosts: failed, error: err, seconds: Math.round((Date.now() - t0) / 1000), dry: DRY };
   report.push(row);
   console.log(JSON.stringify(row));
-  if (!DRY) { state[key] = { done: !err && failed.length === 0, added, scanned, failed_hosts: failed, error: err }; fs.writeFileSync(stateFile, JSON.stringify(state, null, 1)); }
+  if (!DRY) { state[key] = { done: !err && failed.length === 0, added: Number(added) || 0, scanned: Number(scanned) || 0 };   // only what we compute: no response text
+    fs.writeFileSync(stateFile, JSON.stringify(state, null, 1), { mode: 0o600 }); fs.chmodSync(stateFile, 0o600); }
 }
 console.log('TOTAL', JSON.stringify({ windows: report.length, scanned: report.reduce((a, r) => a + r.scanned, 0), added: report.reduce((a, r) => a + r.added, 0), incomplete: report.filter((r) => r.error || r.failed_hosts.length).map((r) => r.window), dry: DRY }));
