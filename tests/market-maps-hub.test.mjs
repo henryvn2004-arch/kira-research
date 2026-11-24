@@ -94,7 +94,7 @@ test('filters: country, industry, kind, size and q combine; facet counts match w
   assert.equal(hub.hubModel({ items }, hub.parseParams({ q: 'zzzzz' })).total, 0);
 });
 
-test('hub HTML: under 80 KB with 4,000 rows, prev/next are real links, tiles and chips link out', async () => {
+test('hub HTML: under 80 KB with 4,000 rows, prev/next are real links, rows carry an SVG icon, no tiles or chips', async () => {
   const { items } = await hub.getIndex();
   const p = hub.parseParams({ page: '3' });
   const m = hub.hubModel({ items }, p);
@@ -102,8 +102,8 @@ test('hub HTML: under 80 KB with 4,000 rows, prev/next are real links, tiles and
   assert.ok(Buffer.byteLength(html) < 80 * 1024, `hub is ${Buffer.byteLength(html)} bytes`);
   assert.match(html, /<a rel="prev" href="\/en\/market-maps\?page=2">/);
   assert.match(html, /<a rel="next" href="\/en\/market-maps\?page=4">/);
-  assert.match(html, /<a class="tile" href="\/en\/market-maps\/vietnam">/);
-  assert.match(html, /<a class="ichip" href="\/en\/market-maps\?industry=/);
+  assert.ok(!html.includes('class="tile"') && !html.includes('class="ichip"') && !html.includes('cover-thumb'));
+  assert.ok((html.match(/<use href="#i-[a-z]+"\/>/g) || []).length === 50 && html.includes('<symbol id="i-food"'));
   assert.equal((html.match(/<a class="lrow" href="\/en\/market-maps\//g) || []).length, 50);
   assert.ok(html.includes('id="mm-table"') && html.includes('id="mm-q"') && html.includes('class="fgrp"'));
   assert.ok(!/\bAI\b|Claude/.test(html.replace(/<style>[\s\S]*?<\/style>/, '')));

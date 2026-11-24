@@ -2,7 +2,7 @@
 // KIRA RESEARCH — api/_lib/market-map/hub.js
 // Data layer of the market-map hub and the country hubs: one light index of every published row (no stats blob),
 // kept in memory for 10 minutes, and the pure functions that filter, count and page it. The hub is a small landing page
-// (country tiles, top industries, search, 50 rows a page); everything else is reached through query parameters
+// (search, sidebar filters, 50 rows a page); everything else is reached through query parameters
 //   ?country=<slug>&industry=<family>&kind=goods|services&size=u100|b100|b300|o500&q=<words>&page=<n>
 // and plain <a href> links, so a crawler can follow every page. No model, no per-request scan of the stats JSON.
 // ============================================================
@@ -85,16 +85,10 @@ export function hubModel(index, p) {
   const filtered = applyFilters(all, p).sort(bySize);
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const page = Math.min(p.page, pages);
-  const tiles = new Map();
-  for (const i of all) { const t = tiles.get(i.country) || { slug: i.country, name: i.country_name, n: 0 }; t.n += 1; tiles.set(i.country, t); }
-  const fam = new Map();
-  for (const i of all) { const k = i.l2_family || 'Other segments'; fam.set(k, (fam.get(k) || 0) + 1); }
   return {
     total: filtered.length, all: all.length, page, pages, pageSize: PAGE_SIZE,
     items: filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
     facets: buildFacets(all, p),
-    tiles: [...tiles.values()].sort((a, b) => b.n - a.n || a.name.localeCompare(b.name)),
-    topFamilies: [...fam.entries()].map(([name, n]) => ({ name, n })).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name)).slice(0, TOP_FAMILIES),
     anyIndexable: all.some((i) => i.indexable),
   };
 }
