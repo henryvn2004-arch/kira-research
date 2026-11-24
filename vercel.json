@@ -228,10 +228,10 @@
     { "source": "/ko/data", "destination": "/en/data/" },
     { "source": "/zh/data/", "destination": "/en/data/" },
     { "source": "/zh/data", "destination": "/en/data/" },
-    { "source": "/en/data/:slug", "destination": "/en/data/_view" },
-    { "source": "/ja/data/:slug", "destination": "/en/data/_view" },
-    { "source": "/ko/data/:slug", "destination": "/en/data/_view" },
-    { "source": "/zh/data/:slug", "destination": "/en/data/_view" }
+    { "source": "/en/data/:slug", "destination": "/api/econ-page?loc=en&slug=:slug" },
+    { "source": "/ja/data/:slug", "destination": "/api/econ-page?loc=ja&slug=:slug" },
+    { "source": "/ko/data/:slug", "destination": "/api/econ-page?loc=ko&slug=:slug" },
+    { "source": "/zh/data/:slug", "destination": "/api/econ-page?loc=zh&slug=:slug" }
   ],
   "crons": [
     { "path": "/api/notify-topic-published", "schedule": "0 2 * * *" },
@@ -272,6 +272,10 @@
     "api/listing.js": {
       "maxDuration": 30,
       "includeFiles": "public/**/_list.html"
+    },
+    "api/econ-page.js": {
+      "maxDuration": 30,
+      "includeFiles": "public/en/data/_econ.html"
     },
     "api/geo.js": {
       "maxDuration": 30,

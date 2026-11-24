@@ -3,10 +3,12 @@
 // Public, read-only feed of published GEO data so BizDirect can pull without a KIRA key.
 //   GET /api/geo-feed?country=<ISO2>      one country; no country = the pilot countries (VN, TH, SG, ID)
 //   → 200 { crosswalk, answers, claims, generated_at }
+// Answers come ordered with KIRA's own estimates first and carry `own`.
 // Only status = 'published' rows (crosswalk: 'approved') and only the columns listed below.
 // ============================================================
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+import { ownKind, rankAnswers } from './_lib/geo-rank.js';
 const PILOT = ['VN', 'TH', 'SG', 'ID'];
 const PAGE = 1000;   // PostgREST caps a response at 1000 rows by default: page through
 
@@ -33,12 +35,14 @@ export default async function handler(req, res) {
   try {
     const [crosswalk, answers, claims] = await Promise.all([
       rows('segment_crosswalk', `status=eq.approved&${cc}`, 'country_code,segment_key,bizdirect_country,bizdirect_term_slugs', 'country_code.asc,segment_key.asc,id.asc'),
-      rows('kira_answers', `status=eq.published&${cc}`, 'id,question,intent,country_code,segment_key,answer_short,source_kind,source_ref,updated_at,i18n', 'id.asc'),
+      rows('kira_answers', `status=eq.published&${cc}`, 'id,question,intent,country_code,segment_key,answer_short,primary_source,source_kind,source_ref,updated_at,i18n', 'id.asc'),
       rows('field_claims', `status=eq.published&${cc}`, 'id,topic,industry,country_code,speaker_role,claim_text,transcript_slug,basis_label,updated_at,i18n', 'id.asc'),
     ]);
     res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.status(200).json({ crosswalk, answers, claims, generated_at: new Date().toISOString() });
+    // KIRA's own figures first (estimates, then field research), each row tagged `own`: estimate | field | third | econ.
+    const ranked = rankAnswers(answers).map((a) => ({ ...a, own: ownKind(a) }));
+    res.status(200).json({ crosswalk, answers: ranked, claims, generated_at: new Date().toISOString() });
   } catch (err) {
     console.error('[geo-feed]', err.message);
     res.setHeader('Cache-Control', 'no-store');
