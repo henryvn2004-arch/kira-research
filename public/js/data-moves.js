@@ -1,4 +1,4 @@
-// Kira Data (D4): company moves pages, rendered inside /<locale>/data/_view.html.
+// Kira Data (D4): company moves pages, rendered inside /<locale>/data/<slug> (template public/en/data/_econ.html, served by api/econ-page.js).
 //   /<locale>/data/moves                     the feed, filters ?host=VN&investor=JP&type=acquisition
 //   /<locale>/data/<investor>-in-<host>      a corridor page, e.g. /en/data/japan-in-vietnam
 // Data from /api/moves (published moves from public sources only). Headlines link to their publisher.

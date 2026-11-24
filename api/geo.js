@@ -24,6 +24,7 @@ import { T, countryName, companyDataHtml } from './_lib/geo-i18n.js';
 import { logGeoHit } from './_lib/geo-hits.js';
 import { answerBlock, claimItem, modelledNote, whoDecidesHtml } from './_lib/geo-html.js';
 import { citeBlock, citationText } from './_lib/cite.js';
+import { rankAnswers, isEstimate } from './_lib/geo-rank.js';
 
 const cut = (s, n) => { const t = plain(s); return t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t; };
 const day = (iso) => String(iso || '').slice(0, 10);
@@ -81,14 +82,20 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   const path = `/${vl}/markets/${countrySlug}/${segment}`;
   const h1 = L.h1Hub(cName, segName);
 
+  // KIRA's own estimates first, in a block of their own at the top; then each intent, own field research before
+  // outside figures (geo-rank.js).
+  const ranked = rankAnswers(rows);
+  const ownRows = ranked.filter(isEstimate).slice(0, 12);
   const byIntent = new Map();
-  for (const a of rows) {
+  for (const a of ranked) {
+    if (ownRows.includes(a)) continue;
     const g = a.source_kind === 'econ' ? 'trade_data' : a.intent;      // Kira Data answers sit in "Trade and data"
     if (!byIntent.has(g)) byIntent.set(g, []);
     byIntent.get(g).push(a);
   }
   const intents = [...byIntent.keys()].sort((x, y) => INTENT_ORDER.indexOf(x) - INTENT_ORDER.indexOf(y));
-  const qa = intents.map((i) => `<section id="${esc(i)}"><h2>${esc(L.intents[i] || i)}</h2>${byIntent.get(i).map((a) => answerBlock(a, titles, L, vl)).join('')}</section>`).join('');
+  const own = ownRows.length ? `<section id="kira-estimates"><h2>${esc(L.ownFigures)}</h2>${ownRows.map((a) => answerBlock(a, titles, L, vl)).join('')}</section>` : '';
+  const qa = own + intents.map((i) => `<section id="${esc(i)}"><h2>${esc(L.intents[i] || i)}</h2>${byIntent.get(i).map((a) => answerBlock(a, titles, L, vl)).join('')}</section>`).join('');
 
   const docSlugs = [...new Set(slugs.filter(Boolean))];
   const repSlugs = docSlugs.filter((s) => known.reports.has(s));
@@ -150,11 +157,11 @@ async function renderHub(req, res, loc, countrySlug, segment) {
     { id: 'ld-breadcrumb', data: crumbJson([
       { name: 'KIRA RESEARCH', item: `${BASE}/${vl}/` }, { name: L.library, item: `${BASE}/${vl}/library` },
       { name: `${cName} ${segName}`, item: BASE + path }]) },
-    { id: 'ld-faq', data: { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage: vl === 'zh' ? 'zh-Hans' : vl, mainEntity: rows.slice(0, 40).map((a) => ({ '@type': 'Question', name: a.question, acceptedAnswer: { '@type': 'Answer', text: a.answer_short } })) } },
+    { id: 'ld-faq', data: { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage: vl === 'zh' ? 'zh-Hans' : vl, mainEntity: ranked.slice(0, 40).map((a) => ({ '@type': 'Question', name: a.question, acceptedAnswer: { '@type': 'Answer', text: a.answer_short } })) } },
   ];
   const editions = LOCALES.filter((l) => ok[l]);
   await shell(req, res, {
-    loc: vl, indexable: !fallback && ok[vl], path, title: `${h1} — KIRA RESEARCH`, description: cut(rows[0].answer_short, 200), ld, content,
+    loc: vl, indexable: !fallback && ok[vl], path, title: `${h1} — KIRA RESEARCH`, description: cut(ranked[0].answer_short, 200), ld, content,
     hreflang: editions.map((l) => ({ locale: l, url: `${BASE}/${l}/markets/${countrySlug}/${segment}` })),
     xDefault: ok.en ? `${BASE}/en/markets/${countrySlug}/${segment}` : null,
   });

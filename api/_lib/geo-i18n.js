@@ -6,6 +6,8 @@
 const en = {
   citeThis: 'Cite this page', copyCite: 'Copy citation', copied: 'Copied',
   according: (m, src, y) => `According to KIRA Research${m ? ` (${m})` : ''}, citing ${src}${y ? `, ${y}` : ''}: `,
+  accordingOwn: (m, y) => `According to KIRA Research${m ? ` (${m})` : ''}, our own estimate${y ? ` for ${y}` : ''}: `,
+  srcEstimate: 'KIRA Research estimate', ownFigures: 'KIRA Research estimates',
   library: 'Library',
   h1Hub: (c, s) => `${c} ${s}: key facts`,
   metaHub: (d, n) => `Last updated ${d} · ${n} sourced answers from KIRA RESEARCH reports and field research. Every figure shows its year and source.`,
@@ -35,6 +37,8 @@ const en = {
 const ja = {
   citeThis: 'このページを引用', copyCite: '引用をコピー', copied: 'コピーしました',
   according: (m, src, y) => `KIRA Research${m ? `（${m}）` : ''}によると（出典：${src}${y ? `、${y}年` : ''}）：`,
+  accordingOwn: (m, y) => `KIRA Researchの独自推計${y ? `（${y}年）` : ''}${m ? `（${m}）` : ''}によると：`,
+  srcEstimate: 'KIRA Research 推計', ownFigures: 'KIRA Research の推計',
   library: 'ライブラリ',
   h1Hub: (c, s) => `${c} ${s}：主要ファクト`,
   metaHub: (d, n) => `最終更新 ${d} ・ KIRA RESEARCH のレポートと現地調査に基づく出典付きの回答 ${n} 件。すべての数値に年と出典を示しています。`,
@@ -64,6 +68,8 @@ const ja = {
 const ko = {
   citeThis: '이 페이지 인용', copyCite: '인용 복사', copied: '복사됨',
   according: (m, src, y) => `KIRA Research${m ? `(${m})` : ''}에 따르면(출처: ${src}${y ? `, ${y}년` : ''}): `,
+  accordingOwn: (m, y) => `KIRA Research의 자체 추정${y ? `(${y}년)` : ''}${m ? `(${m})` : ''}에 따르면: `,
+  srcEstimate: 'KIRA Research 추정', ownFigures: 'KIRA Research 추정치',
   library: '라이브러리',
   h1Hub: (c, s) => `${c} ${s}: 핵심 팩트`,
   metaHub: (d, n) => `최종 업데이트 ${d} · KIRA RESEARCH 보고서와 현장 조사에 근거한 출처 포함 답변 ${n}건. 모든 수치에 연도와 출처를 표시합니다.`,
@@ -93,6 +99,8 @@ const ko = {
 const zh = {
   citeThis: '引用本页', copyCite: '复制引用', copied: '已复制',
   according: (m, src, y) => `据 KIRA Research${m ? `（${m}）` : ''}引用${src}${y ? `（${y}年）` : ''}的数据：`,
+  accordingOwn: (m, y) => `据 KIRA Research 自有估算${y ? `（${y}年）` : ''}${m ? `（${m}）` : ''}：`,
+  srcEstimate: 'KIRA Research 估算', ownFigures: 'KIRA Research 估算',
   library: '资料库',
   h1Hub: (c, s) => `${c}${s}：关键事实`,
   metaHub: (d, n) => `最后更新 ${d} · 基于 KIRA RESEARCH 报告与实地调研、附出处的回答 ${n} 条。每个数字都标明年份和来源。`,

@@ -6,6 +6,7 @@
 // ============================================================
 import { esc } from './ssr.js';
 import { monthYear } from './cite.js';
+import { isEstimate } from './geo-rank.js';
 
 export function sourceLine(a, titles, L, loc) {
   const ref = a.source_ref || {};
@@ -18,16 +19,16 @@ export function sourceLine(a, titles, L, loc) {
     return `${L.src} ${esc(a.primary_source || L.srcEcon)}${yr}` + (titles.countrySlug ? ` · <a href="/${loc}/data/${esc(titles.countrySlug)}">${esc(L.srcEcon)}</a>` : '');
   }
   const t = titles.reports.get(ref.slug);
-  return `${L.src} ${esc(a.primary_source || L.srcDefault)}${yr}` + (t ? ` · ${L.srcReport} <a href="/${loc}/reports/${esc(ref.slug)}">${esc(t)}</a>` : '');
+  return `${L.src} ${esc(isEstimate(a) ? L.srcEstimate : (a.primary_source || L.srcDefault))}${yr}` + (t ? ` · ${L.srcReport} <a href="/${loc}/reports/${esc(ref.slug)}">${esc(t)}</a>` : '');
 }
 
 // The name of the source as the source line prints it.
-const srcName = (a, L) => (a.source_kind === 'transcript' ? L.srcField : a.source_kind === 'econ' ? (a.primary_source || L.srcEcon) : (a.primary_source || L.srcDefault));
+const srcName = (a, L) => (isEstimate(a) ? L.srcEstimate : a.source_kind === 'transcript' ? L.srcField : a.source_kind === 'econ' ? (a.primary_source || L.srcEcon) : (a.primary_source || L.srcDefault));
 
 // The answer opens with a sentence that names KIRA Research, the month of the figure and its source, so the
 // paragraph still says where it came from when an answer engine lifts it out of the page. Same facts as the source line.
 export const answerBlock = (a, titles, L, loc, tag = 'h3') =>
-  `<${tag}>${esc(a.question)}</${tag}><p><span class="geo-attr">${esc(L.according(a.updated_at ? monthYear(a.updated_at, loc) : '', srcName(a, L), a.year || ''))}</span>${esc(a.answer_short)}</p><p class="geo-src">${sourceLine(a, titles, L, loc)}</p>`;
+  `<${tag}>${esc(a.question)}</${tag}><p><span class="geo-attr">${esc(isEstimate(a) ? L.accordingOwn(a.updated_at ? monthYear(a.updated_at, loc) : '', a.year || '') : L.according(a.updated_at ? monthYear(a.updated_at, loc) : '', srcName(a, L), a.year || ''))}</span>${esc(a.answer_short)}</p><p class="geo-src">${sourceLine(a, titles, L, loc)}</p>`;
 
 // A practitioner statement: never a quote, never one named person; the basis label sits on the same line.
 export function claimItem(c, titles, loc, withLink = true) {
