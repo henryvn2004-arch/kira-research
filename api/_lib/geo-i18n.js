@@ -4,6 +4,8 @@
 // text itself comes from kira_answers.i18n / field_claims.i18n (see geo.js lib: ansLoc / claimLoc).
 // ============================================================
 const en = {
+  citeThis: 'Cite this page', copyCite: 'Copy citation', copied: 'Copied',
+  according: (m, src, y) => `According to KIRA Research${m ? ` (${m})` : ''}, citing ${src}${y ? `, ${y}` : ''}: `,
   library: 'Library',
   h1Hub: (c, s) => `${c} ${s}: key facts`,
   metaHub: (d, n) => `Last updated ${d} · ${n} sourced answers from KIRA RESEARCH reports and field research. Every figure shows its year and source.`,
@@ -24,13 +26,15 @@ const en = {
   dataLink: 'Market data: economy, trade and investment →', dataCLink: (c) => `${c}: market data (economy, trade, investment) →`,
   marketsH1: 'Market facts by country', marketsMeta: (n) => `Sourced answers and practitioner views on ${n} markets, grouped by industry. Every figure shows its year and source.`,
   countryH1: (c) => `${c}: market facts by industry`, countryMeta: (n) => `${n} industries with sourced answers from KIRA RESEARCH reports and field research.`, answersN: (n) => `${n} answers`, industriesN: (n) => (n === 1 ? "1 industry" : `${n} industries`),
-  keyQuestions: 'Key questions', keyPoints: 'Key points',
+  keyQuestions: 'Key questions', keyPoints: 'Key points', companiesHere: 'Companies in this market',
   moreSeg: (s, c) => `More on ${s} in ${c}`, acrossAsia: (i, t) => `${i}: ${t.toLowerCase()} across Asia`,
   nfTitle: 'Page not found', nfBody: 'There is nothing published at this address.', nfBrowse: 'Browse the library',
   intents: { market_size: 'Market size', growth: 'Growth', trends: 'Trends', key_players: 'Key players', channels: 'Channels and distribution', pricing: 'Pricing', margins: 'Margins', consumer: 'Customers and demand', trade_flow: 'Trade flows', trade_data: 'Trade and data', regulation: 'Regulation', entry: 'Market entry', investment: 'Investment', risks: 'Risks', practitioner: 'How the trade works', other: 'Other questions' },
   topics: { buyer_roles: 'Who buys', channel: 'Sales channels', risk: 'Risks', competition: 'Competition', pricing: 'Pricing', decision_makers: 'Who decides', switching_triggers: 'Why buyers switch', margins: 'Margins', regulation: 'Regulation', payment_terms: 'Payment terms', lead_times: 'Lead times', exclusivity: 'Exclusivity' },
 };
 const ja = {
+  citeThis: 'このページを引用', copyCite: '引用をコピー', copied: 'コピーしました',
+  according: (m, src, y) => `KIRA Research${m ? `（${m}）` : ''}によると（出典：${src}${y ? `、${y}年` : ''}）：`,
   library: 'ライブラリ',
   h1Hub: (c, s) => `${c} ${s}：主要ファクト`,
   metaHub: (d, n) => `最終更新 ${d} ・ KIRA RESEARCH のレポートと現地調査に基づく出典付きの回答 ${n} 件。すべての数値に年と出典を示しています。`,
@@ -51,13 +55,15 @@ const ja = {
   dataLink: '市場データ：経済・貿易・投資 →', dataCLink: (c) => `${c}：市場データ（経済・貿易・投資） →`,
   marketsH1: '国別の市場ファクト', marketsMeta: (n) => `${n} か国の市場について、出典付きの回答と現場の見解を業種別に整理。すべての数値に年と出典を示しています。`,
   countryH1: (c) => `${c}：業種別の市場ファクト`, countryMeta: (n) => `KIRA RESEARCH のレポートと現地調査に基づく出典付き回答のある ${n} 業種。`, answersN: (n) => `回答 ${n} 件`, industriesN: (n) => `${n} 業種`,
-  keyQuestions: '主要な問い', keyPoints: '要点',
+  keyQuestions: '主要な問い', keyPoints: '要点', companiesHere: 'この市場の企業',
   moreSeg: (s, c) => `${c}の${s}についてさらに見る`, acrossAsia: (i, t) => `${i}：アジア各国の${t}`,
   nfTitle: 'ページが見つかりません', nfBody: 'このアドレスには公開されているページがありません。', nfBrowse: 'ライブラリを見る',
   intents: { market_size: '市場規模', growth: '成長性', trends: 'トレンド', key_players: '主要プレーヤー', channels: '流通チャネル', pricing: '価格', margins: 'マージン', consumer: '顧客と需要', trade_flow: '貿易フロー', trade_data: '貿易とデータ', regulation: '規制', entry: '市場参入', investment: '投資', risks: 'リスク', practitioner: '現場の実態', other: 'その他の質問' },
   topics: { buyer_roles: '購買担当', channel: '販売チャネル', risk: 'リスク', competition: '競争', pricing: '価格', decision_makers: '意思決定者', switching_triggers: '取引先を乗り換える理由', margins: 'マージン', regulation: '規制', payment_terms: '支払条件', lead_times: 'リードタイム', exclusivity: '独占契約' },
 };
 const ko = {
+  citeThis: '이 페이지 인용', copyCite: '인용 복사', copied: '복사됨',
+  according: (m, src, y) => `KIRA Research${m ? `(${m})` : ''}에 따르면(출처: ${src}${y ? `, ${y}년` : ''}): `,
   library: '라이브러리',
   h1Hub: (c, s) => `${c} ${s}: 핵심 팩트`,
   metaHub: (d, n) => `최종 업데이트 ${d} · KIRA RESEARCH 보고서와 현장 조사에 근거한 출처 포함 답변 ${n}건. 모든 수치에 연도와 출처를 표시합니다.`,
@@ -78,13 +84,15 @@ const ko = {
   dataLink: '시장 데이터: 경제·무역·투자 →', dataCLink: (c) => `${c}: 시장 데이터(경제·무역·투자) →`,
   marketsH1: '국가별 시장 팩트', marketsMeta: (n) => `${n}개국 시장에 대한 출처 포함 답변과 업계 의견을 산업별로 정리했습니다. 모든 수치에 연도와 출처를 표시합니다.`,
   countryH1: (c) => `${c}: 산업별 시장 팩트`, countryMeta: (n) => `KIRA RESEARCH 보고서와 현장 조사에 근거한 출처 포함 답변이 있는 ${n}개 산업.`, answersN: (n) => `답변 ${n}건`, industriesN: (n) => `${n}개 산업`,
-  keyQuestions: '핵심 질문', keyPoints: '핵심 포인트',
+  keyQuestions: '핵심 질문', keyPoints: '핵심 포인트', companiesHere: '이 시장의 기업',
   moreSeg: (s, c) => `${c} ${s} 더 보기`, acrossAsia: (i, t) => `${i}: 아시아 각국의 ${t}`,
   nfTitle: '페이지를 찾을 수 없습니다', nfBody: '이 주소에 게시된 페이지가 없습니다.', nfBrowse: '라이브러리 보기',
   intents: { market_size: '시장 규모', growth: '성장', trends: '트렌드', key_players: '주요 기업', channels: '유통 채널', pricing: '가격', margins: '마진', consumer: '고객과 수요', trade_flow: '무역 흐름', trade_data: '무역과 데이터', regulation: '규제', entry: '시장 진입', investment: '투자', risks: '리스크', practitioner: '업계 실무', other: '기타 질문' },
   topics: { buyer_roles: '구매 담당자', channel: '판매 채널', risk: '리스크', competition: '경쟁', pricing: '가격', decision_makers: '의사결정자', switching_triggers: '거래처 전환 요인', margins: '마진', regulation: '규제', payment_terms: '결제 조건', lead_times: '리드타임', exclusivity: '독점 계약' },
 };
 const zh = {
+  citeThis: '引用本页', copyCite: '复制引用', copied: '已复制',
+  according: (m, src, y) => `据 KIRA Research${m ? `（${m}）` : ''}引用${src}${y ? `（${y}年）` : ''}的数据：`,
   library: '资料库',
   h1Hub: (c, s) => `${c}${s}：关键事实`,
   metaHub: (d, n) => `最后更新 ${d} · 基于 KIRA RESEARCH 报告与实地调研、附出处的回答 ${n} 条。每个数字都标明年份和来源。`,
@@ -105,13 +113,15 @@ const zh = {
   dataLink: '市场数据：经济、贸易与投资 →', dataCLink: (c) => `${c}：市场数据（经济、贸易、投资） →`,
   marketsH1: '各国市场事实', marketsMeta: (n) => `${n} 个国家市场的带出处回答与业内观点，按行业整理。每个数字都标明年份和来源。`,
   countryH1: (c) => `${c}：分行业市场事实`, countryMeta: (n) => `${n} 个行业，回答均来自 KIRA RESEARCH 报告与实地调研并附出处。`, answersN: (n) => `${n} 条回答`, industriesN: (n) => `${n} 个行业`,
-  keyQuestions: '关键问题', keyPoints: '要点',
+  keyQuestions: '关键问题', keyPoints: '要点', companiesHere: '该市场的企业',
   moreSeg: (s, c) => `更多关于${c}${s}`, acrossAsia: (i, t) => `${i}：亚洲各国的${t}`,
   nfTitle: '找不到页面', nfBody: '此地址没有已发布的内容。', nfBrowse: '浏览资料库',
   intents: { market_size: '市场规模', growth: '增长', trends: '趋势', key_players: '主要企业', channels: '渠道与分销', pricing: '定价', margins: '利润率', consumer: '客户与需求', trade_flow: '贸易流向', trade_data: '贸易与数据', regulation: '监管', entry: '市场进入', investment: '投资', risks: '风险', practitioner: '行业实务', other: '其他问题' },
   topics: { buyer_roles: '采购角色', channel: '销售渠道', risk: '风险', competition: '竞争', pricing: '定价', decision_makers: '决策者', switching_triggers: '更换供应商的原因', margins: '利润率', regulation: '监管', payment_terms: '付款条件', lead_times: '交货周期', exclusivity: '独家协议' },
 };
 export const T = { en, ja, ko, zh };
+// The "Company data: BizDirect Asia (sister company)" line with the sister site's name linked.
+export const companyDataHtml = (L) => String(L.companyData).replace('BizDirect Asia', '<a href="https://bizdirectasia.com/" rel="noopener">BizDirect Asia</a>');
 
 // Country names by ISO code (tax_countries holds the English name only).
 const COUNTRY = {

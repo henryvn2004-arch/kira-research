@@ -5,7 +5,7 @@
 // Why this exists: vercel.json `rewrites` are skipped when the URL
 // matches a static file (per Vercel docs: "rewrites never execute
 // when a file matches"). That's a problem for studio.kiraresearch.com
-// — the path `/` matches `public/index.html` (the locale-redirect
+// — the path `/` used to match `public/index.html` (now `public/_home.html`, served by api/home.js; the locale-redirect
 // landing for the main domain) so the host-filtered rewrite in
 // vercel.json never fires for the subdomain root.
 //
