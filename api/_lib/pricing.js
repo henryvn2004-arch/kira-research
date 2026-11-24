@@ -14,8 +14,8 @@ export const TRANSCRIPT_PRICE = 29;
 export const SUBSCRIPTION_MONTH_PRICE = 149;   // Month plan: whole library online + transcripts + subscription.pdf_per_month PDF downloads per month
 export const SUBSCRIPTION_YEAR_PRICE = 1190;   // Annual plan: the same, with subscription.pdf_per_year PDF downloads per year (S7b)
 
-// Market-map company lists (Excel): $49 up to 500 companies, $99 above (owner, 2026-11-23). The price is always computed here from the map's company count.
-export const LIST_PRICE_SMALL = 49;
-export const LIST_PRICE_LARGE = 99;
+// Market-map company lists (Excel): $36 up to 500 companies, $57 above (owner, 2026-11-24; was $49/$99). The price is always computed here from the map's company count.
+export const LIST_PRICE_SMALL = 36;
+export const LIST_PRICE_LARGE = 57;
 export const LIST_SMALL_MAX = 500;
 export const listPrice = (n) => (Number(n) > LIST_SMALL_MAX ? LIST_PRICE_LARGE : LIST_PRICE_SMALL);

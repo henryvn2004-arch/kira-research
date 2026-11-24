@@ -301,7 +301,7 @@ function buyBox(S, opts) {
   if (b.enabled) {
     return `<div class="buy" id="buy"><b style="font-size:20px">Excel list: ${n} companies, $${p}</b>${cols}
 <button class="btn" type="button" id="mm-buy">Get the list, $${p}</button><div class="msg" id="mm-msg" role="status"></div>
-<div class="sub" style="margin-top:8px">One file, one-time purchase, a snapshot of ${esc(S.built)}. Up to 500 companies $49, above 500 $99. Download link valid 7 days, up to 5 downloads; the list is also kept under My Library.</div></div>`;
+<div class="sub" style="margin-top:8px">One file, one-time purchase, a snapshot of ${esc(S.built)}. Up to 500 companies $36, above 500 $57. Download link valid 7 days, up to 5 downloads; the list is also kept under My Library.</div></div>`;
   }
   return `<div class="buy" id="buy"><b style="font-size:20px">Excel list: ${n} companies</b>${cols}
 <form id="mm-req" novalidate><label class="hp" aria-hidden="true">Leave empty<input type="text" name="hp" tabindex="-1" autocomplete="off"></label>
@@ -514,7 +514,7 @@ export function renderHub(model, params, opts = {}) {
   const band = `<header class="r-band"><div class="r-container">
 ${crumbs([['MARKET MAP']])}
 <h1>Company lists: every company in a segment, by country</h1>
-<p class="r-sub">Each list covers the companies of one segment in one country, compiled from company websites. The overview of each list is free; the Excel file with company-level phone and email is $49 up to 500 companies, $99 above.</p>
+<p class="r-sub">Each list covers the companies of one segment in one country, compiled from company websites. The overview of each list is free; the Excel file with company-level phone and email is $36 up to 500 companies, $57 above.</p>
 ${m.all ? `<form class="r-search" method="get" action="/en/market-maps#lists" role="search">${hidden}${SEARCH_IC}<input type="search" id="mm-q" name="q" value="${esc(p.q)}" maxlength="60" placeholder="Search segment, country or industry" aria-label="Search company lists"><button type="submit" class="r-btn r-btn-primary">Search</button></form>` : ''}
 </div></header>`;
   const body = `${band}
@@ -545,7 +545,7 @@ export function renderCountryHub(c, opts = {}) {
   const body = `<header class="r-band"><div class="r-container">
 ${crumbs([['MARKET MAP', '/en/market-maps'], [c.name]])}
 <h1>${esc(c.name)} company lists: ${nf(c.items.length)} segments mapped</h1>
-<p class="r-sub">${nf(c.companies)} company entries across ${nf(c.items.length)} segments in ${esc(c.name)}, compiled from company websites. Open a segment for its free overview; the Excel list with company-level phone and email is $49 up to 500 companies, $99 above.</p>
+<p class="r-sub">${nf(c.companies)} company entries across ${nf(c.items.length)} segments in ${esc(c.name)}, compiled from company websites. Open a segment for its free overview; the Excel list with company-level phone and email is $36 up to 500 companies, $57 above.</p>
 <form class="r-search" method="get" action="/en/market-maps#lists" role="search"><input type="hidden" name="country" value="${esc(c.slug)}">${SEARCH_IC}<input type="search" name="q" maxlength="60" placeholder="Search ${esc(c.name)} segments" aria-label="Search ${esc(c.name)} company lists"><button type="submit" class="r-btn r-btn-primary">Search</button></form>
 </div></header>
 <main class="mm r-container" id="mm-root">
