@@ -6,6 +6,9 @@
 # insights) are meant to be found and cited, so search/fetch bots AND training bots may read everything a visitor
 # can read. A named group ignores the "*" group, so each one repeats the same Disallow lines.
 # Only Bytespider is blocked.
+#
+# Market maps exist in English only: /ja|ko|zh/market-maps/... serve the English page with the English canonical and
+# noindex (api/market-maps.js), so crawling them only multiplies ~3,000 server-rendered URLs by four. Repeated per group.
 
 User-agent: *
 Allow: /
@@ -16,6 +19,9 @@ Disallow: /ko/admin/
 Disallow: /zh/admin/
 Disallow: /auth
 Disallow: /auth.html
+Disallow: /ja/market-maps
+Disallow: /ko/market-maps
+Disallow: /zh/market-maps
 
 # Search and fetch bots: they answer a reader's question and link to the source
 User-agent: OAI-SearchBot
@@ -33,6 +39,9 @@ Disallow: /ko/admin/
 Disallow: /zh/admin/
 Disallow: /auth
 Disallow: /auth.html
+Disallow: /ja/market-maps
+Disallow: /ko/market-maps
+Disallow: /zh/market-maps
 
 # Training bots: allowed on public pages so models know the free pages
 User-agent: GPTBot
@@ -49,6 +58,9 @@ Disallow: /ko/admin/
 Disallow: /zh/admin/
 Disallow: /auth
 Disallow: /auth.html
+Disallow: /ja/market-maps
+Disallow: /ko/market-maps
+Disallow: /zh/market-maps
 
 # Blocked: heavy crawler, no referral traffic
 User-agent: Bytespider

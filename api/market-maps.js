@@ -56,7 +56,9 @@ async function enrich(items) {
 
 function send(res, html, { status = 200, index = false, cache = true } = {}) {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('Cache-Control', cache ? 'public, max-age=0, s-maxage=600, stale-while-revalidate=86400' : 'public, max-age=0, s-maxage=60');
+  // 1 hour fresh (was 10 minutes), then stale up to a day while it refreshes: every page is a server render plus a Supabase read
+  // and ~3,000 of them are open to crawlers. Same life as api/listing.js.
+  res.setHeader('Cache-Control', cache ? 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' : 'public, max-age=0, s-maxage=60');
   if (!index) res.setHeader('X-Robots-Tag', 'noindex, follow');
   res.status(status).send(html);
 }
