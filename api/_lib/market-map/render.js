@@ -142,16 +142,19 @@ function stacked(S) {
   return svg(W, H, b.join(''), `Scale tier within each ${AXIS(S)}`, '100% stacked bars of Large, Mid-size, Small and Not rated companies per group.');
 }
 
+// count text of a list item; lb = merged spellings of one label, so the count is a lower bound
+const lbn = (i) => (i.lb ? `at least ${i.n}` : `${i.n}`);
+
 function ranked(items, unit, labelW = 170, cls = 'f-c2') {
   const W = 520, rowh = 26, H = rowh * items.length + 8, mx = Math.max(1, ...items.map((i) => i[1])), bw = W - labelW - 56;
   const b = [];
-  items.forEach(([lab, v], i) => {
-    const y = 4 + i * rowh, w = Math.max(2, bw * v / mx), l = lab.length <= 26 ? lab : `${lab.slice(0, 25)}...`;
+  items.forEach(([lab, v, lb], i) => {
+    const y = 4 + i * rowh, w = Math.max(2, bw * v / mx), l = lab.length <= 26 ? lab : `${lab.slice(0, 25)}...`, vt = lb ? `${v}+` : String(v);
     b.push(T(labelW - 8, y + 15, l, 'hd', 'end'));
-    b.push(`<rect x="${labelW}" y="${y + 3}" width="${f1(w)}" height="16" class="${cls}"><title>${esc(lab)}: ${v} ${unit}</title></rect>`);
-    b.push(T(labelW + w + 5, y + 16, String(v), 'cl'));
+    b.push(`<rect x="${labelW}" y="${y + 3}" width="${f1(w)}" height="16" class="${cls}"><title>${esc(lab)}: ${lb ? 'at least ' : ''}${v} ${unit}</title></rect>`);
+    b.push(T(labelW + w + 5, y + 16, vt, 'cl'));
   });
-  return svg(W, H, b.join(''), `Ranked bars (${unit})`, items.map(([l, v]) => `${l} ${v}`).join('; '));
+  return svg(W, H, b.join(''), `Ranked bars (${unit})`, items.map(([l, v, lb]) => `${l} ${lb ? `${v}+` : v}`).join('; '));
 }
 
 function provinces(S) {
@@ -202,12 +205,12 @@ export function titles(S) {
       : `${lc(f.top_stage.stage)} is the largest ${ax} at ${f.top_stage.pct}% of companies; ${f.large_pct}% of all companies are Large`,
     heatmap: hm ? `The densest cell is ${lc(hm.sub_category)} x ${lc(hm.stage)}: ${hm.n} companies (${hm.pct}% of the list)` : '',
     stacked: !best ? '' : `${best.stage} has the highest share of Large companies (${best.Large.pct}%); ${low.stage} the lowest (${low.Large.pct}%)`,
-    brands: b0 ? `Brands carried by companies in this list: ${b0.brand} leads, named by ${b0.companies} companies` : '',
-    channels: S.channels && S.channels[0] ? `${S.channels[0].name} is the most-cited sales channel (${S.channels[0].n} companies)` : '',
+    brands: b0 ? `Brands carried by companies in this list: ${b0.brand} leads, named by ${b0.lb ? "at least " : ""}${b0.companies} companies` : '',
+    channels: S.channels && S.channels[0] ? `${S.channels[0].name} is the most-cited sales channel (${lbn(S.channels[0])} companies)` : '',
     region: f.top_province ? `${f.top_province.name} alone holds ${f.top_province.pct}% of mapped companies (${f.top_province.n})` : '',
     concentration: `${f.small_pct}% of companies are Small; only ${f.large_pct}% are Large`,
-    certs: S.certifications && S.certifications[0] ? `${S.certifications[0].name} is the most-cited certification (${S.certifications[0].n} companies)` : '',
-    origins: S.origins && S.origins[0] ? `${S.origins[0].name} is the most-cited sourcing origin (${S.origins[0].n} companies)` : '',
+    certs: S.certifications && S.certifications[0] ? `${S.certifications[0].name} is the most-cited certification (${lbn(S.certifications[0])} companies)` : '',
+    origins: S.origins && S.origins[0] ? `${S.origins[0].name} is the most-cited sourcing origin (${lbn(S.origins[0])} companies)` : '',
   };
 }
 
@@ -378,16 +381,16 @@ ${M.y_title === 'Scale tier' || !(S.tiers_by_stage && S.tiers_by_stage.length) ?
 </div></section>`;
   const showBrands = show(S, 'brands'), showCh = show(S, 'channels'), showReg = show(S, 'region');
   const sec3 = (showCh || showBrands) ? `<section><h2>${num()}${showCh && showBrands ? 'Channels and brands' : showCh ? 'Channels' : 'Brands'}</h2><div class="grid">
-${showCh ? `<figure><h3 class="at">${esc(Ti.channels)}</h3><div class="sub">Sales channels the companies name on their own websites (similar wordings grouped)</div>${ranked(S.channels.map((c) => [c.name, c.n]), 'companies')}<figcaption>${esc(S.channels.map((c) => `${c.name} ${c.n}`).join(' · '))}.${esc(based(S, 'channels', 'a stated channel'))}</figcaption>${so('channels')}</figure>` : ''}
-${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">Brands named anywhere on these companies' websites; not limited to this product line.</div>${ranked(brands.map((b) => [b.brand, b.companies]), 'companies')}<div class="scroll">${brandsTbl}</div><figcaption>${esc(based(S, 'brands', 'a listed brand').trim())}</figcaption>${so('brands')}</figure>` : ''}
+${showCh ? `<figure><h3 class="at">${esc(Ti.channels)}</h3><div class="sub">Sales channels the companies name on their own websites (similar wordings grouped)</div>${ranked(S.channels.map((c) => [c.name, c.n, c.lb]), 'companies')}<figcaption>${esc(S.channels.map((c) => `${c.name} ${c.n}${c.lb ? '+' : ''}`).join(' · '))}.${esc(based(S, 'channels', 'a stated channel'))}</figcaption>${so('channels')}</figure>` : ''}
+${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">Brands named anywhere on these companies' websites; not limited to this product line.</div>${ranked(brands.map((b) => [b.brand, b.companies, b.lb]), 'companies')}<div class="scroll">${brandsTbl}</div><figcaption>${esc(based(S, 'brands', 'a listed brand').trim())}</figcaption>${so('brands')}</figure>` : ''}
 </div></section>` : '';
   const sec3b = showReg ? `<section><h2>${num()}Geography</h2><div class="grid"><figure class="wide"><h3 class="at">${esc(Ti.region)}</h3><div class="sub">Main provinces by region; tile width = companies</div>${provinces(S)}<figcaption>${esc(provCap)}.${esc(based(S, 'region', 'a stated region'))}</figcaption>${so('region')}</figure></div></section>` : '';
   let sec4 = '';
   const showC = show(S, 'certifications'), showO = show(S, 'origins');
   if (showC || showO) {
     sec4 = `<section><h2>${num()}Capability and sourcing signals</h2><div class="grid">`;
-    for (const [k, f, items, sub, what] of [['certs', 'certifications', S.certifications, 'Companies citing each certification; a company can cite several', 'a certification'], ['origins', 'origins', S.origins, 'Companies naming each country as a source', 'a sourcing origin']]) {
-      if (f === 'certifications' ? showC : showO) sec4 += `<figure><h3 class="at">${esc(Ti[k])}</h3><div class="sub">${esc(sub)}</div>${ranked(items.map((i) => [i.name, i.n]), 'companies')}<figcaption>${esc(items.map((i) => `${i.name} ${i.n}`).join(' · '))}.${esc(based(S, f, what))}</figcaption>${so(k)}</figure>`;
+    for (const [k, f, items, sub, what] of [['certs', 'certifications', S.certifications, 'Companies citing each certification; a company can cite several', 'a certification'], ['origins', 'origins', S.origins, `Companies naming each country as a source${S.meta?.origins_home_excluded ? `; ${S.country} itself left out` : ''}; "+" = at least, a company can name a country in two spellings`, 'a sourcing origin']]) {
+      if (f === 'certifications' ? showC : showO) sec4 += `<figure><h3 class="at">${esc(Ti[k])}</h3><div class="sub">${esc(sub)}</div>${ranked(items.map((i) => [i.name, i.n, i.lb]), 'companies')}<figcaption>${esc(items.map((i) => `${i.name} ${i.n}${i.lb ? '+' : ''}`).join(' · '))}.${esc(based(S, f, what))}</figcaption>${so(k)}</figure>`;
     }
     sec4 += '</div></section>';
   }
