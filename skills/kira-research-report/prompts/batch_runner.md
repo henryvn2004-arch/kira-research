@@ -565,12 +565,21 @@ node skills/kira-research-report/scripts/make-insight.mjs --pending 5
 
 Cuts the report's executive-summary page and its first chart page out of the finished HTML into an insight, in every language that was just published (nothing is written or translated by a model), and renders its cover slides. `--pending 5` takes the 5 newest published reports that lack an insight (or a language of it): the report just published is the newest, the rest are retries. Prints one JSON line per report and a `summary` line; a report whose layout the insight styles do not cover prints `status: skipped` (fine, nothing to do). NOT fatal, and never delays the queue: note any `failed` line (slug + reason) in the fire summary and continue. Details: `prompts/insight_runner.md`.
 
+**5.3b-6b — Ping IndexNow (new pages, optional).**
+
+```bash
+node skills/kira-research-report/scripts/indexnow-ping.mjs --report "<slug>"
+```
+
+Tells Bing and the other IndexNow engines that the report page (4 languages) and the library list changed. Needs env `INDEXNOW_KEY`; without it prints `skipped` and exits 0. NOT fatal, never delays the queue. The daily cron `/api/cron-indexnow` pings every page updated in the last 26 h anyway, so a missed ping costs at most a day. The Experts and insight runners can call the same script with `--transcript <slug>` / `--insight <slug>`.
+
 **5.3b-7 — Cut the report into citable answers (GEO, migration 065).**
 
 Prompts live in the private brain: `${KIRA_BRAIN_DIR}/geo/prompts/` (`common.md`, `report_extract.md`, `qa.md`, `translate.md`). Never copy them here.
 
 0. **Segment** — `node scripts/geo-segment.mjs --report <slug>` prints `{segment_key, method, candidates}`: the topic's level-2 segment, or `null` plus up to 8 candidate segments of the country.
 1. **Extract** — spawn ONE Haiku subagent (`model: haiku`). Give it the two prompt files, the slug, `country_code`, the resolved `segment_key` (or, when it is null, the `candidates` list), the analysis name and buyer question from the topic brief, and the local files `outputs/batch/${id}/en.html` + `outputs/batch/${id}/exhibits.json` (if present). It writes `outputs/batch/${id}/geo.json`.
+   **Always add this to the Extract brief (KIRA's own figures, GEO 2026-11-24):** "Extract EVERY figure the report tags `[Kira estimates]` (market size, forecast, share, scorecard score, scenario) as its own answer row with `primary_source: "Kira estimates"`, one row per figure, even when the same page has outside-source figures. `answer_short` states the figure with its year, then one short clause giving the method or basis (for example 'bottom-up from licensed outlets x average ticket', 'scenario path to 2030F'), taken from the report's own method line or exhibit note; never invent a method the report does not state. Outside-source figures (`[S&P 2026]`, `[Techcombank 9M25]`) stay rows with that source as `primary_source`; take them after the estimates." The hubs and the feed put these rows first (`api/_lib/geo-rank.js`), because an outside-source number is cited at its source while a KIRA estimate is cited only here. Count check, no model: `grep -o '\[Kira estimates\]' outputs/batch/${id}/en.html | wc -l` against the rows in `geo.json` with `primary_source` "Kira estimates"; if fewer rows than distinct tagged figures, note `geo: estimates x/y` in the fire summary.
 2. **QA** — spawn ONE Sonnet subagent (`model: sonnet`) with `qa.md`, the slug, title, kind `report` and analysis name, and ONLY `geo.json` (not the report). It rewrites `geo.json` in place (drops or fixes rows whose first clause does not answer the question, fixes the analysis name).
 2b. **Translate** — spawn ONE Haiku subagent (`model: haiku`) with `translate.md` and ONLY `geo.json`. It adds `i18n.ja` / `i18n.ko` / `i18n.zh` (`question` + `answer_short`) to every row in place and leaves any other `i18n` key as it is.
 3. **Gate + insert** (code, no model). The first command drops any ja/ko/zh version whose numbers differ from the English row (or that lost "KIRA"); the English rows are not touched:

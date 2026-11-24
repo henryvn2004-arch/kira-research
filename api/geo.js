@@ -20,13 +20,17 @@ import {
   countryBySlug, countryByCode, segmentName, answersForHub, docTitles, hubIndexable,
   publishedClaims, listHubs, countries, slugOf, crosswalk, bizdirectSummary, tradeIndex, tradeTopicIndexable,
 } from './_lib/geo.js';
-import { T, countryName } from './_lib/geo-i18n.js';
+import { T, countryName, companyDataHtml } from './_lib/geo-i18n.js';
 import { logGeoHit } from './_lib/geo-hits.js';
 import { answerBlock, claimItem, modelledNote, whoDecidesHtml } from './_lib/geo-html.js';
+import { citeBlock, citationText } from './_lib/cite.js';
+import { rankAnswers, isEstimate } from './_lib/geo-rank.js';
 
 const cut = (s, n) => { const t = plain(s); return t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t; };
 const day = (iso) => String(iso || '').slice(0, 10);
 const loc2 = (l) => (LOCALES.includes(l) ? l : 'en');
+// "Cite this page" box: KIRA Research, <page title>, <Month YYYY>, <canonical URL>.
+const citeFor = (L, vl, title, date, path) => citeBlock({ heading: L.citeThis, copy: L.copyCite, copied: L.copied, citation: citationText(title, date, BASE + path, vl) });
 const bdUrl = (u) => /^https:\/\/(www\.)?bizdirectasia\.com\//.test(u || '');
 
 function page(res, html, { status = 200, cache = true } = {}) {
@@ -78,14 +82,20 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   const path = `/${vl}/markets/${countrySlug}/${segment}`;
   const h1 = L.h1Hub(cName, segName);
 
+  // KIRA's own estimates first, in a block of their own at the top; then each intent, own field research before
+  // outside figures (geo-rank.js).
+  const ranked = rankAnswers(rows);
+  const ownRows = ranked.filter(isEstimate).slice(0, 12);
   const byIntent = new Map();
-  for (const a of rows) {
+  for (const a of ranked) {
+    if (ownRows.includes(a)) continue;
     const g = a.source_kind === 'econ' ? 'trade_data' : a.intent;      // Kira Data answers sit in "Trade and data"
     if (!byIntent.has(g)) byIntent.set(g, []);
     byIntent.get(g).push(a);
   }
   const intents = [...byIntent.keys()].sort((x, y) => INTENT_ORDER.indexOf(x) - INTENT_ORDER.indexOf(y));
-  const qa = intents.map((i) => `<section id="${esc(i)}"><h2>${esc(L.intents[i] || i)}</h2>${byIntent.get(i).map((a) => answerBlock(a, titles, L, vl)).join('')}</section>`).join('');
+  const own = ownRows.length ? `<section id="kira-estimates"><h2>${esc(L.ownFigures)}</h2>${ownRows.map((a) => answerBlock(a, titles, L, vl)).join('')}</section>` : '';
+  const qa = own + intents.map((i) => `<section id="${esc(i)}"><h2>${esc(L.intents[i] || i)}</h2>${byIntent.get(i).map((a) => answerBlock(a, titles, L, vl)).join('')}</section>`).join('');
 
   const docSlugs = [...new Set(slugs.filter(Boolean))];
   const repSlugs = docSlugs.filter((s) => known.reports.has(s));
@@ -115,7 +125,7 @@ async function renderHub(req, res, loc, countrySlug, segment) {
           (pages.length ? ' ' + pages.map((p) => `<a href="${esc(p.url)}" rel="noopener">${esc(L.bdList(p.role ? String(p.role).toLowerCase() : ''))}</a>`).join(' · ') : '') + '</p>' +
           (top.length ? `<ul class="geo-list">${top.map((c) => `<li>${esc(c.name)}${c.region ? ` (${esc(c.region)})` : ''}</li>`).join('')}</ul>` : '') +
           (regions.length ? `<p class="geo-note">${esc(L.topRegions)} ${regions.map((r) => `${esc(r.region)} (${esc(r.companies)})`).join(', ')}</p>` : '');
-      }).join('') + `<p class="geo-note">${esc(L.companyData)}</p></section>`;
+      }).join('') + `<p class="geo-note">${companyDataHtml(L)}</p></section>`;
     }
   } catch (_e) { who = ''; }
 
@@ -141,17 +151,17 @@ async function renderHub(req, res, loc, countrySlug, segment) {
   const content = '<!--SSR-->' +
     crumbs([{ name: L.library, href: `/${vl}/library` }, { name: cName }, { name: segName }]) +
     `<h1>${esc(h1)}</h1><p class="geo-meta">${esc(L.metaHub(updated, rows.length))}</p>` +
-    qa + market + decide + trade + who + related + '<!--/SSR-->';
+    qa + market + decide + trade + who + related + citeFor(L, vl, h1, updated, path) + '<!--/SSR-->';
 
   const ld = [
     { id: 'ld-breadcrumb', data: crumbJson([
       { name: 'KIRA RESEARCH', item: `${BASE}/${vl}/` }, { name: L.library, item: `${BASE}/${vl}/library` },
       { name: `${cName} ${segName}`, item: BASE + path }]) },
-    { id: 'ld-faq', data: { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage: vl === 'zh' ? 'zh-Hans' : vl, mainEntity: rows.slice(0, 40).map((a) => ({ '@type': 'Question', name: a.question, acceptedAnswer: { '@type': 'Answer', text: a.answer_short } })) } },
+    { id: 'ld-faq', data: { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage: vl === 'zh' ? 'zh-Hans' : vl, mainEntity: ranked.slice(0, 40).map((a) => ({ '@type': 'Question', name: a.question, acceptedAnswer: { '@type': 'Answer', text: a.answer_short } })) } },
   ];
   const editions = LOCALES.filter((l) => ok[l]);
   await shell(req, res, {
-    loc: vl, indexable: !fallback && ok[vl], path, title: `${h1} — KIRA RESEARCH`, description: cut(rows[0].answer_short, 200), ld, content,
+    loc: vl, indexable: !fallback && ok[vl], path, title: `${h1} — KIRA RESEARCH`, description: cut(ranked[0].answer_short, 200), ld, content,
     hreflang: editions.map((l) => ({ locale: l, url: `${BASE}/${l}/markets/${countrySlug}/${segment}` })),
     xDefault: ok.en ? `${BASE}/en/markets/${countrySlug}/${segment}` : null,
   });
@@ -296,7 +306,7 @@ async function renderCountry(req, res, loc, countrySlug) {
     `<p class="geo-note"><a href="/${vl}/data/${countrySlug}">${esc(L.dataCLink(cName))}</a></p>` +
     [...groups.values()].sort((a, b) => a.name.localeCompare(b.name)).map(({ name: g, items }) =>
       `<section><h2>${esc(g)}</h2><ul class="geo-list">${items.sort((a, b) => (b.lvl1 - a.lvl1) || a.name.localeCompare(b.name)).map(({ h, name }) => `<li><a href="/${vl}/markets/${countrySlug}/${esc(h.segment)}">${esc(name)}</a> · ${esc(L.answersN(h.counts[vl]))}</li>`).join('')}</ul></section>`).join('') +
-    '<!--/SSR-->';
+    citeFor(L, vl, h1, hubs.reduce((m, h) => (h.updated > m ? h.updated : m), ''), path) + '<!--/SSR-->';
   const editions = LOCALES.filter((l) => okFor(l).length);
   await shell(req, res, {
     loc: vl, indexable: !fallback && list.length > 0, path, title: `${h1} — KIRA RESEARCH`, description: cut(L.countryMeta(list.length), 200),
@@ -320,7 +330,8 @@ async function renderMarkets(req, res, loc) {
   const content = '<!--SSR-->' + crumbs([{ name: L.library, href: `/${vl}/library` }, { name: L.marketsH1 }]) +
     `<h1>${esc(L.marketsH1)}</h1><p class="geo-meta">${esc(L.marketsMeta(list.length))}</p>` +
     `<p class="geo-note"><a href="/${vl}/data/">${esc(L.dataLink)}</a></p>` +
-    `<ul class="geo-list">${list.map(({ c, n }) => `<li><a href="/${vl}/markets/${slugOf(c.name)}">${esc(countryName(c, vl))}</a> · ${esc(L.industriesN(n))}</li>`).join('')}</ul><!--/SSR-->`;
+    `<ul class="geo-list">${list.map(({ c, n }) => `<li><a href="/${vl}/markets/${slugOf(c.name)}">${esc(countryName(c, vl))}</a> · ${esc(L.industriesN(n))}</li>`).join('')}</ul>` +
+    citeFor(L, vl, L.marketsH1, hubs.reduce((m, h) => (h.updated > m ? h.updated : m), ''), path) + '<!--/SSR-->';
   const editions = LOCALES.filter((l) => okFor(l).length);
   await shell(req, res, {
     loc: vl, indexable: !fallback && list.length > 0, path, title: `${L.marketsH1} — KIRA RESEARCH`, description: cut(L.marketsMeta(list.length), 200),
