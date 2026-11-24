@@ -40,14 +40,16 @@ const yc = (S, g) => {
   return ['c1', 'c2', 'c3', 'c5'][Math.max(0, Math.min(3, i))];
 };
 // coverage gates: an optional exhibit is hidden when too few companies have the field
-const TH_DEFAULT = { region: 0.8, channels: 0.5, brands_min_n: 5, certifications_min_n: 5, origins_min_n: 5 };
+const TH_DEFAULT = { region: 0.8, channels: 0.5, brands_min_n: 5, certifications_min_n: 5, origins_min_n: 5, brands_linked_min: 0.3 };
 const cov = (S, f) => S.coverage?.[f] || null;
 const th = (S) => ({ ...TH_DEFAULT, ...(S.thresholds || {}) });
 export function show(S, f) {
   const c = cov(S, f), t = th(S);
   if (f === 'region') return !!(S.regions && S.provinces && (!c || c.share_filled >= t.region));
   if (f === 'channels') return !!(S.channels && S.channels.length && c && c.share_filled >= t.channels);
-  if (f === 'brands') return !!(S.brands || []).filter((b) => b.companies >= 2).length && (!c || c.n_filled >= t.brands_min_n);
+  if (f === 'brands') return !!(S.brands || []).filter((b) => b.companies >= 2).length && (!c || c.n_filled >= t.brands_min_n)
+    // brands must be linked to the segment's products (site-verified brand-product pairs); unknown share (older stats) = hidden
+    && typeof c?.share_linked === 'number' && c.share_linked >= t.brands_linked_min;
   if (f === 'certifications') return !!(S.certifications && S.certifications.length) && (!c || c.n_filled >= t.certifications_min_n);
   if (f === 'origins') return !!(S.origins && S.origins.length) && (!c || c.n_filled >= t.origins_min_n);
   return true;
@@ -444,7 +446,7 @@ ${buyScripts}<script src="/js/nav.js" defer></script>
 
 export function mapTitle(S) { return `${S.segment} companies in ${S.country}: market landscape and company list | KIRA Research`; }
 export function mapDescription(S, buyOn = false) {
-  return `${S.companies} ${lc(S.segment)} companies in ${S.country} mapped by ${lc(AXIS_TITLE(S))}, region, scale${S.brands && S.brands.length ? ' and brands' : ''}. Free overview${buyOn ? `; Excel list $${S.price_usd}` : '; Excel list on request'}.`;
+  return `${S.companies} ${lc(S.segment)} companies in ${S.country} mapped by ${lc(AXIS_TITLE(S))}, region, scale${show(S, 'brands') ? ' and brands' : ''}. Free overview${buyOn ? `; Excel list $${S.price_usd}` : '; Excel list on request'}.`;
 }
 
 export function renderDocument(S, C, opts = {}) {
