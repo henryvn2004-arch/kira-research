@@ -104,7 +104,7 @@ test('hub HTML: under 80 KB with 4,000 rows, prev/next are real links, tiles and
   assert.match(html, /<a rel="next" href="\/en\/market-maps\?page=4">/);
   assert.match(html, /<a class="tile" href="\/en\/market-maps\/vietnam">/);
   assert.match(html, /<a class="ichip" href="\/en\/market-maps\?industry=/);
-  assert.equal((html.match(/<tr><td><a href="\/en\/market-maps\//g) || []).length, 50);
+  assert.equal((html.match(/<a class="lrow" href="\/en\/market-maps\//g) || []).length, 50);
   assert.ok(html.includes('id="mm-table"') && html.includes('id="mm-q"') && html.includes('class="fgrp"'));
   assert.ok(!/\bAI\b|Claude/.test(html.replace(/<style>[\s\S]*?<\/style>/, '')));
   const first = renderHub(hub.hubModel({ items }, hub.parseParams({})), hub.parseParams({}), { loc: 'en' });

@@ -266,7 +266,15 @@ export const MM_CSS = `
 .mm .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 22px;margin-top:8px;font-size:13px;color:var(--muted)}
 .mm .method{display:grid;grid-template-columns:1fr 1fr;gap:24px}.mm .method h3{font-size:13px;border-top:2px solid var(--primary);padding-top:8px;margin-bottom:6px}.mm .method p,.mm .method li{font-size:12px;color:var(--muted)}.mm .method ul{padding-left:16px}
 .mm .foot{margin-top:30px;border-top:2px solid var(--text);padding-top:10px;font-size:11px;color:var(--muted-dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.mm .lib2{padding-block:20px 0}.mm .lib2-side{background:var(--surface)}.mm .fgrp-head{color:var(--text)}
+.mm.r-container{max-width:1240px;padding:0 24px 40px}.mm .lib2{padding-block:28px 24px}
+.mm .lrow .chip{max-width:100%}.mm .lrow .go .r-btn{white-space:nowrap}.mm .lrow .meta b{color:var(--text);font-weight:600}.mm .cover-thumb .ph{justify-content:flex-end}.mm .cover-thumb .ph span{font-size:10px}
+.mm .mm-fdet>summary{list-style:none;cursor:default}.mm .mm-fdet>summary::-webkit-details-marker{display:none}.mm .mm-fdet>summary a{pointer-events:auto}
+.mm .lib2-side-head h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;border:0;padding:0;margin:0;line-height:1.4}.mm .lib2-count strong{font-weight:700}.mm .hub-land{padding-top:26px}.mm .hub-land .hub-h:first-child{margin-top:0}
+.mm .lib2-bar .k{font-size:13px}.mm .lib2-bar select{display:none}
+@media (min-width:961px){.mm .mm-fdet>summary{pointer-events:none}}
+@media (max-width:960px){.mm .lib2-side{display:block}.mm .lib2-bar{display:flex}.mm .mm-fdet>summary{cursor:pointer;border-bottom:1px solid var(--border)}.mm .mm-fdet:not([open])>summary{border-bottom:0}.mm .mm-fdet>summary::after{content:"+";font-size:18px;color:var(--primary);margin-left:auto;padding-left:12px}.mm .mm-fdet[open]>summary::after{content:"−"}.mm .lib2-side-head{gap:10px}.mm .lib2-side-head h2{margin-right:auto}}
+@media (max-width:640px){.mm.r-container{padding:0 16px 32px}.mm .lrow .go{display:none}.mm .lrow{grid-template-columns:64px minmax(0,1fr)}}
+.mm .fgrp-body .fopt{cursor:pointer}.mm .fopt input{pointer-events:none}
 .mm .hubbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.mm .hubbar input[type=search]{flex:1 1 220px;min-width:0;padding:10px 12px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}.mm .hubbar select{padding:6px 8px;border:1px solid var(--border-strong);border-radius:6px;background:var(--bg);color:var(--text);font:inherit}
 .mm .hub-h{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:0;padding:0;margin:22px 0 10px;display:block}
 .mm .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -274,8 +282,8 @@ export const MM_CSS = `
 .mm .tile b{display:block;font-size:15px}.mm .tile span{font-size:12px;color:var(--muted)}
 .mm .chips{display:flex;flex-wrap:wrap;gap:8px}.mm .ichip{border:1px solid var(--border-strong);border-radius:999px;padding:5px 12px;font-size:13px;line-height:1.3;background:var(--surface);color:var(--text);font-family:inherit;text-transform:none;letter-spacing:0;font-weight:400;display:inline-block}.mm .ichip:hover{border-color:var(--primary)}.mm .ichip span{color:var(--muted-dim);font-size:11px;margin-left:4px}
 .mm .hub-land+.lib2{margin-top:30px}
-.mm a.fopt{display:flex;gap:8px;justify-content:space-between;padding:4px 0;font-size:13px}.mm a.fopt:hover .lbl{text-decoration:underline}.mm a.fopt.on .lbl{font-weight:700;color:var(--primary)}.mm a.fopt .n{color:var(--muted-dim);font-size:12px}
-.mm .fgrp-head{font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:6px 0;display:block}
+.mm a.fopt{text-decoration:none}.mm a.fopt:hover .lbl{text-decoration:underline}.mm a.fopt.on .lbl{font-weight:700;color:var(--primary)}
+.mm .fgrp>.fgrp-head{padding:14px 16px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary)}
 .mm .tag{font-size:10px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border-strong);border-radius:4px;padding:0 5px;margin-left:6px;color:var(--muted);vertical-align:middle}
 .mm .sbtn{padding:10px 16px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font:inherit;font-weight:600;cursor:pointer}
 .mm .pager{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:16px;font-size:14px}.mm .pager a{color:var(--primary);font-weight:600}.mm .pager .off{color:var(--muted-dim)}
@@ -465,6 +473,11 @@ const kindTag = (i) => (i.kind === 'service' ? ' <span class="tag">Services</spa
 const crumbLd = (items) => [{ id: 'ld-breadcrumb', data: { '@context': 'https://schema.org', '@type': 'BreadcrumbList',
   itemListElement: items.map(([name, item], n) => ({ '@type': 'ListItem', position: n + 1, name, item })) } }];
 
+const SEARCH_IC = '<svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>';
+const HOME_IC = '<svg class="ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7M6 9.5V20h12V9.5"/></svg>';
+// Library-style breadcrumb: home icon, then [label, href?] steps (the last one is plain text).
+const crumbs = (steps) => `<nav class="r-crumbs" aria-label="Breadcrumb"><a href="/en/" aria-label="Home">${HOME_IC}</a>${steps.map(([t, h]) => `<span class="sep">&rsaquo;</span>${h ? `<a href="${h}">${esc(t)}</a>` : `<span>${esc(t)}</span>`}`).join('')}</nav>`;
+
 function pager(m, p) {
   if (m.pages < 2) return '';
   const at = (n) => hubHref(p, { page: n });
@@ -483,7 +496,7 @@ export function renderHub(model, params, opts = {}) {
   const filtered = isFiltered(p);
   const canonical = opts.canonical || `${BASE}${hubHref(p, { page: m.page })}`;
   const link = (over) => esc(hubHref(p, { page: 1, ...over }));
-  const opt = (label, n, on, over, offOver) => `<a class="fopt${on ? ' on' : ''}" href="${link(on ? offOver : over)}"${on ? ' aria-current="true"' : ''}><span class="lbl">${esc(label)}</span><span class="n">${n}</span></a>`;
+  const opt = (label, n, on, over, offOver) => `<a class="fopt${on ? ' on' : ''}" href="${link(on ? offOver : over)}"${on ? ' aria-current="true"' : ''}><input type="checkbox" tabindex="-1" aria-hidden="true"${on ? ' checked' : ''}><span class="lbl">${esc(label)}</span><span class="n">${n}</span></a>`;
   const grp = (k, label, body) => (body ? `<div class="fgrp" data-group="${k}"><div class="fgrp-head">${esc(label)}</div><div class="fgrp-body">${body}</div></div>` : '');
   const F = m.facets;
   const filterHtml = [
@@ -492,19 +505,24 @@ export function renderHub(model, params, opts = {}) {
     grp('kind', 'Goods or services', F.kinds.map((c) => opt(c.name, c.n, p.kind === c.key, { kind: c.key }, { kind: '' })).join('')),
     grp('band', 'Number of companies', F.sizes.map((c) => opt(c.name, c.n, p.size === c.key, { size: c.key }, { size: '' })).join('')),
   ].join('');
-  const rows = m.items.map((i) => `<tr><td><a href="/en/market-maps/${esc(i.slug)}"><b>${esc(i.title)}</b></a>${kindTag(i)}<div class="k">${esc(i.l2_family || '')}</div></td><td><a href="/en/market-maps/${esc(i.country)}">${esc(i.country_name)}</a></td><td class="n">${nf(i.companies)}</td><td class="n">${i.phone_pct == null ? '-' : `${i.phone_pct}%`}</td><td class="n">${i.email_pct == null ? '-' : `${i.email_pct}%`}</td><td class="n">$${i.price}</td><td>${esc(i.built)}</td></tr>`).join('');
+  const rows = m.items.map((i) => `<a class="lrow" href="/en/market-maps/${esc(i.slug)}"><div class="cover-thumb"><div class="ph"><span>${esc(i.country_name)}</span></div></div><div class="lrow-body"><div class="lrow-chips"><span class="chip">${esc(i.l2_family || 'List')}</span>${i.kind === 'service' ? '<span class="chip">Services</span>' : ''}</div><h3>${esc(i.title)}</h3><div class="meta"><span>${nf(i.companies)} companies</span>${i.phone_pct == null ? '' : `<span>${i.phone_pct}% phone</span>`}${i.email_pct == null ? '' : `<span>${i.email_pct}% email</span>`}<span>$${i.price}</span><span>${esc(i.built)}</span></div></div><div class="go"><span class="r-btn r-btn-outline">View list &rarr;</span></div></a>`).join('');
   const from = m.total ? (m.page - 1) * m.pageSize + 1 : 0;
   const hidden = ['country', 'industry', 'kind', 'size'].filter((k) => p[k]).map((k) => `<input type="hidden" name="${k}" value="${esc(p[k])}">`).join('');
   const tiles = m.tiles.map((t) => `<a class="tile" href="/en/market-maps/${esc(t.slug)}"><b>${esc(t.name)}</b><span>${nf(t.n)} lists</span></a>`).join('');
   const chips = m.topFamilies.map((f) => `<a class="ichip" href="${esc(hubHref({}, { industry: f.name }))}">${esc(f.name)} <span>${f.n}</span></a>`).join('');
-  const body = `<main class="mm" id="mm-root">
-<div class="crumb">Market Map</div>
+  const band = `<header class="r-band"><div class="r-container">
+${crumbs([['MARKET MAP']])}
 <h1>Company lists: every company in a segment, by country</h1>
-<p class="dek">Each list covers the companies of one segment in one country, compiled from company websites. The overview of each list is free; the Excel file with company-level phone and email is $49 up to 500 companies, $99 above.</p>
+<p class="r-sub">Each list covers the companies of one segment in one country, compiled from company websites. The overview of each list is free; the Excel file with company-level phone and email is $49 up to 500 companies, $99 above.</p>
+${m.all ? `<form class="r-search" method="get" action="/en/market-maps#lists" role="search">${hidden}${SEARCH_IC}<input type="search" id="mm-q" name="q" value="${esc(p.q)}" maxlength="60" placeholder="Search segment, country or industry" aria-label="Search company lists"><button type="submit" class="r-btn r-btn-primary">Search</button></form>` : ''}
+</div></header>`;
+  const body = `${band}
+<main class="mm r-container" id="mm-root">
 ${m.all ? `<section class="hub-land" aria-label="Browse by country and industry"><h2 class="hub-h">Countries</h2><div class="tiles">${tiles}</div><h2 class="hub-h">Top industries</h2><div class="chips">${chips}</div></section>
-<div class="lib2" id="lists"><aside class="lib2-side" aria-label="Refine by"><div class="lib2-side-head"><h2>Refine by</h2>${filtered ? `<a class="r-link" href="/en/market-maps#lists">Clear all</a>` : ''}</div><div class="lib2-filters">${filterHtml}</div></aside>
-<section class="lib2-main"><form class="hubbar" method="get" action="/en/market-maps#lists" role="search">${hidden}<input type="search" id="mm-q" name="q" value="${esc(p.q)}" maxlength="60" placeholder="Search segment, country or industry" aria-label="Search company lists"><button type="submit" class="sbtn">Search</button><span class="k" id="mm-count">${m.total ? `${nf(from)}-${nf(from + m.items.length - 1)} of ${nf(m.total)} lists, largest first` : '0 lists'}</span></form>
-${m.total ? `<div class="scroll top"><table id="mm-table"><thead><tr><th>Segment</th><th>Country</th><th class="n">Companies</th><th class="n">With phone</th><th class="n">With email</th><th class="n">Price</th><th>Built</th></tr></thead><tbody>${rows}</tbody></table></div>${pager(m, p)}` : '<p class="k" id="mm-none" style="margin-top:12px">No list matches these filters.</p>'}</section></div>`
+<div class="lib2" id="lists"><aside class="lib2-side" aria-label="Refine by"><details class="mm-fdet" open><summary class="lib2-side-head"><h2>Refine by</h2>${filtered ? `<a class="r-link" href="/en/market-maps#lists">Clear all</a>` : ''}</summary><div class="lib2-filters">${filterHtml}</div></details></aside>
+<section class="lib2-main"><div class="lib2-bar"><div class="lib2-count" id="mm-count">${m.total ? `<strong>${nf(m.total)} lists</strong> <span class="pg">(${nf(from)}-${nf(from + m.items.length - 1)}, largest first)</span>` : '<strong>0 lists</strong>'}</div></div>
+${m.total ? `<div class="lib2-rows" id="mm-table">${rows}</div>${pager(m, p)}` : '<div class="r-empty" id="mm-none"><h3>No list matches these filters</h3><p>Try removing a filter or searching for another segment.</p><div class="acts"><a class="r-btn r-btn-primary" href="/en/market-maps#lists">Clear filters</a></div></div>'}</section></div>
+<script>if(window.matchMedia&&matchMedia("(max-width:960px)").matches){var d=document.querySelector(".mm-fdet");if(d)d.open=false}</script>`
   : `<div class="mm-empty" style="margin-top:24px;padding:28px 24px;border:1px solid var(--border,#e5e7eb);border-radius:12px;max-width:640px"><p style="margin:0 0 8px;font-size:20px;font-weight:600">${esc(E.h)}</p><p class="dek" style="margin:0 0 16px">${esc(E.p)}</p><a href="/${loc}/library" style="font-weight:600">${esc(E.a)}</a></div>`}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
 </main>`;
@@ -519,14 +537,22 @@ export function renderCountryHub(c, opts = {}) {
   const seen = new Set(), dup = new Set();
   for (const i of c.items) { const t = i.title.toLowerCase(); if (seen.has(t)) dup.add(t); seen.add(t); }
   const canonical = opts.canonical || `${BASE}/en/market-maps/${c.slug}`;
-  const groups = c.groups.map((g) => `<section class="fam"><h2>${esc(g.name)} <i>${g.items.length} ${g.items.length === 1 ? 'list' : 'lists'}</i></h2><ul class="mmlist">${g.items.map((i) =>
+  const gid = (n) => `f${n + 1}`;
+  const groups = c.groups.map((g, n) => `<section class="fam" id="${gid(n)}"><h2>${esc(g.name)} <i>${g.items.length} ${g.items.length === 1 ? 'list' : 'lists'}</i></h2><ul class="mmlist">${g.items.map((i) =>
     `<li><a href="/en/market-maps/${esc(i.slug)}">${esc(i.title)}</a>${dup.has(i.title.toLowerCase()) ? kindTag(i) : ''} <span class="k">${nf(i.companies)} companies</span></li>`).join('')}</ul></section>`).join('');
-  const body = `<main class="mm" id="mm-root">
-<div class="crumb"><a href="/en/market-maps">Market Map</a><i>/</i>${esc(c.name)}</div>
+  const side = c.groups.map((g, n) => `<a class="fopt" href="#${gid(n)}"><span class="lbl">${esc(g.name)}</span><span class="n">${g.items.length}</span></a>`).join('');
+  const body = `<header class="r-band"><div class="r-container">
+${crumbs([['MARKET MAP', '/en/market-maps'], [c.name]])}
 <h1>${esc(c.name)} company lists: ${nf(c.items.length)} segments mapped</h1>
-<p class="dek">${nf(c.companies)} company entries across ${nf(c.items.length)} segments in ${esc(c.name)}, compiled from company websites. Open a segment for its free overview; the Excel list with company-level phone and email is $49 up to 500 companies, $99 above.</p>
+<p class="r-sub">${nf(c.companies)} company entries across ${nf(c.items.length)} segments in ${esc(c.name)}, compiled from company websites. Open a segment for its free overview; the Excel list with company-level phone and email is $49 up to 500 companies, $99 above.</p>
+<form class="r-search" method="get" action="/en/market-maps#lists" role="search"><input type="hidden" name="country" value="${esc(c.slug)}">${SEARCH_IC}<input type="search" name="q" maxlength="60" placeholder="Search ${esc(c.name)} segments" aria-label="Search ${esc(c.name)} company lists"><button type="submit" class="r-btn r-btn-primary">Search</button></form>
+</div></header>
+<main class="mm r-container" id="mm-root">
+<div class="lib2"><aside class="lib2-side" aria-label="Industries"><details class="mm-fdet" open><summary class="lib2-side-head"><h2>Industries</h2></summary><div class="lib2-filters"><div class="fgrp"><div class="fgrp-body">${side}</div></div></div></details></aside>
+<section class="lib2-main"><div class="lib2-bar"><div class="lib2-count"><strong>${nf(c.items.length)} lists</strong> <span class="pg">(grouped by industry)</span></div></div>
 ${groups}
-<p class="k" style="margin-top:24px"><a href="/en/market-maps?country=${esc(c.slug)}#lists">Search and filter ${esc(c.name)} lists</a> · <a href="/en/market-maps">All countries</a></p>
+<p class="k" style="margin-top:24px"><a href="/en/market-maps?country=${esc(c.slug)}#lists">Filter ${esc(c.name)} lists by size and type</a> · <a href="/en/market-maps">All countries</a></p></section></div>
+<script>if(window.matchMedia&&matchMedia("(max-width:960px)").matches){var d=document.querySelector(".mm-fdet");if(d)d.open=false}</script>
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>Data: BizDirect Asia (bizdirectasia.com)</span></div>
 </main>`;
   const ld = crumbLd([['Kira Research', `${BASE}/`], ['Market Map', `${BASE}/en/market-maps`], [c.name, canonical]]);
