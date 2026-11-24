@@ -67,3 +67,11 @@ test('helpers', () => {
   assert.equal(isHttpUrl('https://a.b/c'), true);
   assert.equal(isHttpUrl('not a url'), false);
 });
+
+test('a BizDirect press draft with a non-Latin company name and a local news domain passes the same guards', () => {
+  const row = draft({ source_key: 'bizdirect_press', url: 'https://vnexpress.net/tin-tuc/abc-123.html', company: 'トヨタ自動車' });
+  const r = checkDecision(row, publish(), [], NOW);
+  assert.equal(r.ok, true);
+  assert.equal(r.patch.status, 'published');
+  assert.ok(companyKey('トヨタ自動車').length > 0);
+});
