@@ -72,9 +72,10 @@ test('changedUrls: every changed translation plus the listing pages', async () =
     return [{ slug: 't1', expert_transcript_translations: [{ locale: 'en' }] }];
   };
   const u = await changedUrls(sb, '2026-11-23T00:00:00Z');
-  assert.ok(u.includes('https://kiraresearch.com/zh/reports/r1'));
-  assert.ok(u.includes('https://kiraresearch.com/en/experts/transcripts/t1'));
-  assert.ok(u.includes('https://kiraresearch.com/ja/library'));
+  const set = new Set(u); // exact membership in the URL list
+  assert.ok(set.has('https://kiraresearch.com/zh/reports/r1'));
+  assert.ok(set.has('https://kiraresearch.com/en/experts/transcripts/t1'));
+  assert.ok(set.has('https://kiraresearch.com/ja/library'));
   assert.ok(!u.some((x) => x.includes('/insights/')));
 });
 
