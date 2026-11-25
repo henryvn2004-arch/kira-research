@@ -15,3 +15,11 @@ export function isIndexable(stats) {
   const deep = stages.filter((s) => Number(s.n) >= MIN_STAGE_COMPANIES).length;
   return n >= MIN_COMPANIES && deep >= MIN_STAGES;
 }
+
+// A translated commentary is CURRENT only when the commentary it was translated from is still the stored one:
+// i18n[loc].src_built_at must equal commentary_built_at (compared as instants, so "+00:00" and "Z" spellings agree).
+export function i18nCurrent(commentaryBuiltAt, srcBuiltAt) {
+  if (!commentaryBuiltAt || !srcBuiltAt) return false;
+  const a = Date.parse(commentaryBuiltAt), b = Date.parse(srcBuiltAt);
+  return Number.isFinite(a) && a === b;
+}

@@ -7,17 +7,22 @@
 //   Hub params (hub and list): country=<slug>&industry=<family>&kind=goods|services&size=u100|b100|b300|o500&q=<words>&sort=small|az&page=<n>, 50 rows a page (default sort: largest first)
 //   GET /api/market-maps?type=country&loc=en&country=vietnam          /<loc>/market-maps/<country> (every map of the country, grouped by industry)
 //   GET /api/market-maps?type=map&loc=en&country=vietnam&segment=soft-drinks   /<loc>/market-maps/<country>/<segment>
-// English only: ja/ko/zh paths serve the English page with the English canonical and noindex.
+// Four languages (migration 073): /ja /ko /zh use the fixed texts of api/_lib/market-map/i18n.js, segment titles and family names
+// from table market_map_names (English when missing) and commentary from market_maps.i18n[loc] ONLY while it is current
+// (i18n[loc].src_built_at = commentary_built_at); otherwise the page shows no commentary block for that language.
 // Robots: noindex everywhere unless setting `marketmaps.indexing_enabled` is on AND the row is indexable
-// (>= 50 companies, >= 2 stages with 5+ companies) AND the language is English. Not linked from nav or footer.
+// (>= 50 companies, >= 2 stages with 5+ companies). A ja/ko/zh map page also needs a current commentary translation AND a
+// translated segment title. Hubs and country hubs index when at least one map of theirs is indexable in that language.
+// hreflang (en/ja/ko/zh-Hans + x-default = en) lists only the languages a page may be indexed in. Canonical is per language.
 // A missing table, an empty table or a database error all end as "no maps" (hub 200, map 404), never a 500.
 // The page never contains a phone number, an email or a named person: the stats hold none.
 // ============================================================
 import { getConfig } from './_lib/config.js';
-import { BASE, LOCALES } from './_lib/ssr.js';
+import { BASE, LOCALES, esc } from './_lib/ssr.js';
 import { renderDocument, renderHub, renderCountryHub } from './_lib/market-map/render.js';
-import { getIndex, parseParams, isFiltered, hubModel, countryModel, hubHref } from './_lib/market-map/hub.js';
-import { isIndexable } from './_lib/market-map/gate.js';
+import { getIndex, getNames, parseParams, isFiltered, hubModel, countryModel, hubHref, localizeItems, indexableLocales } from './_lib/market-map/hub.js';
+import { isIndexable, i18nCurrent } from './_lib/market-map/gate.js';
+import { ui, LOCS, countryLabel } from './_lib/market-map/i18n.js';
 import { listPrice } from './_lib/pricing.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -45,6 +50,9 @@ async function fetchRange(path, from, to) {
 async function loadIndex() {
   try { return await getIndex(fetchRange); } catch (err) { console.warn('[market-maps] index', err.message); return { items: [] }; }
 }
+async function loadNames() {
+  try { return await getNames(fetchRange); } catch (err) { console.warn('[market-maps] names', err.message); return null; }
+}
 // Phone / email shares and the build date sit in the stats JSON: read for the 50 rows of a page only.
 async function enrich(items) {
   if (!items.length) return items;
@@ -63,9 +71,10 @@ function send(res, html, { status = 200, index = false, cache = true } = {}) {
   res.status(status).send(html);
 }
 
-function notFound(res) {
-  const body = `<main class="mm"><h1>Market map not found</h1><p class="dek">This map is not published. <a href="/en/market-maps">See all market maps</a>.</p></main>`;
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Market map not found | KIRA Research</title><meta name="robots" content="noindex,follow"><link rel="stylesheet" href="/css/kira.css"><style>.mm{max-width:1120px;margin:0 auto;padding:40px 16px}.mm h1{font-size:28px}.mm a{color:var(--primary)}</style></head><body>${body}<script src="/js/nav.js" defer></script></body></html>`;
+function notFound(res, loc = 'en') {
+  const t = ui(loc);
+  const body = `<main class="mm"><h1>${esc(t.nfTitle)}</h1><p class="dek">${esc(t.nfText)} <a href="/${loc}/market-maps">${esc(t.nfLink)}</a>.</p></main>`;
+  const html = `<!doctype html><html lang="${t.htmlLang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t.nfTitle)} | KIRA Research</title><meta name="robots" content="noindex,follow"><link rel="stylesheet" href="/css/kira.css"><style>.mm{max-width:1120px;margin:0 auto;padding:40px 16px}.mm h1{font-size:28px}.mm a{color:var(--primary)}</style></head><body>${body}<script src="/js/nav.js" defer></script></body></html>`;
   send(res, html, { status: 404, cache: false });
 }
 
@@ -78,37 +87,60 @@ export default async function handler(req, res) {
 
   if (q.type === 'hub' || q.type === 'list') {
     const p = parseParams(q);
-    const model = hubModel(await loadIndex(), p);
-    model.items = await enrich(model.items);
+    const ix = await loadIndex();
     if (q.type === 'list') {
+      const model = hubModel(ix, p);
+      model.items = await enrich(model.items);
       res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400');
       res.status(200).json({ items: model.items.map((i) => ({ slug: i.slug, country: i.country, country_name: i.country_name, segment_key: i.segment_key, title: i.title, l2_family: i.l2_family, kind: i.kind, companies: i.companies, phone_pct: i.phone_pct, email_pct: i.email_pct, price: i.price, built: i.built })), total: model.total, page: model.page, pages: model.pages, page_size: model.pageSize });
       return;
     }
+    const names = await loadNames();
+    const model = hubModel({ ...ix, items: localizeItems(ix.items, names, loc) }, p);
+    model.items = await enrich(model.items);
     // Only the clean first page is a search landing page; filtered views and later pages are noindex (crawlers still follow them).
-    const index = indexingOn && loc === 'en' && model.anyIndexable && !isFiltered(p) && model.page === 1;
-    send(res, renderHub(model, p, { loc, canonical: `${BASE}${hubHref(p, { page: model.page })}`, robots: index ? 'index,follow' : 'noindex,follow' }), { index });
+    const index = indexingOn && model.anyIndexable && !isFiltered(p) && model.page === 1;
+    const langs = index ? indexableLocales(ix.items, names) : [];
+    send(res, renderHub(model, p, { loc, canonical: `${BASE}${hubHref(p, { page: model.page }, loc)}`, robots: index ? 'index,follow' : 'noindex,follow', alternates: alternatesFor(langs, (l) => `${BASE}/${l}/market-maps`) }), { index });
     return;
   }
 
   if (q.type === 'country') {
     const slug = String(q.country || '');
-    const c = SLUG.test(slug) ? countryModel(await loadIndex(), slug) : null;
-    if (!c) { notFound(res); return; }
-    const index = indexingOn && loc === 'en' && c.indexableCount > 0;
-    send(res, renderCountryHub(c, { canonical: `${BASE}/en/market-maps/${c.slug}`, robots: index ? 'index,follow' : 'noindex,follow' }), { index });
+    const ix = SLUG.test(slug) ? await loadIndex() : null;
+    const names = ix ? await loadNames() : null;
+    const c = ix ? countryModel({ ...ix, items: localizeItems(ix.items, names, loc) }, slug) : null;
+    if (!c) { notFound(res, loc); return; }
+    const index = indexingOn && c.indexableCount > 0;
+    const langs = index ? indexableLocales(ix.items, names, (i) => i.country === slug) : [];
+    send(res, renderCountryHub(c, { loc, canonical: `${BASE}/${loc}/market-maps/${c.slug}`, robots: index ? 'index,follow' : 'noindex,follow', alternates: alternatesFor(langs, (l) => `${BASE}/${l}/market-maps/${c.slug}`) }), { index });
     return;
   }
 
   const country = String(q.country || ''), segment = String(q.segment || '');
-  if (!SLUG.test(country) || !SLUG.test(segment)) { notFound(res); return; }
-  const rows = await sb(`market_maps?country=eq.${encodeURIComponent(country)}&segment_key=eq.${encodeURIComponent(segment)}&status=eq.published&select=*&limit=1`);
+  if (!SLUG.test(country) || !SLUG.test(segment)) { notFound(res, loc); return; }
+  const [rows, nameRows] = await Promise.all([
+    sb(`market_maps?country=eq.${encodeURIComponent(country)}&segment_key=eq.${encodeURIComponent(segment)}&status=eq.published&select=*&limit=1`),
+    sb(`market_map_names?kind=eq.segment&key=eq.${encodeURIComponent(segment)}&select=lang,name`),
+  ]);
   const row = rows[0];
-  if (!row || !row.stats || !row.stats.meta) { notFound(res); return; }
-  const index = indexingOn && loc === 'en' && row.indexable === true && isIndexable(row.stats);
+  if (!row || !row.stats || !row.stats.meta) { notFound(res, loc); return; }
+  const segNames = Object.fromEntries((nameRows || []).filter((r) => r && r.name).map((r) => [r.lang, String(r.name)]));
+  const enOk = row.indexable === true && isIndexable(row.stats);
+  // a language is open to search engines only with a current commentary translation and a translated segment title
+  const current = (l) => i18nCurrent(row.commentary_built_at, row.i18n && row.i18n[l] && row.i18n[l].src_built_at);
+  const langOk = (l) => (l === 'en' ? enOk : enOk && current(l) && !!segNames[l]);
+  const index = indexingOn && langOk(loc);
+  const langs = index ? LOCALES.filter(langOk) : [];
   row.stats.price_usd = listPrice(row.n_companies);   // the price is always the server rule, whatever the stats file says
-  const html = renderDocument(row.stats, row.commentary || null, {
-    canonical: `${BASE}/en/market-maps/${row.slug}`, robots: index ? 'index,follow' : 'noindex,follow', buy,
+  const C = loc === 'en' ? (row.commentary || null) : (current(loc) && row.i18n[loc].commentary) || null;
+  const html = renderDocument(row.stats, C, {
+    loc, canonical: `${BASE}/${loc}/market-maps/${row.slug}`, robots: index ? 'index,follow' : 'noindex,follow', buy,
+    segName: loc === 'en' ? row.stats.segment : (segNames[loc] || row.stats.segment), countryName: countryLabel(row.country, row.stats.country, loc),
+    alternates: alternatesFor(langs, (l) => `${BASE}/${l}/market-maps/${row.slug}`),
   });
   send(res, html, { index });
 }
+
+// [[loc, url]] of the languages a page may be indexed in; hreflang is only written when there are two or more.
+function alternatesFor(langs, url) { return langs.length > 1 ? LOCS.filter((l) => langs.includes(l)).map((l) => [l, url(l)]) : []; }

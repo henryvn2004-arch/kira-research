@@ -58,6 +58,7 @@ export default async function handler(req, res) {
       if (!rows[0]) { res.status(404).json({ error: 'list_not_found' }); return; }
       if (!rows[0].definition) { res.status(409).json({ error: 'list_unavailable' }); return; }   // no segment definition: the file could not be built
       const amount = listPrice(rows[0].n_companies).toFixed(2);
+      const loc = ['en', 'ja', 'ko', 'zh'].includes(body.loc) ? body.loc : 'en';   // the buyer returns to the language page they bought on
       const token = await getPayPalToken();
       const orderRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -65,7 +66,7 @@ export default async function handler(req, res) {
           intent: 'CAPTURE',
           purchase_units: [{ amount: { currency_code: 'USD', value: amount }, description: `KIRA RESEARCH — company list ${slug}`, custom_id: slug }],
           application_context: { brand_name: 'KIRA RESEARCH', landing_page: 'BILLING', user_action: 'PAY_NOW',
-            return_url: `${APP_URL}/en/market-maps/${slug}?paypal=success`, cancel_url: `${APP_URL}/en/market-maps/${slug}?paypal=cancel` },
+            return_url: `${APP_URL}/${loc}/market-maps/${slug}?paypal=success`, cancel_url: `${APP_URL}/${loc}/market-maps/${slug}?paypal=cancel` },
         }),
       });
       if (!orderRes.ok) throw new Error('paypal_create_failed_' + orderRes.status);
