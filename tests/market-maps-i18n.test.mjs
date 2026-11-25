@@ -64,7 +64,20 @@ function call(h, query, url = '/') {
 const robots = (html) => /<meta name="robots" content="([^"]+)"/.exec(html)[1];
 const canonical = (html) => /<link rel="canonical" href="([^"]+)"/.exec(html)[1];
 const hreflangs = (html) => [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)].map((m) => `${m[1]} ${m[2]}`);
-const noStyle = (html) => html.replace(/<style>[\s\S]*?<\/style>/g, '').replace(/<script[\s\S]*?<\/script>/g, '');
+// Visible text only: drop <style> and <script> blocks (case-insensitive scan, test helper, not a sanitizer).
+const dropBlocks = (html, tag) => {
+  const low = html.toLowerCase(); let out = ''; let i = 0;
+  for (;;) {
+    const s = low.indexOf(`<${tag}`, i);
+    if (s < 0) return out + html.slice(i);
+    out += html.slice(i, s);
+    const e = low.indexOf(`</${tag}`, s);
+    if (e < 0) return out;
+    const close = low.indexOf('>', e);
+    i = close < 0 ? html.length : close + 1;
+  }
+};
+const noStyle = (html) => dropBlocks(dropBlocks(html, 'style'), 'script');
 const mapPage = (loc, seg = 'soft-drinks', country = 'vietnam') => call(handler, { type: 'map', loc, country, segment: seg });
 
 test('i18nCurrent compares instants, not spellings', () => {
