@@ -1,4 +1,4 @@
--- 073_bizdirect_press_licence_google.sql — make the bizdirect_press licence text match what is stored:
+-- 074_bizdirect_press_licence_google.sql — make the bizdirect_press licence text match what is stored:
 -- the headline (English line written by the bridge, original title kept in raw), the date, the publisher's name and domain,
 -- and a link to the article. The link is either the publisher's own URL ('original') or a Google News link that redirects
 -- to the publisher ('google_news'); raw.bridge.url_kind tells which. No article text is stored. The domain shown is the
