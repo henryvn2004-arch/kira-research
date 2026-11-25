@@ -24,11 +24,12 @@ test('hub page: CDN keeps it 1 hour fresh and serves stale for a day', async () 
   assert.match(r.headers['Cache-Control'], /stale-while-revalidate=86400/);
 });
 
-test('robots.txt: every group that allows the site also disallows the ja/ko/zh market-maps copies', () => {
+test('robots.txt: ja/ko/zh market maps are open to every group (translated pages are indexable since 2026-11-25), admin and api stay closed', () => {
   const groups = readFileSync(new URL('../public/robots.txt', import.meta.url), 'utf8').split(/\n\s*\n/).filter((g) => /^User-agent:/m.test(g));
   const allowing = groups.filter((g) => /^Allow:\s*\/\s*$/m.test(g));
   assert.ok(allowing.length >= 3, 'expected the *, search-bot and training-bot groups');
-  for (const g of allowing) for (const loc of ['ja', 'ko', 'zh']) assert.match(g, new RegExp(`^Disallow:\\s*/${loc}/market-maps\\s*$`, 'm'), `${g.split('\n').find((l) => /User-agent/.test(l))} misses /${loc}/market-maps`);
-  // The English pages stay open to every crawler.
-  for (const g of allowing) assert.doesNotMatch(g, /^Disallow:\s*\/(en\/)?market-maps/m);
+  for (const g of allowing) {
+    assert.doesNotMatch(g, /^Disallow:\s*\/(en|ja|ko|zh)?\/?market-maps/m);
+    for (const loc of ['en', 'ja', 'ko', 'zh']) assert.match(g, new RegExp(`^Disallow:\\s*/${loc}/admin/\\s*$`, 'm'));
+  }
 });

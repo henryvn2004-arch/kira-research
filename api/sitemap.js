@@ -8,7 +8,7 @@
 //   GET /api/sitemap?locale=ja        → full urlset for JA
 //   GET /api/sitemap?locale=ko        → full urlset for KO
 //   GET /api/sitemap?locale=zh        → full urlset for ZH (Simplified Chinese)
-//   GET /api/sitemap?type=market-maps → market-map hub + country hubs + indexable maps (EN; empty while the switch is off)
+//   GET /api/sitemap?type=market-maps[&locale=ja|ko|zh] → market-map hub + country hubs + indexable maps (EN by default; ja/ko/zh only translated + current ones; empty while the switch is off)
 //
 // Wired up via vercel.json rewrites:
 //   /sitemap.xml         → /api/sitemap
@@ -16,7 +16,7 @@
 //   /sitemap-ja.xml      → /api/sitemap?locale=ja
 //   /sitemap-ko.xml      → /api/sitemap?locale=ko
 //   /sitemap-zh.xml      → /api/sitemap?locale=zh
-//   /sitemap-market-maps.xml → /api/sitemap?type=market-maps
+//   /sitemap-market-maps.xml → /api/sitemap?type=market-maps (and -ja / -ko / -zh)
 //
 // Each <url> entry in a per-locale sitemap carries <xhtml:link rel="alternate"
 // hreflang="..."> annotations pointing to the equivalent URL in the other
@@ -29,6 +29,7 @@
 
 import { coverage, countryIndexable, pairIndexable } from './_lib/econ/coverage.js';
 import { getConfig } from './_lib/config.js';
+import { i18nCurrent } from './_lib/market-map/gate.js';
 import { INVESTOR_SLUG, HOST_SLUG } from './_lib/moves/alerts.js';
 import { listHubs, tradeIndex, tradeTopicIndexable, topicSlug, countries, slugOf } from './_lib/geo.js';
 
@@ -124,7 +125,8 @@ function buildIndex(withMaps = false) {
     '  </sitemap>'
   ].join('\n')).join('\n');
   // Market maps: its own file (about 3,000 URLs), listed only while marketmaps.indexing_enabled is on.
-  const mm = withMaps ? ['  <sitemap>', `    <loc>${ORIGIN}/sitemap-market-maps.xml</loc>`, `    <lastmod>${today}</lastmod>`, '  </sitemap>'].join('\n') : '';
+  // One file per language (ja/ko/zh hold only maps whose translation is current and whose title is translated).
+  const mm = withMaps ? ['', '-ja', '-ko', '-zh'].map((sfx) => ['  <sitemap>', `    <loc>${ORIGIN}/sitemap-market-maps${sfx}.xml</loc>`, `    <lastmod>${today}</lastmod>`, '  </sitemap>'].join('\n')).join('\n') : '';
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -328,25 +330,37 @@ async function buildLocale(locale) {
   ].join('\n');
 }
 
-// ── Market maps sitemap (migration 070): English only, only while setting marketmaps.indexing_enabled is on ──
-// Lists the hub, every country hub that has at least one indexable map, and every indexable map. The stats JSON is not
-// read here (3,000 blobs): the loader's `indexable` column (same gate as api/_lib/market-map/gate.js) plus >= 50
-// companies decide; the page itself still re-checks the full gate and sets robots on its own.
-async function buildMarketMaps() {
+// ── Market maps sitemaps (migration 070, 073): /sitemap-market-maps.xml (English) and -ja / -ko / -zh, only while setting marketmaps.indexing_enabled is on ──
+// Each file lists the hub, every country hub that has at least one indexable map and every indexable map in that language. The stats JSON
+// is not read here (3,000 blobs): the loader's `indexable` column (same gate as api/_lib/market-map/gate.js) plus >= 50 companies decide;
+// the page itself still re-checks the full gate and sets robots on its own. A ja/ko/zh URL is listed only when its commentary translation
+// is current (i18n[loc].src_built_at = commentary_built_at) and its segment title has a translated name (market_map_names), the same
+// two conditions the page uses. hreflang alternates are written in the page head (they list only languages that are indexable for that page).
+async function buildMarketMaps(loc = 'en') {
   const urls = [];
   if (await getConfig('marketmaps.indexing_enabled')) {
-    const { rows } = await sbPaged('market_maps?status=eq.published&indexable=eq.true&n_companies=gte.50&select=slug,country,updated_at');
+    const cols = loc === 'en' ? 'slug,country,updated_at' : `slug,country,segment_key,updated_at,cb:commentary_built_at,src:i18n->${loc}->>src_built_at`;
+    let { rows } = await sbPaged(`market_maps?status=eq.published&indexable=eq.true&n_companies=gte.50&select=${cols}`);
+    if (loc !== 'en') {
+      const named = new Set();
+      for (let from = 0; from < 50000; from += 1000) {
+        const r = (await sb(`market_map_names?kind=eq.segment&lang=eq.${loc}&order=key.asc&limit=1000&offset=${from}&select=key`)).rows;
+        r.forEach((x) => named.add(x.key));
+        if (r.length < 1000) break;
+      }
+      rows = rows.filter((m) => i18nCurrent(m.cb, m.src) && named.has(m.segment_key));
+    }
     const countries = new Map();
     for (const m of rows) {
       if (!m.slug || !m.country) continue;
       const t = countries.get(m.country) || '';
       countries.set(m.country, m.updated_at && m.updated_at > t ? m.updated_at : t);
     }
-    if (rows.length) urls.push(urlEntry({ subPath: 'market-maps', locale: 'en', changefreq: 'weekly', priority: '0.7', noAlternates: true }));
-    for (const [c, lm] of [...countries.entries()].sort()) urls.push(urlEntry({ subPath: `market-maps/${c}`, locale: 'en', lastmod: lm ? lm.slice(0, 10) : null, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
+    if (rows.length) urls.push(urlEntry({ subPath: 'market-maps', locale: loc, changefreq: 'weekly', priority: '0.7', noAlternates: true }));
+    for (const [c, lm] of [...countries.entries()].sort()) urls.push(urlEntry({ subPath: `market-maps/${c}`, locale: loc, lastmod: lm ? lm.slice(0, 10) : null, changefreq: 'weekly', priority: '0.6', noAlternates: true }));
     for (const m of rows) {
       if (!m.slug) continue;
-      urls.push(urlEntry({ subPath: `market-maps/${m.slug}`, locale: 'en', lastmod: m.updated_at ? m.updated_at.slice(0, 10) : null, changefreq: 'monthly', priority: '0.6', noAlternates: true }));
+      urls.push(urlEntry({ subPath: `market-maps/${m.slug}`, locale: loc, lastmod: m.updated_at ? m.updated_at.slice(0, 10) : null, changefreq: 'monthly', priority: '0.6', noAlternates: true }));
     }
   }
   return ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">', urls.join('\n'), '</urlset>'].filter((x) => x !== '').join('\n');
@@ -369,7 +383,7 @@ export default async function handler(req, res) {
 
   try {
     if (url.searchParams.get('type') === 'market-maps') {
-      res.status(200).send(await buildMarketMaps());
+      res.status(200).send(await buildMarketMaps(['ja', 'ko', 'zh'].includes(locale) ? locale : 'en'));
       return;
     }
     if (!locale) {

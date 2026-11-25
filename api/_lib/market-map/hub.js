@@ -7,6 +7,8 @@
 // and plain <a href> links, so a crawler can follow every page. No model, no per-request scan of the stats JSON.
 // ============================================================
 import { listPrice } from '../pricing.js';
+import { i18nCurrent } from './gate.js';
+import { countryLabel } from './i18n.js';
 
 export const PAGE_SIZE = 50;
 export const BANDS = [['u100', 'Under 100', 0, 99], ['b100', '100 to 299', 100, 299], ['b300', '300 to 500 ($36)', 300, 500], ['o500', 'Over 500 ($57)', 501, Infinity]];
@@ -46,10 +48,10 @@ export function queryString(p, over = {}) {
   if (m.page > 1) out.push(`page=${m.page}`);
   return out.length ? `?${out.join('&')}` : '';
 }
-export const hubHref = (p, over = {}) => `/en/market-maps${queryString(p, over)}`;
+export const hubHref = (p, over = {}, loc = 'en') => `/${loc}/market-maps${queryString(p, over)}`;
 
 // ── filtering, facets, paging (pure) ──
-const matchQ = (i, words) => { if (!words.length) return true; const t = `${i.title} ${i.country_name} ${i.l2_family || ''} ${i.segment_key}`.toLowerCase(); return words.every((w) => t.includes(w)); };
+const matchQ = (i, words) => { if (!words.length) return true; const t = `${i.title} ${i.title_loc || ''} ${i.country_name} ${i.family_loc || ''} ${i.l2_family || ''} ${i.segment_key}`.toLowerCase(); return words.every((w) => t.includes(w)); };
 export function applyFilters(items, p, skip = '') {
   const words = p.q.toLowerCase().split(/\s+/).filter(Boolean);
   return items.filter((i) =>
@@ -67,9 +69,11 @@ export function buildFacets(items, p) {
   const names = new Map(items.map((i) => [i.country, i.country_name]));
   const countries = [...byCountry.entries()].map(([slug, n]) => ({ slug, name: names.get(slug) || countryName(slug), n })).sort((a, b) => a.name.localeCompare(b.name));
   const fam = tally(applyFilters(items, p, 'industry'), (i) => i.l2_family || 'Other segments');
-  let industries = [...fam.entries()].map(([name, n]) => ({ name, n })).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
+  // name = the English family text (the filter key in the URL); label = its translation when the row carries one
+  const famLabel = new Map(); for (const i of items) if (i.family_loc && !famLabel.has(i.l2_family)) famLabel.set(i.l2_family, i.family_loc);
+  let industries = [...fam.entries()].map(([name, n]) => ({ name, label: famLabel.get(name) || '', n })).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
   industries = industries.slice(0, TOP_FAMILIES);
-  if (p.industry && !industries.some((x) => x.name === p.industry)) industries.push({ name: p.industry, n: fam.get(p.industry) || 0 });
+  if (p.industry && !industries.some((x) => x.name === p.industry)) industries.push({ name: p.industry, label: famLabel.get(p.industry) || '', n: fam.get(p.industry) || 0 });
   const kinds = tally(applyFilters(items, p, 'kind'), (i) => (i.kind === 'service' ? 'services' : 'goods'));
   const sizes = tally(applyFilters(items, p, 'size'), (i) => bandOf(i.companies));
   return {
@@ -82,7 +86,7 @@ export function buildFacets(items, p) {
 // Largest lists first, then A to Z (stable, so a page boundary never moves between requests).
 export const bySize = (a, b) => b.companies - a.companies || (a.slug < b.slug ? -1 : 1);
 const bySmall = (a, b) => a.companies - b.companies || (a.slug < b.slug ? -1 : 1);
-const byName = (a, b) => a.title.localeCompare(b.title) || (a.slug < b.slug ? -1 : 1);
+const byName = (a, b) => (a.title_loc || a.title).localeCompare(b.title_loc || b.title) || (a.slug < b.slug ? -1 : 1);
 export const sorter = (sort) => (sort === 'small' ? bySmall : sort === 'az' ? byName : bySize);
 
 export function hubModel(index, p) {
@@ -103,7 +107,7 @@ export function countryModel(index, slug) {
   const items = index.items.filter((i) => i.country === slug).sort(bySize);
   if (!items.length) return null;
   const groups = new Map();
-  for (const i of items) { const k = i.l2_family || 'Other segments'; const g = groups.get(k) || { name: k, items: [], companies: 0 }; g.items.push(i); g.companies += i.companies; groups.set(k, g); }
+  for (const i of items) { const k = i.l2_family || 'Other segments'; const g = groups.get(k) || { name: k, label: i.family_loc || '', items: [], companies: 0 }; g.items.push(i); g.companies += i.companies; groups.set(k, g); }
   return {
     slug, name: items[0].country_name, items, indexableCount: items.filter((i) => i.indexable).length,
     companies: items.reduce((a, i) => a + i.companies, 0),
@@ -128,7 +132,7 @@ async function readAll(fetchRange, path) {
 export async function buildIndex(fetchRange) {
   const base = 'market_maps?status=eq.published&order=slug.asc';
   const [rows, svc] = await Promise.all([
-    readAll(fetchRange, `${base}&select=slug,country,segment_key,title,l2_family,n_companies,indexable,built_at`),
+    readAll(fetchRange, `${base}&select=slug,country,segment_key,title,l2_family,n_companies,indexable,built_at,cb:commentary_built_at,ja_src:i18n->ja->>src_built_at,ko_src:i18n->ko->>src_built_at,zh_src:i18n->zh->>src_built_at`),
     readAll(fetchRange, `${base}&select=slug&stats->meta->>kind=eq.service`),
   ]);
   const services = new Set(svc.map((r) => r.slug));
@@ -136,6 +140,8 @@ export async function buildIndex(fetchRange) {
     slug: r.slug, country: r.country, country_name: countryName(r.country), segment_key: r.segment_key, title: r.title || r.segment_key,
     l2_family: r.l2_family || '', kind: services.has(r.slug) ? 'service' : 'goods', companies: Number(r.n_companies) || 0,
     indexable: r.indexable === true, price: listPrice(r.n_companies), built: String(r.built_at || '').slice(0, 10),
+    // translated commentary is current (see gate.js i18nCurrent); no text is carried in the index
+    ready: { ja: i18nCurrent(r.cb, r.ja_src), ko: i18nCurrent(r.cb, r.ko_src), zh: i18nCurrent(r.cb, r.zh_src) },
   }));
   return { items, at: Date.now() };
 }
@@ -147,4 +153,44 @@ export async function getIndex(fetchRange) {
   if (cache && Date.now() - cache.at < TTL_MS) return cache;
   if (!inflight) inflight = buildIndex(fetchRange).then((ix) => { if (ix.items.length) cache = ix; return ix; }).finally(() => { inflight = null; });
   return inflight;
+}
+
+
+// ── translated names (table market_map_names, migration 073) ──
+// One light read of the whole table (a few thousand short rows), cached like the index. names[lang] = { segment: Map(segment_key -> name), family: Map(English family -> name) }.
+let namesCache = null;
+let namesInflight = null;
+export function clearNamesCache() { namesCache = null; namesInflight = null; }
+export async function buildNames(fetchRange) {
+  const rows = await readAll(fetchRange, 'market_map_names?order=kind.asc,key.asc,lang.asc&select=kind,key,lang,name');
+  const names = { ja: { segment: new Map(), family: new Map() }, ko: { segment: new Map(), family: new Map() }, zh: { segment: new Map(), family: new Map() } };
+  for (const r of rows) { const n = names[r.lang]; if (n && n[r.kind] && r.key && r.name) n[r.kind].set(r.key, String(r.name)); }
+  return { names, at: Date.now() };
+}
+// A missing table or a failed read gives empty names (English titles), never an error; an empty result is not cached for long.
+export async function getNames(fetchRange) {
+  if (namesCache && Date.now() - namesCache.at < TTL_MS) return namesCache.names;
+  if (!namesInflight) namesInflight = buildNames(fetchRange).catch(() => ({ names: buildEmptyNames(), at: Date.now() - TTL_MS + 60000 })).then((x) => { namesCache = x; return x; }).finally(() => { namesInflight = null; });
+  return (await namesInflight).names;
+}
+export function buildEmptyNames() { const e = () => ({ segment: new Map(), family: new Map() }); return { ja: e(), ko: e(), zh: e() }; }
+
+// Items of the index seen in one language: translated title / family / country, and `indexable` = the English gate AND
+// the locale commentary is current AND the segment title has a translation (the owner's rule for ja/ko/zh pages).
+// English items are returned unchanged. l2_family stays the English text: it is the filter key in the URL.
+export function localizeItems(items, names, loc) {
+  const n = names && names[loc];
+  if (!n) return items;
+  return items.map((i) => {
+    const t = n.segment.get(i.segment_key) || '';
+    return { ...i, title_loc: t, family_loc: n.family.get(i.l2_family) || '', country_name: countryLabel(i.country, i.country_name, loc),
+      indexable_en: i.indexable, indexable: i.indexable && !!t && !!(i.ready && i.ready[loc]) };
+  });
+}
+// Which languages a page of a given kind may be indexed in (drives hreflang and robots). `scope` filters items (a country, or all).
+export function indexableLocales(items, names, scope = () => true) {
+  const out = [];
+  if (items.some((i) => scope(i) && i.indexable)) out.push('en');
+  for (const loc of ['ja', 'ko', 'zh']) { const n = names && names[loc]; if (n && items.some((i) => scope(i) && i.indexable && i.ready && i.ready[loc] && n.segment.get(i.segment_key))) out.push(loc); }
+  return out;
 }
