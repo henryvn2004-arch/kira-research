@@ -1283,9 +1283,11 @@ test.describe('Server-rendered content pages (raw HTML, bot user agent)', () => 
     else expect(h).toContain('name="robots" content="noindex,follow"');
   });
 
-  test('unknown slugs still reach the page script (client shows not found)', async ({ request }) => {
-    const h = await htmlOf(request, '/en/reports/this-report-does-not-exist-xyz');
-    expect(h).toContain('id="rpt-root"');
+  test('unknown slugs are a real 404 (noindex) that still reaches the page script (client shows not found)', async ({ request }) => {
+    const r = await request.get('/en/reports/this-report-does-not-exist-xyz', { headers: BOT });
+    expect(r.status()).toBe(404);
+    expect(r.headers()['x-robots-tag']).toContain('noindex');
+    expect(await r.text()).toContain('id="rpt-root"');
   });
 });
 
