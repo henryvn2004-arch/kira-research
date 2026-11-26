@@ -78,10 +78,34 @@ function notFound(res, loc = 'en') {
   send(res, html, { status: 404, cache: false });
 }
 
+// Pages take no parameters beyond the ones the rewrite adds (hub: the filter set). Every other query string would be a new CDN key
+// (a server render plus Supabase reads) per value, which is how a crawler turns ~3,000 cached pages into unlimited misses, so a
+// stray parameter is dropped with a cheap permanent redirect to the clean URL. Ad and share tracking parameters stay on the URL
+// (the browser's track.js reads them after load).
+const TRACKING = /^(utm_[a-z0-9_]{1,30}|gclid|gbraid|wbraid|gad_source|gad_campaignid|fbclid|msclkid|ref)$/i;
+const OWN = { map: ['type', 'loc', 'country', 'segment'], country: ['type', 'loc', 'country'], hub: ['type', 'loc', 'country', 'industry', 'kind', 'size', 'q', 'sort', 'page'] };
+function strayRedirect(q, loc, res) {
+  const own = OWN[q.type];
+  if (!own || !Object.keys(q).some((k) => !own.includes(k) && !TRACKING.test(k))) return false;
+  const country = String(q.country || ''), segment = String(q.segment || '');
+  let path;
+  if (q.type === 'hub') path = hubHref(parseParams(q), {}, loc);
+  else if (SLUG.test(country) && (q.type === 'country' || SLUG.test(segment))) path = `/${loc}/market-maps/${country}${q.type === 'map' ? `/${segment}` : ''}`;
+  else return false;   // a bad slug falls through to the normal 404
+  const keep = new URLSearchParams();
+  for (const k of Object.keys(q)) if (TRACKING.test(k)) keep.set(k, String(Array.isArray(q[k]) ? q[k][0] : q[k]).slice(0, 200));
+  const tail = keep.toString();
+  res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=3600');
+  res.setHeader('Location', tail ? `${path}${path.includes('?') ? '&' : '?'}${tail}` : path);
+  res.status(308).end();
+  return true;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') { res.status(405).json({ error: 'method_not_allowed' }); return; }
   const q = req.query || {};
   const loc = LOCALES.includes(q.loc) ? q.loc : 'en';
+  if (strayRedirect(q, loc, res)) return;
   const indexingOn = await getConfig('marketmaps.indexing_enabled');
   const buy = { enabled: await getConfig('checkout.list_enabled') };
 

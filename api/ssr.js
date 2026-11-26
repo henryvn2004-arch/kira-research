@@ -341,11 +341,13 @@ export default async function handler(req, res) {
       else if (type === 'report') done = (await renderReport(req, res, loc, slug)) || (await renderSoon(req, res, loc, slug, query));
     }
     if (done) return;
-    // Unknown slug: the unchanged template, as before; the client shows "not found".
+    // Unknown slug: the unchanged template (the client shows "not found"), but with a real 404 and noindex: a 200 invited crawlers
+    // to try unlimited made-up slugs, each one a server render and Supabase reads. The CDN keeps it 10 minutes.
     const tplType = ['transcript', 'insight', 'report'].includes(type) ? type : 'report';
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=600');
-    res.status(200).send(await loadTemplate(tplType, req));
+    res.setHeader('X-Robots-Tag', 'noindex');
+    res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=600');
+    res.status(404).send(await loadTemplate(tplType, req));
   } catch (err) {
     console.error('[ssr]', type, slug, err.message);
     // Never take the page down because of this function: serve the plain template.
