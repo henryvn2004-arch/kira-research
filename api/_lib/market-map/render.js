@@ -19,7 +19,7 @@
 import { BASE, esc, ldJson, HREFLANG, OG_LOCALE } from '../ssr.js';
 import { citeBlock, citationText } from '../cite.js';
 import { BANDS, SORTS, isFiltered, hubHref } from './hub.js';
-import { LOCS, ui, lab, labShort, nfLoc } from './i18n.js';
+import { LOCS, ui, lab, labShort, nfLoc, monthYear } from './i18n.js';
 import { listsBlockHtml } from '../bizdirect-lists.js';
 import { orgLdTag } from '../org-ld.js';
 
@@ -252,13 +252,16 @@ export function titles(S, loc = 'en') {
   };
 }
 
+// "BizDirect Asia company database, November 2026" (the source of the company count), '' when the date is unusable.
+export function sourcePhrase(S, loc = 'en') { const dt = monthYear(S && S.built, loc); return dt ? ui(loc).srcLab(dt) : ''; }
+
 export function fallbackTakeaway(S, loc = 'en') {
   const t = ui(loc), en = loc === 'en';
   const f = S.findings, geo = show(S, 'region') && f.top_region;
   const goodsSub = S.meta.mekko && S.meta.mekko.y_title === 'Sub-category' && S.marimekko;
   const stg = en ? cap1(lc(f.top_stage.stage)) : lab(loc, f.top_stage.stage);
   return t.takeaway(en ? S.companies : nfl(loc)(S.companies), en ? lc(S.segment) : S.segment, S.country, stg, axWord(S, loc), f.top_stage.pct,
-    goodsSub ? (en ? lc(f.top_sub.name) : f.top_sub.name) : '', goodsSub ? f.top_sub.pct : 0, geo ? (en ? f.top_region.region : lab(loc, f.top_region.region)) : '', geo ? f.top_region.pct : 0, f.small_pct, f.large_pct);
+    goodsSub ? (en ? lc(f.top_sub.name) : f.top_sub.name) : '', goodsSub ? f.top_sub.pct : 0, geo ? (en ? f.top_region.region : lab(loc, f.top_region.region)) : '', geo ? f.top_region.pct : 0, f.small_pct, f.large_pct, sourcePhrase(S, loc));
 }
 
 // ── CSS: every rule lives under .mm so it can sit next to kira.css and the shared nav ──
@@ -469,7 +472,7 @@ ${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">${
 <h1>${esc(t.h1(cn, segL))}</h1>
 <p class="dek">${esc(t.dek(cn, segL, en ? lc(axT) : axT, S.built))}</p>
 <div class="kpis">${kpis}</div>
-<div class="take" data-slot="takeaway"><div class="lab">${esc(t.takeLab)}</div><p>${esc(tk)}</p></div>
+<div class="take" data-slot="takeaway"><div class="lab">${esc(t.takeLab)}</div><p>${esc(tk)}</p>${C && C.takeaway && sourcePhrase(S, loc) ? `<p class="sub">${esc(sourcePhrase(S, loc))}</p>` : ''}</div>
 ${sec1}${sec2}${sec3}${sec3b}${sec4}${sec5}${impl}${sec7}
 ${buyBox(S, { ...opts, loc })}
 ${listsBlockHtml(opts.bdLists, loc, 'bd-lists mm-bd')}

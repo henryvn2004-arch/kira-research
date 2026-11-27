@@ -60,9 +60,9 @@ const TXT = {
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 // Heading + up to 3 plain follow links (no UTM). '' when there is nothing to show. headingTag: 'h2' (default) or 'h3'.
-export function listsBlockHtml(rows, loc = 'en', cls = 'bd-lists') {
+export function listsBlockHtml(rows, loc = 'en', cls = 'bd-lists', citeHtml = '') {
   if (!rows || !rows.length) return '';
   const t = TXT[loc] || TXT.en;
   const items = rows.map((r) => `<li><a href="${esc(r.url)}">${esc(r.title)}</a>${r.n ? ` <span class="bd-n">· ${esc(t.n(r.n))}</span>` : ''}</li>`).join('');
-  return `<section class="${cls}"><h2>${esc(t.h)}</h2><p class="bd-sub">${esc(t.sub)}</p><ul>${items}</ul></section>`;
+  return `<section class="${cls}"><h2>${esc(t.h)}</h2><p class="bd-sub">${esc(t.sub)}</p>${citeHtml}<ul>${items}</ul></section>`;
 }
