@@ -22,12 +22,17 @@ export function isHttpUrl(u) {
 export const BRIDGE_SOURCE = 'bizdirect_press';
 const hostOf = (u) => { try { return new URL(String(u)).hostname.toLowerCase().replace(/^www\./, ''); } catch (_e) { return ''; } };
 export function isAggregatorUrl(u) { const h = hostOf(u); return h === 'google.com' || h.endsWith('.google.com') || h === 'feedproxy.google.com'; }
-// "English" title: at most 20% of its letters outside basic Latin (so CJK, Thai, Hangul, Cyrillic and mostly-accented titles fail).
+// "English" title: few letters outside ASCII AND common English words present (Vietnamese / Indonesian use Latin letters, so script checks alone pass them).
+const EN_WORDS = new Set(['the', 'of', 'in', 'to', 'and', 'for', 'a', 'an', 'is', 'on', 'with', 'at', 'by', 'from', 'as', 'its', 'new', 'plans', 'will', 'opens',
+  'open', 'into', 'launches', 'acquires', 'invests', 'expands', 'says', 'has', 'have', 'are', 'be', 'that', 'this', 'after', 'over', 'up', 'us', 'it', 'or',
+  'their', 'more', 'first', 'million', 'billion', 'plant', 'factory', 'investment', 'market']);
 export function isEnglishTitle(t) {
+  const words = String(t || '').toLowerCase().match(/\p{L}+/gu) || [];
   const letters = String(t || '').match(/\p{L}/gu) || [];
-  if (!letters.length) return false;
-  return letters.filter((c) => c.charCodeAt(0) > 0x24f).length / letters.length <= 0.2
-    && letters.filter((c) => /[^\x00-\x7f]/.test(c)).length / letters.length <= 0.2;
+  if (!letters.length || words.length < 3) return false;
+  if (letters.filter((c) => c.charCodeAt(0) > 127).length / letters.length > 0.1) return false;
+  const hits = words.filter((w) => EN_WORDS.has(w)).length;
+  return hits >= 2 && hits / words.length >= 0.15;
 }
 
 const days = (a, b) => Math.abs(Date.parse(a) - Date.parse(b)) / 864e5;

@@ -89,3 +89,11 @@ test('bridge guards: aggregator url, domain mismatch, non-English title, investo
   assert.equal(checkDecision(b({ investor_country: 'AU', raw: { hq_country: 'US' } }), publish({ investor_country: 'US' }), [], NOW).ok, true);
   assert.equal(checkDecision(draft({ title: '工場' }), publish(), [], NOW).ok, true); // non-bridge sources keep their own rules
 });
+
+test('isEnglishTitle: Vietnamese and CJK titles fail, English passes', async () => {
+  const { isEnglishTitle } = await import('../api/_lib/moves/review.js');
+  assert.equal(isEnglishTitle('Samsung Electronics khai trương Business Experience Studio tại Việt Nam'), false);
+  assert.equal(isEnglishTitle('PepsiCo sắp sa thải 1.000 nhân viên'), false);
+  assert.equal(isEnglishTitle('工場をベトナムに新設'), false);
+  assert.equal(isEnglishTitle('Gamuda opens new plant in Vietnam'), true);
+});
