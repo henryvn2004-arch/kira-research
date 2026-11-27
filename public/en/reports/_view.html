@@ -505,6 +505,12 @@
     // Preview viewer: the source HTML is 1280×720 per page. One page at a time,
     // scaled to the full content width (and to the viewport height), with
     // previous / next and full screen.
+    // Page-type label for the locked-page cards (types come from api/_lib/preview-pages.js).
+    function typeLabel(type) {
+      const m = t('pvTypes') || {};
+      return m[type] || m.other || '';
+    }
+    function trackPv(name, extra) { try { if (window.kiraTrack) window.kiraTrack(name, extra); } catch (_e) { /* tracking never breaks the page */ } }
     function renderPreviewFrame(d, currentLocale) {
       const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) + '&locale=' + encodeURIComponent(currentLocale);
       const cta = PER_REPORT_PURCHASE
@@ -529,10 +535,11 @@
           '</div></div>' +
           '<div class="rd-preview-bar">' +
             '<div class="rd-pv-ctl">' + navBtn(-1, t('prev')) + '<span class="rd-pv-pg">1 / ' + total + '</span>' + navBtn(1, t('next')) +
-              '<span class="rd-pv-note">' + escapeHtml(t('freePages', PREVIEW_PAGES)) + '</span></div>' +
+              '<span class="rd-pv-note"></span></div>' +
             '<div class="rd-pv-ctl"><span class="rd-pv-zoom">' + zoomBtn('out', '−', 'Zoom out') + zoomBtn('in', '+', 'Zoom in') + '</span>' +
               '<button type="button" class="rd-pv-nav" data-pv="fs" aria-label="Full screen">' + R.icon('expand') + R.icon('x') + '</button>' + cta + '</div>' +
           '</div>' +
+          '<div class="rd-pv-strip" hidden aria-label="' + escapeHtml(t('stripTitle')) + '"></div>' +
         '</div></section>';
     }
     function fitPreviewFrame() {
@@ -552,23 +559,63 @@
         box.querySelectorAll('[data-pv="zoom-out"]').forEach(b => { b.disabled = zoom <= 1; });
         box.querySelectorAll('[data-pv="zoom-in"]').forEach(b => { b.disabled = scale * PREVIEW_ZOOM_STEP > PREVIEW_MAX_SCALE; });
         const page = Number(wrap.dataset.page) || 0;
-        const total = Number(wrap.dataset.total) || PREVIEW_PAGES;
-        const locked = page >= PREVIEW_PAGES;
-        // A locked page shows one of the free pages 2–5, blurred, under the lock card.
-        const shown = locked ? 1 + ((page - PREVIEW_PAGES) % (PREVIEW_PAGES - 1)) : page;
+        const seq = wrap._seq || null;           // curated preview: [{src, free, type, title}] per viewer page
+        const total = seq ? seq.length : (Number(wrap.dataset.total) || PREVIEW_PAGES);
+        const pageTotal = Number(wrap.dataset.all) || total;
+        const cur = seq ? seq[Math.min(page, seq.length - 1)] : { src: page, free: page < PREVIEW_PAGES };
+        const locked = !cur.free;
         const tops = wrap._tops || [];
-        const top = tops[shown] != null ? tops[shown] : shown * PREVIEW_PAGE_H;
-        iframe.style.filter = locked ? 'blur(7px)' : '';
+        const top = tops[cur.src] != null ? tops[cur.src] : cur.src * PREVIEW_PAGE_H;
+        // A locked page is a designed placeholder (page number, title, type): the page itself never reaches the browser.
+        iframe.style.visibility = locked ? 'hidden' : '';
+        wrap.classList.toggle('is-locked', locked);
         const lock = wrap.querySelector('.rd-pv-lock');
-        if (lock) { lock.hidden = !locked; lock.querySelector('.k').textContent = t('pageOf', page + 1, total); }
+        if (lock) {
+          lock.hidden = !locked;
+          lock.querySelector('.k').textContent = t('pageOf', cur.src + 1, pageTotal) + (cur.type ? ' · ' + typeLabel(cur.type) : '');
+          const h3 = lock.querySelector('h3');
+          h3.textContent = cur.title || t('lockedTitle');
+        }
         wrap.style.width = Math.round(PREVIEW_PAGE_W * scale) + 'px';
         wrap.style.height = Math.round(PREVIEW_PAGE_H * scale) + 'px';
         iframe.style.transform = 'translateY(' + (-top * scale) + 'px) scale(' + scale + ')';
         const pg = box.querySelector('.rd-pv-pg');
-        if (pg) pg.textContent = (page + 1) + ' / ' + total;
+        if (pg) pg.textContent = (cur.src + 1) + ' / ' + pageTotal;
+        box.querySelectorAll('.rd-pv-strip button').forEach(b => b.classList.toggle('on', Number(b.dataset.pos) === page));
         box.querySelectorAll('[data-pv="-1"]').forEach(b => { b.disabled = page === 0; });
         box.querySelectorAll('[data-pv="1"]').forEach(b => { b.disabled = page === total - 1; });
+        wrap._shown = page;
       });
+    }
+    // Build the viewer sequence from the preview file: every page of the report except the cover
+    // (the cover is only the small thumbnail), free pages readable, the rest locked placeholders.
+    function buildSeq(wrap, box, doc, pages) {
+      let meta = null;
+      try { meta = JSON.parse(doc.getElementById('kira-preview-meta').textContent); } catch (_e) { /* old file */ }
+      const stamped = pages.filter(el => el.hasAttribute('data-src-page'));
+      if (!meta || !stamped.length) return;                       // uncurated file: keep the first-5 behaviour
+      const freeSet = new Set(meta.free);
+      const bySrc = meta.pages.filter(p => p.i !== meta.cover)
+        .map(p => ({ src: p.i, free: freeSet.has(p.i), type: p.t, title: p.h }));
+      if (!bySrc.some(p => p.free)) return;
+      // Free pages first (the viewer opens on the executive summary), then the locked ones in report order.
+      const seq = bySrc.filter(p => p.free).concat(bySrc.filter(p => !p.free));
+      wrap._seq = seq;
+      wrap.dataset.total = String(seq.length);
+      wrap.dataset.page = '0';
+      wrap.dataset.all = String(meta.total);
+      const nFree = seq.filter(p => p.free).length;
+      trackPv('preview_page', { pg: seq[0].src + 1, via: 'load' });
+      const note = box.querySelector('.rd-pv-note');
+      if (note) note.textContent = t('curatedNote', nFree);
+      const strip = box.querySelector('.rd-pv-strip');
+      if (strip) {
+        strip.innerHTML = bySrc.map(p =>
+          '<button type="button" data-pos="' + seq.indexOf(p) + '" class="' + (p.free ? 'free' : 'locked') + '">' +
+          '<span class="n">' + (p.src + 1) + '</span><span class="h">' + escapeHtml(p.title || typeLabel(p.type)) + '</span>' +
+          (p.free ? '' : R.icon('lock')) + '</button>').join('');
+        strip.hidden = false;
+      }
     }
     function wirePreview() {
       const box = document.querySelector('.rd-preview');
@@ -582,8 +629,15 @@
           const doc = iframe.contentDocument;
           const pages = [...doc.querySelectorAll('.page')].filter(el => !el.parentElement.closest('.page'));
           if (pages.length) {
-            wrap._tops = pages.map(el => el.getBoundingClientRect().top + doc.defaultView.scrollY);
+            // The preview file stamps each page with its number in the full report (data-src-page) and carries
+            // the list of every page's type + title (#kira-preview-meta), so server and viewer agree.
+            wrap._tops = [];
+            pages.forEach((el, k) => {
+              const src = el.hasAttribute('data-src-page') ? Number(el.getAttribute('data-src-page')) : k;
+              wrap._tops[src] = el.getBoundingClientRect().top + doc.defaultView.scrollY;
+            });
             iframe.height = String(doc.documentElement.scrollHeight);
+            buildSeq(wrap, box, doc, pages);
           }
         } catch (_) { /* cross-origin or blocked: fall back to n × 720 */ }
         fitPreviewFrame();
@@ -591,9 +645,14 @@
       const stage = wrap.parentElement;
       const go = step => {
         const total = Number(wrap.dataset.total) || PREVIEW_PAGES;
-        wrap.dataset.page = String(Math.max(0, Math.min(total - 1, (Number(wrap.dataset.page) || 0) + step)));
+        goTo(Math.max(0, Math.min(total - 1, (Number(wrap.dataset.page) || 0) + step)), 'viewer');
+      };
+      const goTo = (pos, via) => {
+        wrap.dataset.page = String(pos);
         stage.scrollTo(0, 0);
         fitPreviewFrame();
+        const cur = wrap._seq ? wrap._seq[pos] : { src: pos, free: pos < PREVIEW_PAGES };
+        if (cur) trackPv(cur.free ? 'preview_page' : 'lock_hit', { pg: cur.src + 1, via: via });
       };
       const setFull = on => {
         box.classList.toggle('is-full', on);
@@ -605,6 +664,8 @@
         box.focus();
       };
       box.addEventListener('click', e => {
+        const sb = e.target.closest('.rd-pv-strip button');
+        if (sb) return goTo(Number(sb.dataset.pos) || 0, 'strip');
         const b = e.target.closest('[data-pv]');
         if (!b) return;
         const pv = b.dataset.pv;
@@ -950,7 +1011,7 @@
         document.body.style.overflow = '';
         if (opener) opener.focus();
       }
-      document.querySelectorAll('[data-locked]').forEach(el => el.addEventListener('click', () => openModal(el.dataset.locked, el)));
+      document.querySelectorAll('[data-locked]').forEach(el => el.addEventListener('click', () => { trackPv('lock_hit', { via: 'toc' }); openModal(el.dataset.locked, el); }));
       document.querySelectorAll('[data-preview]').forEach(el => el.addEventListener('click', () => {
         const target = document.getElementById('preview');
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
