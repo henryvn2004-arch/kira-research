@@ -758,7 +758,7 @@ test.describe('SEO surface', () => {
     expect(href).toBe('https://kiraresearch.com/en/');
   });
 
-  test('/en/ has Organization JSON-LD injected by nav.js', async ({ page }) => {
+  test('/en/ has Organization JSON-LD in the served HTML', async ({ page }) => {
     await page.goto('/en/', { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('script#ld-organization', { state: 'attached', timeout: 5_000 });
     const text = await page.locator('script#ld-organization').textContent();

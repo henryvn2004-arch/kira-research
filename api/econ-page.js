@@ -9,6 +9,7 @@
 // ============================================================
 import { LOCALES, HREFLANG, BASE, esc, loadStatic } from './_lib/ssr.js';
 import { loadBase, loadCountry } from './_lib/econ/load.js';
+import { orgLdTag } from './_lib/org-ld.js';
 import { econPage } from './_lib/econ/page.js';
 
 const FILE = 'public/en/data/_econ.html';
@@ -25,6 +26,7 @@ export function fillEcon(html, loc, slug, page) {
     head += `<link rel="alternate" hreflang="x-default" href="${BASE}/en/data/${esc(slug)}" />\n`;
     head += `<script type="application/ld+json" id="ld-dataset">${page.ld}</script>\n`;
   }
+  head += orgLdTag(loc) + '\n';
   out = out.replace('</head>', () => head + '</head>');
   out = out.replace(/(id="ed-root")>[\s\S]*?<\/main>/, (_m, a) => `${a} data-ssr="1">${page.content}</main>`);
   out = out.replace(/(<a href=")\/en\/data\/(" id="ed-crumb-data")/, (_m, a, b) => `${a}/${loc}/data/${b}`);

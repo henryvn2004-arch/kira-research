@@ -82,7 +82,7 @@ test('changedUrls: every changed translation plus the listing pages', async () =
 test('home pages carry Organization + WebSite(SearchAction) JSON-LD in every locale', () => {
   for (const l of ['en', 'ja', 'ko', 'zh']) {
     const html = readFileSync(new URL(`../public/${l}/index.html`, import.meta.url), 'utf8');
-    const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+    const blocks = [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
     assert.ok(blocks.some((b) => b['@type'] === 'Organization' && b.name === 'KIRA Research'));
     const w = blocks.find((b) => b['@type'] === 'WebSite');
     assert.equal(w.potentialAction.target.urlTemplate, `https://kiraresearch.com/${l}/library?q={search_term_string}`);
