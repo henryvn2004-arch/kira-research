@@ -4,9 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In — KIRA RESEARCH</title>
+  <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/auth.js"></script>
+  <script src="/js/track.js" defer></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{background:#FFFFFF;color:#0F172A;font-family:'Satoshi',-apple-system,BlinkMacSystemFont,Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -43,6 +45,10 @@
     .error{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.2);border-radius:8px;padding:12px 14px;font-size:13px;color:#C0392B;margin-bottom:20px;display:none}
     .success{background:rgba(34,139,90,.06);border:1px solid rgba(34,139,90,.2);border-radius:8px;padding:12px 14px;font-size:13px;color:#1F7A4F;margin-bottom:20px;display:none}
 
+    .linkbtn{background:none;border:none;color:#1E6FFF;font-size:13px;cursor:pointer;font-family:inherit;padding:0}
+    .row{display:flex;justify-content:space-between;align-items:center;margin:-8px 0 16px}
+    .info{background:rgba(30,111,255,.06);border:1px solid rgba(30,111,255,.2);border-radius:8px;padding:12px 14px;font-size:13px;color:#1558CC;margin-bottom:20px;display:none}
+    .hint{font-size:12px;color:#64748B;margin-top:10px;text-align:center;line-height:1.5}
     .footer-note{text-align:center;font-size:12px;color:#94A3B8;margin-top:24px}
     .footer-note a{color:#1E6FFF}
   </style>
@@ -53,142 +59,286 @@
       <img src="/logo.png" alt="KIRA RESEARCH" />
     </div>
 
-    <div class="tabs">
-      <button class="tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
-      <button class="tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+    <div class="tabs" id="tabs">
+      <button class="tab active" id="tab-signin" data-i="tabSignin" onclick="switchTab('signin')">Sign In</button>
+      <button class="tab" id="tab-signup" data-i="tabSignup" onclick="switchTab('signup')">Create Account</button>
     </div>
 
     <div id="msg-error" class="error"></div>
     <div id="msg-success" class="success"></div>
+    <div id="msg-info" class="info"></div>
 
-    <!-- Sign In Form -->
+    <!-- Sign In -->
     <div id="form-signin">
       <div class="field">
-        <label>Email</label>
-        <input type="email" id="signin-email" placeholder="you@company.com" />
+        <label data-i="email">Email</label>
+        <input type="email" id="signin-email" placeholder="you@company.com" autocomplete="email" />
       </div>
       <div class="field">
-        <label>Password</label>
-        <input type="password" id="signin-password" placeholder="••••••••" />
+        <label data-i="password">Password</label>
+        <input type="password" id="signin-password" placeholder="••••••••" autocomplete="current-password" />
       </div>
-      <button class="btn-submit" id="btn-signin" onclick="handleSignIn()">Sign In</button>
-
-      <div class="divider">or</div>
-      <button class="btn-google" onclick="handleGoogleSignIn()">
-        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-        Continue with Google
-      </button>
+      <div class="row"><button class="linkbtn" type="button" data-i="forgot" onclick="showView('forgot')">Forgot password?</button></div>
+      <button class="btn-submit" id="btn-signin" data-i="btnSignin" onclick="handleSignIn()">Sign In</button>
+      <div class="divider" data-i="or">or</div>
+      <button class="btn-google" style="margin-bottom:10px" type="button" id="btn-magic" data-i="magic" onclick="handleMagic('signin-email')">Email me a sign-in link</button>
+      <button class="btn-google" type="button" onclick="handleGoogleSignIn()"><svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg> <span data-i="google">Continue with Google</span></button>
+      <p class="hint" data-i="boughtHint">Bought something as a guest? Use "Email me a sign-in link" with the email you paid with.</p>
     </div>
 
-    <!-- Sign Up Form -->
+    <!-- Create account -->
     <div id="form-signup" style="display:none">
       <div class="field">
-        <label>Email</label>
-        <input type="email" id="signup-email" placeholder="you@company.com" />
+        <label data-i="email">Email</label>
+        <input type="email" id="signup-email" placeholder="you@company.com" autocomplete="email" />
       </div>
       <div class="field">
-        <label>Password</label>
-        <input type="password" id="signup-password" placeholder="Min. 8 characters" />
+        <label data-i="password">Password</label>
+        <input type="password" id="signup-password" data-ph="pwMin" placeholder="Min. 8 characters" autocomplete="new-password" />
       </div>
-      <button class="btn-submit" id="btn-signup" onclick="handleSignUp()">Create Account</button>
+      <button class="btn-submit" id="btn-signup" data-i="btnSignup" onclick="handleSignUp()">Create Account</button>
+      <div class="divider" data-i="or">or</div>
+      <button class="btn-google" type="button" onclick="handleGoogleSignIn()"><svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg> <span data-i="google">Continue with Google</span></button>
+      <p class="hint" data-i="noAcctNeeded">You do not need an account to buy: pay first, we create it from your PayPal email.</p>
+    </div>
 
-      <div class="divider">or</div>
-      <button class="btn-google" onclick="handleGoogleSignIn()">
-        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-        Continue with Google
-      </button>
+    <!-- Forgot password -->
+    <div id="form-forgot" style="display:none">
+      <p class="hint" style="text-align:left;margin:0 0 16px" data-i="forgotIntro">Enter your email and we will send a link to set a new password.</p>
+      <div class="field">
+        <label data-i="email">Email</label>
+        <input type="email" id="forgot-email" placeholder="you@company.com" autocomplete="email" />
+      </div>
+      <button class="btn-submit" id="btn-forgot" data-i="sendReset" onclick="handleForgot()">Send reset link</button>
+      <div class="row" style="margin:14px 0 0"><button class="linkbtn" type="button" data-i="backSignin" onclick="showView('signin')">Back to sign in</button></div>
+    </div>
+
+    <!-- Set new password (after the reset link) -->
+    <div id="form-reset" style="display:none">
+      <div class="field">
+        <label data-i="newPw">New password</label>
+        <input type="password" id="reset-password" data-ph="pwMin" placeholder="Min. 8 characters" autocomplete="new-password" />
+      </div>
+      <button class="btn-submit" id="btn-reset" data-i="savePw" onclick="handleReset()">Save password</button>
     </div>
 
     <div class="footer-note">
-      <a href="/">← Back to home</a>
+      <a href="/" data-i="back">← Back to home</a>
     </div>
   </div>
 
   <script>
-    function switchTab(tab) {
-      document.getElementById('form-signin').style.display = tab === 'signin' ? 'block' : 'none';
-      document.getElementById('form-signup').style.display = tab === 'signup' ? 'block' : 'none';
-      document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
-      document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+    // ── language: ?lang=, else the language prefix of ?next=, else the browser ─────────
+    var Q = new URLSearchParams(location.search);
+    var T = {
+      en: { tabSignin:'Sign In', tabSignup:'Create Account', email:'Email', password:'Password', forgot:'Forgot password?', btnSignin:'Sign In', or:'or',
+        magic:'Email me a sign-in link', google:'Continue with Google', boughtHint:'Bought something as a guest? Use "Email me a sign-in link" with the email you paid with.',
+        btnSignup:'Create Account', pwMin:'Min. 8 characters', noAcctNeeded:'You do not need an account to buy: pay first, we create it from your PayPal email.',
+        forgotIntro:'Enter your email and we will send a link to set a new password.', sendReset:'Send reset link', backSignin:'Back to sign in',
+        newPw:'New password', savePw:'Save password', back:'← Back to home',
+        fillAll:'Please fill in all fields.', pwShort:'Password must be at least 8 characters.', enterEmail:'Please enter your email.',
+        signingIn:'Signing in...', creating:'Creating account...', sending:'Sending...', saving:'Saving...',
+        signinFail:'Sign in failed. Please try again.', signupFail:'Sign up failed. Please try again.', googleFail:'Google sign-in failed. Please try again.',
+        created:'Account created! Check your email to confirm. The confirmation link brings you back here.',
+        magicSent:'We sent a sign-in link to {email}. Open it on this device to continue.', resetSent:'If that address has an account, a reset link is on its way.',
+        pwSaved:'Password saved. Signing you in...', linkBad:'That link has expired or was already used. Enter your email and we will send a fresh one.', signingLink:'Signing you in...',
+        pageTitle:'Sign In — KIRA RESEARCH' },
+      ja: { tabSignin:'サインイン', tabSignup:'アカウント作成', email:'メールアドレス', password:'パスワード', forgot:'パスワードをお忘れですか?', btnSignin:'サインイン', or:'または',
+        magic:'サインイン用リンクをメールで受け取る', google:'Googleで続行', boughtHint:'ゲストとして購入した場合は、お支払いに使ったメールアドレスで「サインイン用リンクをメールで受け取る」をお使いください。',
+        btnSignup:'アカウントを作成', pwMin:'8文字以上', noAcctNeeded:'購入にアカウントは不要です。先にお支払いいただければ、PayPalのメールアドレスでアカウントを作成します。',
+        forgotIntro:'メールアドレスを入力すると、新しいパスワードを設定するためのリンクをお送りします。', sendReset:'リセットリンクを送信', backSignin:'サインインに戻る',
+        newPw:'新しいパスワード', savePw:'パスワードを保存', back:'← ホームへ戻る',
+        fillAll:'すべての項目を入力してください。', pwShort:'パスワードは8文字以上にしてください。', enterEmail:'メールアドレスを入力してください。',
+        signingIn:'サインイン中...', creating:'作成中...', sending:'送信中...', saving:'保存中...',
+        signinFail:'サインインに失敗しました。もう一度お試しください。', signupFail:'登録に失敗しました。もう一度お試しください。', googleFail:'Googleでのサインインに失敗しました。もう一度お試しください。',
+        created:'アカウントを作成しました。確認メールのリンクを開くと、このページに戻ります。',
+        magicSent:'{email} にサインイン用リンクを送信しました。この端末で開いてください。', resetSent:'そのアドレスのアカウントがある場合、リセット用リンクをお送りしました。',
+        pwSaved:'パスワードを保存しました。サインインします...', linkBad:'このリンクは期限切れか、すでに使用されています。メールアドレスを入力すると新しいリンクをお送りします。', signingLink:'サインインしています...',
+        pageTitle:'サインイン — KIRA RESEARCH' },
+      ko: { tabSignin:'로그인', tabSignup:'계정 만들기', email:'이메일', password:'비밀번호', forgot:'비밀번호를 잊으셨나요?', btnSignin:'로그인', or:'또는',
+        magic:'로그인 링크를 이메일로 받기', google:'Google로 계속', boughtHint:'게스트로 구매하셨나요? 결제에 사용한 이메일로 "로그인 링크를 이메일로 받기"를 이용하세요.',
+        btnSignup:'계정 만들기', pwMin:'8자 이상', noAcctNeeded:'구매에 계정은 필요 없습니다. 먼저 결제하면 PayPal 이메일로 계정이 만들어집니다.',
+        forgotIntro:'이메일을 입력하면 새 비밀번호를 설정하는 링크를 보내 드립니다.', sendReset:'재설정 링크 보내기', backSignin:'로그인으로 돌아가기',
+        newPw:'새 비밀번호', savePw:'비밀번호 저장', back:'← 홈으로',
+        fillAll:'모든 항목을 입력해 주세요.', pwShort:'비밀번호는 8자 이상이어야 합니다.', enterEmail:'이메일을 입력해 주세요.',
+        signingIn:'로그인 중...', creating:'계정 만드는 중...', sending:'보내는 중...', saving:'저장 중...',
+        signinFail:'로그인에 실패했습니다. 다시 시도해 주세요.', signupFail:'가입에 실패했습니다. 다시 시도해 주세요.', googleFail:'Google 로그인에 실패했습니다. 다시 시도해 주세요.',
+        created:'계정이 만들어졌습니다. 이메일의 확인 링크를 열면 이 페이지로 돌아옵니다.',
+        magicSent:'{email} (으)로 로그인 링크를 보냈습니다. 이 기기에서 열어 주세요.', resetSent:'해당 주소로 가입된 계정이 있다면 재설정 링크를 보냈습니다.',
+        pwSaved:'비밀번호가 저장되었습니다. 로그인합니다...', linkBad:'링크가 만료되었거나 이미 사용되었습니다. 이메일을 입력하면 새 링크를 보내 드립니다.', signingLink:'로그인 중입니다...',
+        pageTitle:'로그인 — KIRA RESEARCH' },
+      zh: { tabSignin:'登录', tabSignup:'创建账号', email:'邮箱', password:'密码', forgot:'忘记密码?', btnSignin:'登录', or:'或',
+        magic:'给我发送登录链接', google:'使用 Google 继续', boughtHint:'以访客身份购买过?请用付款时的邮箱点击“给我发送登录链接”。',
+        btnSignup:'创建账号', pwMin:'至少8位', noAcctNeeded:'购买无需账号:先付款,我们会用您的PayPal邮箱创建账号。',
+        forgotIntro:'输入邮箱,我们会发送设置新密码的链接。', sendReset:'发送重置链接', backSignin:'返回登录',
+        newPw:'新密码', savePw:'保存密码', back:'← 返回首页',
+        fillAll:'请填写所有字段。', pwShort:'密码至少8位。', enterEmail:'请输入邮箱。',
+        signingIn:'登录中...', creating:'创建中...', sending:'发送中...', saving:'保存中...',
+        signinFail:'登录失败,请重试。', signupFail:'注册失败,请重试。', googleFail:'Google 登录失败,请重试。',
+        created:'账号已创建!请查收确认邮件,点击确认链接即可回到此页。',
+        magicSent:'登录链接已发送至 {email},请在此设备上打开。', resetSent:'如果该邮箱已有账号,重置链接已发出。',
+        pwSaved:'密码已保存,正在登录...', linkBad:'链接已过期或已被使用。输入邮箱,我们会重新发送。', signingLink:'正在登录...',
+        pageTitle:'登录 — KIRA RESEARCH' }
+    };
+    function safeNext(p) { p = String(p || ''); return /^\/[A-Za-z0-9\/_\-.?=&%#]{0,300}$/.test(p) && p.indexOf('//') !== 0 ? p : ''; }
+    var NEXT = safeNext(Q.get('next'));
+    var LANG = (function () {
+      var l = Q.get('lang');
+      if (!l) { var m = /^\/(en|ja|ko|zh)(\/|$)/.exec(NEXT); l = m ? m[1] : ''; }
+      if (!T[l]) { var n = (navigator.language || 'en').slice(0, 2).toLowerCase(); l = T[n] ? n : 'en'; }
+      return l;
+    })();
+    function tr(k) { return (T[LANG] && T[LANG][k]) || T.en[k] || k; }
+    document.documentElement.lang = LANG;
+    document.title = tr('pageTitle');
+    document.querySelectorAll('[data-i]').forEach(function (el) { el.textContent = tr(el.getAttribute('data-i')); });
+    document.querySelectorAll('[data-ph]').forEach(function (el) { el.placeholder = tr(el.getAttribute('data-ph')); });
+    (function () { var m = Q.get('msg'); if (m) { var i = document.getElementById('msg-info'); i.textContent = m; i.style.display = 'block'; } })();
+
+    // ── return path: kept in localStorage (a confirmation link opens a new tab, where sessionStorage is empty) ──
+    var RKEY = 'kira_redirect_after_login';
+    function setReturn(p) { try { localStorage.setItem(RKEY, p); } catch (e) {} try { sessionStorage.setItem(RKEY, p); } catch (e) {} }
+    function getReturn() {
+      var p = NEXT;
+      if (!p) { try { p = localStorage.getItem(RKEY) || ''; } catch (e) {} }
+      if (!p) { try { p = sessionStorage.getItem(RKEY) || ''; } catch (e) {} }
+      return safeNext(p) || '/';
+    }
+    function clearReturn() { try { localStorage.removeItem(RKEY); } catch (e) {} try { sessionStorage.removeItem(RKEY); } catch (e) {} }
+    if (NEXT) setReturn(NEXT);
+    function goNext() { var r = getReturn(); clearReturn(); window.location.href = r; }
+    function track(ev) { try { if (typeof window.kiraTrack === 'function') window.kiraTrack(ev); } catch (e) {} }
+
+    function showView(v) {
+      ['signin', 'signup', 'forgot', 'reset'].forEach(function (x) { document.getElementById('form-' + x).style.display = x === v ? 'block' : 'none'; });
+      document.getElementById('tabs').style.display = (v === 'signin' || v === 'signup') ? 'flex' : 'none';
+      document.getElementById('tab-signin').classList.toggle('active', v !== 'signup');
+      document.getElementById('tab-signup').classList.toggle('active', v === 'signup');
       clearMessages();
     }
+    function switchTab(tab) { showView(tab); }
 
-    function showError(msg) {
-      const el = document.getElementById('msg-error');
-      el.textContent = msg; el.style.display = 'block';
-      document.getElementById('msg-success').style.display = 'none';
-    }
-
-    function showSuccess(msg) {
-      const el = document.getElementById('msg-success');
-      el.textContent = msg; el.style.display = 'block';
-      document.getElementById('msg-error').style.display = 'none';
-    }
-
-    function clearMessages() {
-      document.getElementById('msg-error').style.display = 'none';
-      document.getElementById('msg-success').style.display = 'none';
-    }
+    function showError(msg) { var el = document.getElementById('msg-error'); el.textContent = msg; el.style.display = 'block'; document.getElementById('msg-success').style.display = 'none'; }
+    function showSuccess(msg) { var el = document.getElementById('msg-success'); el.textContent = msg; el.style.display = 'block'; document.getElementById('msg-error').style.display = 'none'; }
+    function clearMessages() { ['msg-error', 'msg-success', 'msg-info'].forEach(function (id) { document.getElementById(id).style.display = 'none'; }); }
+    function origin() { return window.location.origin; }
+    function backUrl(extra) { var q = new URLSearchParams(extra || {}); q.set('lang', LANG); var r = getReturn(); if (r !== '/') q.set('next', r); return origin() + '/auth.html?' + q.toString(); }
 
     async function handleGoogleSignIn() {
-      try {
-        await window.kiraAuth.signInWithGoogle();
-        // Page will redirect to Google — nothing else needed here
-      } catch (e) {
-        showError(e.message || 'Google sign-in failed. Please try again.');
-      }
+      try { await window.kiraAuth.signInWithGoogle(); }
+      catch (e) { showError(e.message || tr('googleFail')); }
     }
 
     async function handleSignIn() {
-      const email    = document.getElementById('signin-email').value.trim();
-      const password = document.getElementById('signin-password').value;
-      const btn      = document.getElementById('btn-signin');
-      if (!email || !password) return showError('Please fill in all fields.');
-
-      btn.disabled = true; btn.textContent = 'Signing in...';
+      var email = document.getElementById('signin-email').value.trim();
+      var password = document.getElementById('signin-password').value;
+      var btn = document.getElementById('btn-signin');
+      if (!email || !password) return showError(tr('fillAll'));
+      btn.disabled = true; btn.textContent = tr('signingIn');
       try {
         await window.kiraAuth.signIn(email, password);
-        const redirect = sessionStorage.getItem('kira_redirect_after_login') || '/';
-        sessionStorage.removeItem('kira_redirect_after_login');
-        window.location.href = redirect;
+        track('login');
+        goNext();
       } catch (e) {
-        showError(e.message || 'Sign in failed. Please try again.');
-        btn.disabled = false; btn.textContent = 'Sign In';
+        showError(e.message || tr('signinFail'));
+        btn.disabled = false; btn.textContent = tr('btnSignin');
       }
     }
 
     async function handleSignUp() {
-      const email    = document.getElementById('signup-email').value.trim();
-      const password = document.getElementById('signup-password').value;
-      const btn      = document.getElementById('btn-signup');
-      if (!email || !password) return showError('Please fill in all fields.');
-      if (password.length < 8) return showError('Password must be at least 8 characters.');
-
-      btn.disabled = true; btn.textContent = 'Creating account...';
+      var email = document.getElementById('signup-email').value.trim();
+      var password = document.getElementById('signup-password').value;
+      var btn = document.getElementById('btn-signup');
+      if (!email || !password) return showError(tr('fillAll'));
+      if (password.length < 8) return showError(tr('pwShort'));
+      btn.disabled = true; btn.textContent = tr('creating');
       try {
-        await window.kiraAuth.signUp(email, password);
-        showSuccess('Account created! Check your email to confirm, then sign in.');
-        btn.disabled = false; btn.textContent = 'Create Account';
+        // The confirmation link comes back to this page with ?next=, and the path is also kept in localStorage.
+        var r = await window.db.auth.signUp({ email: email, password: password, options: { emailRedirectTo: backUrl() } });
+        if (r.error) throw new Error(r.error.message);
+        track('sign_up');
+        showSuccess(tr('created'));
       } catch (e) {
-        showError(e.message || 'Sign up failed. Please try again.');
-        btn.disabled = false; btn.textContent = 'Create Account';
+        showError(e.message || tr('signupFail'));
       }
+      btn.disabled = false; btn.textContent = tr('btnSignup');
     }
 
-    // If already logged in, redirect to stored path (or home)
-    window.kiraAuth.getUser().then(user => {
-      if (user) {
-        const redirect = sessionStorage.getItem('kira_redirect_after_login') || '/';
-        sessionStorage.removeItem('kira_redirect_after_login');
-        window.location.href = redirect;
+    // Magic link (sign in without a password). Also the way back in for a guest buyer.
+    async function handleMagic(fieldId, quiet) {
+      var email = document.getElementById(fieldId).value.trim();
+      if (!email) return showError(tr('enterEmail'));
+      var btn = document.getElementById('btn-magic');
+      btn.disabled = true;
+      try {
+        var r = await window.db.auth.signInWithOtp({ email: email, options: { emailRedirectTo: backUrl(), shouldCreateUser: true } });
+        if (r.error) throw new Error(r.error.message);
+        showSuccess(tr('magicSent').replace('{email}', email));
+      } catch (e) { showError(e.message || tr('signinFail')); }
+      btn.disabled = false;
+    }
+
+    async function handleForgot() {
+      var email = document.getElementById('forgot-email').value.trim();
+      var btn = document.getElementById('btn-forgot');
+      if (!email) return showError(tr('enterEmail'));
+      btn.disabled = true; btn.textContent = tr('sending');
+      try {
+        var r = await window.db.auth.resetPasswordForEmail(email, { redirectTo: backUrl({ mode: 'reset' }) });
+        if (r.error) throw new Error(r.error.message);
+        showSuccess(tr('resetSent'));
+      } catch (e) { showError(e.message || tr('signinFail')); }
+      btn.disabled = false; btn.textContent = tr('sendReset');
+    }
+
+    async function handleReset() {
+      var pw = document.getElementById('reset-password').value;
+      var btn = document.getElementById('btn-reset');
+      if (pw.length < 8) return showError(tr('pwShort'));
+      btn.disabled = true; btn.textContent = tr('saving');
+      try {
+        var r = await window.db.auth.updateUser({ password: pw });
+        if (r.error) throw new Error(r.error.message);
+        showSuccess(tr('pwSaved'));
+        setTimeout(goNext, 900);
+      } catch (e) { showError(e.message || tr('signinFail')); btn.disabled = false; btn.textContent = tr('savePw'); }
+    }
+
+    // ── entering the page ─────────────────────────────────────────────────────────────
+    // 1) our own one-time link (receipt email): ?token_hash=...&type=recovery -> session -> straight to the purchase
+    // 2) reset link from Supabase (?mode=reset, tokens in the hash) -> "set new password"
+    // 3) already signed in (incl. after a magic link / confirmation / Google) -> back to where the reader was
+    (async function init() {
+      var pre = Q.get('email'); if (pre) { ['signin-email', 'forgot-email', 'signup-email'].forEach(function (id) { document.getElementById(id).value = pre; }); }
+      var th = Q.get('token_hash'), type = Q.get('type');
+      if (th && (type === 'recovery' || type === 'magiclink' || type === 'email')) {
+        var info = document.getElementById('msg-info'); info.textContent = tr('signingLink'); info.style.display = 'block';
+        try {
+          var v = await window.db.auth.verifyOtp({ token_hash: th, type: type });
+          if (v.error) throw v.error;
+          track('login');
+          goNext();
+        } catch (e) {
+          clearMessages(); showError(tr('linkBad'));
+        }
+        return;
       }
+      if (Q.get('mode') === 'reset') {
+        showView('reset');
+        return;   // the recovery session arrives from the hash; handleReset() uses it
+      }
+      var user = await window.kiraAuth.getUser();
+      if (user) { if (/access_token|code=/.test(location.hash + location.search)) track('login'); goNext(); }
+    })();
+    window.db.auth.onAuthStateChange(function (event) {
+      if (event === 'SIGNED_IN' && Q.get('mode') !== 'reset' && !Q.get('token_hash')) setTimeout(goNext, 50);
+      if (event === 'PASSWORD_RECOVERY') showView('reset');
     });
 
-    // Enter key support
-    document.addEventListener('keydown', e => {
+    document.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter') return;
-      const activeTab = document.getElementById('tab-signin').classList.contains('active');
-      activeTab ? handleSignIn() : handleSignUp();
+      var vis = ['signin', 'signup', 'forgot', 'reset'].filter(function (x) { return document.getElementById('form-' + x).style.display !== 'none'; })[0];
+      if (vis === 'signin') handleSignIn(); else if (vis === 'signup') handleSignUp(); else if (vis === 'forgot') handleForgot(); else if (vis === 'reset') handleReset();
     });
   </script>
 </body>

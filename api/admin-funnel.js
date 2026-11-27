@@ -77,14 +77,17 @@ export default async function handler(req, res) {
     const days = [7, 30, 90].includes(parseInt(req.query && req.query.days, 10)) ? parseInt(req.query.days, 10) : 30;
     const since = new Date(Date.now() - days * 864e5).toISOString();
 
-    const [fr, requests, waitlist, leads, purchases, firstEvent, ads] = await Promise.all([
+    const [fr, requests, waitlist, leads, purchases, firstEvent, ads, checkout] = await Promise.all([
       fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_summary`, { method: 'POST', headers: H(), body: JSON.stringify({ p_from: since }) }),
       countSince('topic_requests', since),
       countSince('waitlist', since),
       countSince('leads', since),
       countSince('purchases', since, '&status=eq.completed'),
       fetch(`${SUPABASE_URL}/rest/v1/site_events?select=at&order=at.asc&limit=1`, { headers: H() }).then(r => r.ok ? r.json() : []).catch(() => []),
-      adSignups(since).catch(() => null)
+      adSignups(since).catch(() => null),
+      // checkout steps (migration 078); null until it is applied
+      fetch(`${SUPABASE_URL}/rest/v1/rpc/funnel_checkout`, { method: 'POST', headers: H(), body: JSON.stringify({ p_from: since }) })
+        .then(r => r.ok ? r.json() : null).catch(() => null)
     ]);
     if (!fr.ok) throw new Error(`funnel_summary ${fr.status}`);
     const funnel = await fr.json();
@@ -94,7 +97,8 @@ export default async function handler(req, res) {
       funnel,
       tracking_since: firstEvent[0] ? firstEvent[0].at : null,       // events only exist from this moment on
       actual: { request_email: requests, waitlist, lead: leads, purchases },
-      ads
+      ads,
+      checkout: checkout ? { ...checkout, days } : null
     });
   } catch (err) {
     console.error('[admin-funnel] error:', err.message);

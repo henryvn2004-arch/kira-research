@@ -171,6 +171,20 @@
         ${rows.map(r => `<tr><td>${esc(labels[r[nameKey]] || r[nameKey])}</td><td class="n">${n(r.visitors)}</td><td class="n">${n(r.raised)}</td><td class="n">${pct(r.raised, r.visitors)}</td></tr>`).join('')}</tbody></table></div>`;
     }
 
+    // Checkout steps (stage 0 events, migration 078): sessions per step, then revenue from purchase events.
+    const CO_STEPS = [['lock_hit', 'Hit a locked page'], ['preview_page', 'Turned a preview page'], ['buy_click', 'Clicked buy'], ['begin_checkout', 'Went to PayPal'],
+      ['paypal_cancel', 'Cancelled at PayPal'], ['purchase', 'Purchased'], ['sign_up', 'Created an account'], ['login', 'Signed in']];
+    function checkoutCard(c) {
+      if (!c) return '';
+      const s = c.steps || {};
+      const rows = CO_STEPS.map(([k, label]) => `<tr><td>${esc(label)}</td><td class="n">${n(s[k])}</td></tr>`).join('');
+      const items = (c.by_item || []).map(x => `<tr><td>${esc(x.item)}</td><td class="n">${n(x.purchases)}</td><td class="n">$${n(x.revenue)}</td></tr>`).join('');
+      return `<h2 class="fn-sec">Checkout steps<small>sessions per step, last ${c.days || ''} days</small></h2>
+        <div class="fn-card"><div class="fn-wrap"><table class="fn"><thead><tr><th>Step</th><th class="n">Sessions</th></tr></thead><tbody>${rows}</tbody></table></div>
+        <p class="fn-note">Revenue seen by purchase events: <b>$${n(c.revenue)}</b>. The purchase table below (database) is the truth; events miss browsers that block tracking.</p>
+        ${items ? `<div class="fn-wrap"><table class="fn"><thead><tr><th>Item</th><th class="n">Purchases</th><th class="n">Revenue</th></tr></thead><tbody>${items}</tbody></table></div>` : ''}</div>`;
+    }
+
     function render(d) {
       const f = d.funnel, st = f.steps, a = d.actual;
       const since = d.tracking_since ? new Date(d.tracking_since) : null;
@@ -188,6 +202,8 @@
           <button class="fn-link" id="fn-toggle">${state.table ? 'Show chart' : 'Show as table'}</button>
           <p class="fn-note">Bots, crawlers, our own tests and people with Do Not Track are not counted. Each bar counts visitors who also did the step above it.</p>
         </div>
+
+        ${checkoutCard(d.checkout)}
 
         <h2 class="fn-sec">Sign-ups, counted two ways</h2>
         <div class="fn-card">

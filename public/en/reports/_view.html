@@ -33,6 +33,7 @@
   <!-- Supabase client + kiraAuth (for purchase state) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/auth.js"></script>
+  <script src="/js/checkout.js"></script>
 
   <link rel="stylesheet" href="/css/research.css" />
 </head>
@@ -243,57 +244,18 @@
     }
 
     async function capturePurchase(orderId) {
-      // Capture REQUIRES the user to be signed in. If they aren't, prompt
-      // login first and pass the order through sessionStorage so we can
-      // resume the capture once they're back.
-      const session = (await window.db.auth.getSession()).data.session;
-      if (!session) {
-        sessionStorage.setItem('kira_pending_capture', orderId);
-        sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
-        window.location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to finalise your purchase');
-        throw new Error('redirecting_to_login');
-      }
-      try {
-        const r = await fetch('/api/library-buy?action=capture', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
-          body:    JSON.stringify({ orderId })
-        });
-        const body = await r.json();
-        return { ok: r.ok, ...body };
-      } catch (err) {
-        return { ok: false, error: 'network' };
-      }
+      // No sign-in needed: the server files the purchase under the payer's PayPal email and, for a guest,
+      // returns a one-time token that signs this browser in (see /js/checkout.js).
+      const res = await window.kiraCheckout.finish({ endpoint: '/api/library-buy', orderId, item: 'report', id: slug, name: slug });
+      return res.ok ? { ok: true, guestEmail: res.guestEmail } : { ok: false, error: res.error };
     }
 
     async function startCheckout(slug, locale) {
-      // Require login first — capture step needs auth anyway.
-      const user = await window.kiraAuth.getUser();
-      if (!user) {
-        sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
-        window.location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to purchase this report');
-        return;
-      }
-      try {
-        const sess = (await window.db.auth.getSession()).data.session;
-        const r = await fetch('/api/library-buy?action=create', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (sess ? sess.access_token : '') },
-          body:   JSON.stringify({ slug, locale })
-        });
-        if (!r.ok) {
-          const body = await r.json().catch(() => ({}));
-          alert('Could not start checkout (' + (body.error || r.status) + ').');
-          return;
-        }
-        const body = await r.json();
-        if (body.approveUrl) {
-          window.location.href = body.approveUrl;
-        } else {
-          alert('Checkout error: no approval URL returned.');
-        }
-      } catch (err) {
-        alert('Network error starting checkout. Please retry.');
+      const res = await window.kiraCheckout.start({ endpoint: '/api/library-buy', body: { slug, locale }, item: 'report', id: slug, name: slug });
+      if (res.error) {
+        const K = window.kiraCheckout;
+        alert(res.error === 'network' ? K.t('network', locale) : K.t('startFail', locale) + ' (' + res.error + ').');
+        ['buy-btn', 'preview-buy-btn', 'unlock-modal-buy'].forEach(id => { const el = document.getElementById(id); if (el) el.disabled = false; });
       }
     }
 
@@ -715,9 +677,11 @@
       }
       if (PER_REPORT_PURCHASE) {
         return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3>' +
-          '<p style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + (d.price || 49) + '</p>' +
+          '<p id="buy-price" style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + (d.price || 49) + '</p>' +
+          window.kiraCheckout.licenceHtml(d.price || 49, locale) +
           (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
-          '<button class="r-btn r-btn-primary r-btn-block" id="buy-btn">' + escapeHtml(t('accessTitle')) + R.icon('arrow') + '</button>' + incl + subBox + '</div>';
+          '<button class="r-btn r-btn-primary r-btn-block" id="buy-btn">' + escapeHtml(t('accessTitle')) + R.icon('arrow') + '</button>' +
+          '<p class="small" style="margin-top:8px">' + escapeHtml(window.kiraCheckout.t('guestNote', locale)) + '</p>' + incl + subBox + '</div>';
       }
       return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3><p>' + escapeHtml(t('accessBody')) + '</p>' +
         (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
@@ -760,9 +724,10 @@
       let banners = '';
       if (captureResult) {
         banners += captureResult.ok
-          ? '<div class="rd-banner"><strong>Purchase complete.</strong> Your full report is unlocked below.</div>'
+          ? '<div class="rd-banner"><strong>Purchase complete.</strong> Your full report is unlocked below.' + (captureResult.guestEmail ? ' ' + escapeHtml(window.kiraCheckout.t('doneGuest', locale).replace('{email}', captureResult.guestEmail)) : '') + '</div>'
           : '<div class="rd-banner warn"><strong>We could not finalise your purchase.</strong> Please retry, or email hello@kiraresearch.com with your PayPal receipt.</div>';
       } else if (paypalReturn === 'cancel') {
+        window.kiraCheckout.cancelSeen('report');
         banners += '<div class="rd-banner warn">Checkout cancelled. Your card was not charged.</div>';
       }
       if (d.isFallback) banners += '<div class="rd-banner">' + escapeHtml(t('fallback')) + '</div>';
@@ -850,6 +815,10 @@
 
       const buyBtn = document.getElementById('buy-btn');
       if (buyBtn) buyBtn.addEventListener('click', () => { buyBtn.disabled = true; startCheckout(d.slug, locale); });
+      window.kiraCheckout.bindLicence(document, (lic) => {
+        const pe = document.getElementById('buy-price');
+        if (pe) pe.textContent = '$' + window.kiraCheckout.licencePrice(d.price || 49, lic);
+      });
       const subscribeBtn = document.getElementById('subscribe-btn');
       if (subscribeBtn) subscribeBtn.addEventListener('click', async () => {
         subscribeBtn.disabled = true;

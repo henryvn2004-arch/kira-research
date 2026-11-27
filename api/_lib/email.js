@@ -114,7 +114,9 @@ export async function sendPurchaseReceipt({
   reportTitle,
   downloadUrl,
   kind = 'report',           // 'report' | 'transcript' (expert-interview transcript, S19) | 'list' (market-map company list)
-  pending = false            // list only: paid, the file is not ready yet
+  pending = false,           // list only: paid, the file is not ready yet
+  licence = 'single',        // 'single' | 'team' | 'company' (shown on the receipt)
+  signInUrl = null           // guest checkout: one-time sign-in link, the same mail doubles as the sign-in email
 }) {
   if (!buyerEmail) return false;
 
@@ -127,14 +129,19 @@ export async function sendPurchaseReceipt({
   const listNote = !isList ? '' : pending ? 'We are preparing your Excel file and will email the download link as soon as it is ready. You do not need to do anything.' : 'Your Excel file is ready. The link works for 7 days and for up to 5 downloads; you can also find it under My Library in your profile.';
 
   const subject = `Your KIRA RESEARCH ${noun} — ${title}`;
+  const licenceLabel = licence === 'team' ? 'Team licence (up to 10 people, same company)' : licence === 'company' ? 'Company-wide licence' : '';
+  const openUrl = isList && downloadUrl ? downloadUrl : (signInUrl || reportUrl);
+  const signInNote = signInUrl ? 'We created your KIRA account from this email address. The button signs you in; to come back later, use "Email me a sign-in link" on the sign-in page.' : '';
 
   const text = [
     `Thanks for your purchase.`,
     ``,
     `You bought: ${title}`,
     `Amount: ${niceAmount} ${currency}`,
+    licenceLabel ? `Licence: ${licenceLabel}` : '',
     ``,
-    `View your ${noun}: ${reportUrl}`,
+    signInUrl ? `Open your ${noun} (signs you in): ${signInUrl}` : `View your ${noun}: ${reportUrl}`,
+    signInNote,
     isList ? listNote : '',
     downloadUrl ? (isList ? `Download your Excel list: ${downloadUrl}` : `Direct PDF download: ${downloadUrl}`) : '',
     ``,
@@ -151,8 +158,10 @@ export async function sendPurchaseReceipt({
   <table style="border-collapse:collapse;margin:0 0 24px;">
     <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">${isTranscript ? 'Transcript' : isList ? 'Company list' : 'Report'}</td><td style="padding:4px 0;font-size:14px;">${esc(title)}</td></tr>
     <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Amount</td><td style="padding:4px 0;font-size:14px;">${esc(niceAmount)} ${esc(currency)}</td></tr>
+    ${licenceLabel ? `<tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Licence</td><td style="padding:4px 0;font-size:14px;">${esc(licenceLabel)}</td></tr>` : ''}
   </table>
-  <p style="margin:0 0 12px;"><a href="${esc(isList && downloadUrl ? downloadUrl : reportUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">${isList ? (downloadUrl ? 'Download your Excel list' : 'View the list page') : `Open your ${noun}`}</a></p>
+  <p style="margin:0 0 12px;"><a href="${esc(openUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">${isList ? (downloadUrl ? 'Download your Excel list' : 'View the list page') : `Open your ${noun}`}</a></p>
+  ${signInNote ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">${esc(signInNote)}${isList && downloadUrl ? ` <a href="${esc(signInUrl)}">Sign in</a>` : ''}</p>` : ''}
   ${isList ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">${esc(listNote)}</p>` : ''}
   ${downloadUrl && !isList ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">Direct PDF link (expires in 1 hour): <a href="${esc(downloadUrl)}">download</a></p>` : ''}
   <p style="margin:24px 0 6px;font-size:13px;color:#666;">If you have any questions, just reply to this email.</p>

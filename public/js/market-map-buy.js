@@ -19,7 +19,6 @@
   try { M = Object.assign({}, EN, JSON.parse(root.getAttribute('data-msgs') || '{}')); } catch (_e) { /* English */ }
   const say = (t) => { msg.textContent = t; };
   const whenReady = async () => { for (let i = 0; i < 100 && !window.kiraAuth; i++) await new Promise((r) => setTimeout(r, 20)); };
-  const ORDER_RE = /^[A-Za-z0-9_-]{5,64}$/;
 
   function showResult(p) {
     msg.textContent = '';
@@ -34,41 +33,34 @@
   }
 
   async function capture() {
-    const qs = new URLSearchParams(location.search);
-    let orderId = qs.get('paypal') === 'success' ? qs.get('token') : null;
-    if (!orderId) { try { orderId = sessionStorage.getItem('kira_pending_lcapture'); } catch (_e) { /* storage blocked */ } }
-    if (!ORDER_RE.test(orderId || '')) { if (qs.get('paypal') === 'cancel') history.replaceState({}, '', location.pathname); return; }
+    const K = window.kiraCheckout;
     await whenReady();
-    const s0 = window.db ? (await window.db.auth.getSession()).data.session : null;
-    if (!s0) {
-      try { sessionStorage.setItem('kira_pending_lcapture', orderId); sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* storage blocked */ }
-      location.href = '/auth.html?msg=' + encodeURIComponent(M.signInFinish);
-      return;
-    }
+    const orderId = K.orderFromUrl();
+    if (!orderId) { if (K.cancelSeen('list')) history.replaceState({}, '', location.pathname); return; }
+    // No sign-in needed: the server files the purchase under the payer's PayPal email and signs this browser in.
     say(M.finalising);
     btn.disabled = true;
-    const r = await fetch('/api/list-buy?action=capture', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + s0.access_token }, body: JSON.stringify({ orderId }) });
-    try { sessionStorage.removeItem('kira_pending_lcapture'); } catch (_e) { /* storage blocked */ }
+    const fin = await K.finish({ endpoint: '/api/list-buy', orderId, item: 'list', id: slug, name: slug });
     history.replaceState({}, '', location.pathname);
-    const b = await r.json().catch(() => ({}));
-    if (r.ok && b.purchase) showResult(b.purchase); else { say(M.couldNot); btn.disabled = false; }
+    if (fin.ok && fin.body && fin.body.purchase) {
+      showResult(fin.body.purchase);
+      if (fin.guestEmail) msg.appendChild(document.createTextNode(' ' + K.t('doneGuest', loc).replace('{email}', fin.guestEmail)));
+    } else { say(M.couldNot); btn.disabled = false; }
+  }
+
+  // Licence picker (single / team / company); the price on the button follows the choice.
+  const licBox = document.getElementById('mm-lic');
+  if (licBox && window.kiraCheckout) {
+    const K = window.kiraCheckout, base = Number(licBox.getAttribute('data-base')) || 0;
+    const label = btn.textContent;
+    licBox.innerHTML = K.licenceHtml(base, loc);
+    K.bindLicence(licBox, (lic) => { btn.textContent = label.replace('$' + base, '$' + K.licencePrice(base, lic)); });
   }
 
   btn.addEventListener('click', async () => {
     btn.disabled = true;
-    try {
-      await whenReady();
-      const session = window.db ? (await window.db.auth.getSession()).data.session : null;
-      if (!session) {
-        try { sessionStorage.setItem('kira_redirect_after_login', location.pathname); } catch (_e) { /* storage blocked */ }
-        location.href = '/auth.html?msg=' + encodeURIComponent(M.signInBuy);
-        return;
-      }
-      const r = await fetch('/api/list-buy?action=create', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ slug, loc }) });
-      const b = await r.json().catch(() => ({}));
-      if (!r.ok || !b.approveUrl) { say(M.startFail + ' (' + (b.error || r.status) + ').'); btn.disabled = false; return; }
-      location.href = b.approveUrl;
-    } catch (_e) { say(M.network); btn.disabled = false; }
+    const res = await window.kiraCheckout.start({ endpoint: '/api/list-buy', body: { slug, loc }, item: 'list', id: slug, name: slug });
+    if (res.error) { say(res.error === 'network' ? M.network : M.startFail + ' (' + res.error + ').'); btn.disabled = false; }
   });
 
   capture().catch(() => say(M.reload));

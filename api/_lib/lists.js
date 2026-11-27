@@ -48,7 +48,7 @@ async function storeFile(path, bytes, contentType) {
 // Build + store + open the link + send the email. Never throws: a failed build leaves the purchase 'failed' with
 // build_error (the buyer has paid; the receipt says the file is being prepared and the owner can retry via
 // list-buy?action=build). Returns the updated purchase row.
-export async function finishBuild(purchase, buyerEmail, title) {
+export async function finishBuild(purchase, buyerEmail, title, extra = {}) {
   const id = purchase.id;
   const fail = async (msg) => {
     console.error('[lists] build failed for purchase', id, msg);
@@ -79,7 +79,7 @@ export async function finishBuild(purchase, buyerEmail, title) {
   }
   sendPurchaseReceipt({
     buyerEmail, slug: purchase.slug, locale: 'en', amount: Number(purchase.amount), currency: purchase.currency || 'USD', reportTitle: title,
-    kind: 'list', downloadUrl: row.build_status === 'ready' ? downloadUrl(row) : null, pending: row.build_status !== 'ready',
+    kind: 'list', licence: extra.licence || purchase.licence || 'single', signInUrl: extra.signInUrl || null, downloadUrl: row.build_status === 'ready' ? downloadUrl(row) : null, pending: row.build_status !== 'ready',
   }).catch((e) => console.error('[lists] receipt threw:', e.message));
   return row;
 }

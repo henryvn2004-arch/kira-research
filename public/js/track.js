@@ -10,6 +10,10 @@
 // Events: pageview (on load), search (library search with 3+ letters, once per query),
 //         request_email / waitlist / lead (a successful form POST) — all detected by watching
 //         fetch, so no form on the site needs to be edited.
+// Checkout / auth events (stage 0): buy_click, begin_checkout, paypal_cancel, purchase (item + value), sign_up, login,
+//   lock_hit, preview_page. They are sent by code that calls window.kiraTrack(event, extra), e.g. /js/checkout.js and
+//   /auth.html (extra: it = report | transcript | list, v = amount in USD). GA4 begin_checkout / purchase are fired by
+//   /js/checkout.js through window.gtag.
 // ============================================================
 (function () {
   'use strict';

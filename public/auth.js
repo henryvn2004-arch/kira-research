@@ -168,14 +168,16 @@
 
     // Email/password sign-up (sends confirmation email)
     async signUp(email, password) {
-      const { data, error } = await db.auth.signUp({ email, password });
+      const { data, error } = await db.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin + '/auth.html' } });
       if (error) throw new Error(error.message);
       return data.user;
     },
 
     // Google OAuth — redirects to Google, then back to `redirectTo`
     async signInWithGoogle() {
-      const after   = sessionStorage.getItem('kira_redirect_after_login') || '/';
+      // The return path lives in localStorage (survives a new tab); sessionStorage is the old key.
+      let after = '/';
+      try { after = localStorage.getItem('kira_redirect_after_login') || sessionStorage.getItem('kira_redirect_after_login') || '/'; } catch (_) { /* storage blocked */ }
       const { error } = await db.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -196,7 +198,8 @@
     async requireAuth() {
       const user = await this.getUser();
       if (!user) {
-        sessionStorage.setItem('kira_redirect_after_login', window.location.pathname + window.location.search);
+        const back = window.location.pathname + window.location.search;
+        try { localStorage.setItem('kira_redirect_after_login', back); sessionStorage.setItem('kira_redirect_after_login', back); } catch (_) { /* storage blocked */ }
         window.location.href = '/auth.html';
         return null;
       }

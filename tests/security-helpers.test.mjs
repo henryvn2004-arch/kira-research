@@ -26,7 +26,7 @@ test('admin check fails closed on an empty list', () => {
 const UID = '123e4567-e89b-12d3-a456-426614174000';
 test('custom_id carries kind + item + buyer', () => {
   const id = buildCustomId('report', 'vn-coffee-2026', 'en', UID);
-  assert.deepEqual(parseCustomId('report', id), { item: 'vn-coffee-2026', locale: 'en', userId: UID });
+  assert.deepEqual(parseCustomId('report', id), { item: 'vn-coffee-2026', locale: 'en', userId: UID, licence: 'single' });
   assert.equal(parseCustomId('transcript', id), null);          // wrong product
   assert.equal(parseCustomId('report', 'vn-coffee-2026|en'), null); // legacy / no buyer
 });

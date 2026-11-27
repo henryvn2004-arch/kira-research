@@ -13,7 +13,10 @@
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
-const EVENTS = new Set(['pageview', 'search', 'request_email', 'waitlist', 'lead']);
+const EVENTS = new Set(['pageview', 'search', 'request_email', 'waitlist', 'lead',
+  // checkout + auth funnel (stage 0, migration 078); lock_hit / preview_page are sent by the preview code
+  'buy_click', 'begin_checkout', 'paypal_cancel', 'purchase', 'sign_up', 'login', 'lock_hit', 'preview_page']);
+const ITEMS = new Set(['report', 'transcript', 'list']);
 const LOCALES = new Set(['en', 'ja', 'ko', 'zh']);
 const BOT = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|gtmetrix|preview|facebookexternalhit|embedly|monitor|uptime|curl|wget|python|node-fetch|axios|go-http|java\/|httpclient|playwright|puppeteer|selenium|phantom/i;
 const ORIGIN = /^https:\/\/(www\.)?kiraresearch\.com$/;
@@ -87,6 +90,9 @@ export default async function handler(req, res) {
       src: event === 'pageview' ? sourceOf(b.r, b.u) : null,
       hit: event === 'search' ? b.h === true : null
     };
+    // item / value exist from migration 078; only sent when set, so pageviews keep working before it is applied.
+    if (ITEMS.has(b.it)) row.item = b.it;
+    if (event === 'purchase' && Number.isFinite(Number(b.v)) && Number(b.v) >= 0 && Number(b.v) <= 5000) row.value = Math.round(Number(b.v) * 100) / 100;
     const r = await fetch(`${SUPABASE_URL}/rest/v1/site_events`, {
       method: 'POST',
       headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
