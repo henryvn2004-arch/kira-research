@@ -553,7 +553,14 @@ Runs the same checks as `check-exhibits.mjs`, then writes the numbers behind thi
 node scripts/match-market-maps.mjs --write --only reports --slug ${slug}
 ```
 
-Fills `living_reports.market_map_country` / `market_map_segment` by a code match against the published market maps (same country, every word of the map's segment in the report's segment). An unclear match stays empty and the report simply shows no BizDirect links. Prints one JSON line. NOT fatal: note a failure (or `"matched": 0`) in the fire summary and continue. Needs `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` like the other publish scripts; skip while migration 077 is not applied.
+Fills `living_reports.market_map_country` / `market_map_segment` by a code match against the published market maps (same country, every word of the map's segment in the report's segment). An unclear match stays empty and the report simply shows no BizDirect links. Prints one JSON line. If `"matched"` is 0, the session chooses (same idea as Step 0.7):
+
+```bash
+node scripts/match-market-maps.mjs --suggest --slug ${slug}      # JSON: the report + the top 25 market maps of its country (segment_key = title)
+node scripts/match-market-maps.mjs --apply --slug ${slug} --segment <segment_key|none>
+```
+
+Pick exactly ONE segment of the SAME market that the report is really about, or `none`. Not a neighbouring segment: data centres are NOT cloud hosting, banking is NOT savings accounts. When unsure, `none` (no link beats a wrong link). `--apply` refuses a key that does not exist, is in another country or is not indexable. NOT fatal: note a failure in the fire summary and continue. Needs `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` like the other publish scripts; skip while migration 077 is not applied.
 
 **5.3b-5 — Build the Kira Chain draft.**
 

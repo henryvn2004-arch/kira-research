@@ -60,3 +60,19 @@ test('matchMarketMap: wrong country, industry-only hit, healthcare IT and ties g
   assert.equal(matchMarketMap({ country: 'Vietnam', segment: 'coffee and tea' }, maps), null);
   assert.equal(matchMarketMap({ country: '', segment: 'coffee' }, maps), null);
 });
+
+import { suggestCandidates, validateChoice } from '../api/_lib/market-map-match.js';
+const maps2 = [...maps.map((m) => ({ ...m, indexable: true })), { country: 'vietnam', segment_key: 'wine', title: 'Wine', indexable: false }];
+test('suggestCandidates: own country only, ranked by shared words', () => {
+  const c = suggestCandidates({ country: 'Vietnam', segment: 'coffee and tea shops' }, maps2);
+  assert.deepEqual(c.map((x) => x.segment_key).sort(), ['coffee', 'tea']);
+  assert.ok(!c.some((x) => x.segment_key === 'rice'));
+});
+test('validateChoice: refuses unknown key, wrong country, not indexable; accepts good and none', () => {
+  const item = { country: 'Vietnam' };
+  assert.equal(validateChoice(item, maps2, 'nope').error, 'unknown_segment');
+  assert.equal(validateChoice(item, maps2, 'rice').error, 'wrong_country');
+  assert.equal(validateChoice(item, maps2, 'wine').error, 'not_indexable');
+  assert.deepEqual(validateChoice(item, maps2, 'coffee'), { ok: true, key: { country: 'vietnam', segment_key: 'coffee' } });
+  assert.deepEqual(validateChoice(item, maps2, 'none'), { ok: true, key: null });
+});
