@@ -63,5 +63,6 @@
     if (res.error) { say(res.error === 'waiver' ? window.kiraCheckout.t('waiverNeeded', loc) : res.error === 'network' ? M.network : M.startFail + ' (' + res.error + ').'); btn.disabled = false; }
   });
 
+  if (window.kiraCheckout && window.kiraCheckout.focusBuy) window.kiraCheckout.focusBuy('mm-buy');   // ?buy=1 from emails
   capture().catch(() => say(M.reload));
 })();

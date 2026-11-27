@@ -198,7 +198,22 @@
     return t ? { 'X-Guest-Token': t } : {};
   }
 
+  // ?buy=1 (links in our emails): bring the buy button into view and focus it (the waiver tick if the button is still
+  // disabled by it). Nothing is charged or started; the query string is left untouched.
+  function focusBuy(id) {
+    try {
+      if (new URLSearchParams(location.search).get('buy') !== '1') return false;
+      var b = document.getElementById(id);
+      if (!b) return false;
+      b.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var cb = document.querySelector('.kc-waiver');
+      (b.disabled && cb ? cb : b).focus({ preventScroll: true });
+      return true;
+    } catch (_e) { return false; }
+  }
+
   window.kiraCheckout = {
+    focusBuy: focusBuy,
     guestHeaders: guestHeaders,
     start: start, finish: finish, orderFromUrl: orderFromUrl, cancelSeen: cancelSeen,
     licenceHtml: licenceHtml, bindLicence: bindLicence, licence: function () { return chosen; },
