@@ -21,6 +21,7 @@ import { citeBlock, citationText } from '../cite.js';
 import { BANDS, SORTS, isFiltered, hubHref } from './hub.js';
 import { LOCS, ui, lab, labShort, nfLoc } from './i18n.js';
 import { listsBlockHtml } from '../bizdirect-lists.js';
+import { orgLdTag } from '../org-ld.js';
 
 // "Company data: BizDirect Asia" with a link to the sister site (the pages are mostly English; the label follows opts.loc when given).
 const CD_LABEL = { en: 'Company data', ja: '企業データ', ko: '기업 데이터', zh: '企业数据' };
@@ -497,6 +498,7 @@ ${alt}<meta property="og:type" content="article"><meta property="og:site_name" c
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/css/kira.css">
 ${researchCss ? '<link rel="stylesheet" href="/css/research.css">\n' : ''}<style>${researchCss ? hubCss(loc) : MM_CSS}</style>
+${orgLdTag(loc)}
 ${(ld || []).map((l) => `<script type="application/ld+json" id="${l.id}">${ldJson(l.data)}</script>`).join('\n')}
 </head><body>
 <!-- nav + footer injected by /js/nav.js -->
