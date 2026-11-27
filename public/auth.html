@@ -310,8 +310,12 @@
     // 3) already signed in (incl. after a magic link / confirmation / Google) -> back to where the reader was
     (async function init() {
       var pre = Q.get('email'); if (pre) { ['signin-email', 'forgot-email', 'signup-email'].forEach(function (id) { document.getElementById(id).value = pre; }); }
-      var th = Q.get('token_hash'), type = Q.get('type');
-      if (th && (type === 'recovery' || type === 'magiclink' || type === 'email')) {
+      // The link type only picks which one-time token Supabase checks; Supabase verifies the token server-side,
+      // so nothing on this page trusts the URL. Unknown types fall back to 'recovery' (our receipt email link).
+      var OTP_TYPES = { recovery: 'recovery', magiclink: 'magiclink', email: 'email' };
+      var th = Q.get('token_hash') || '';
+      var type = OTP_TYPES[Q.get('type') || ''] || 'recovery';
+      if (th.length > 0) {
         var info = document.getElementById('msg-info'); info.textContent = tr('signingLink'); info.style.display = 'block';
         try {
           var v = await window.db.auth.verifyOtp({ token_hash: th, type: type });
