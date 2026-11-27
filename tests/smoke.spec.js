@@ -369,7 +369,7 @@ test.describe('public APIs', () => {
     test(`/${loc}/privacy loads`, async ({ page }) => {
       const r = await page.goto(`/${loc}/privacy`);
       expect(r.status()).toBe(200);
-      await expect(page.locator('h1')).toHaveText('Privacy');
+      await expect(page.locator('h1')).toHaveText({ en: 'Privacy', ja: 'プライバシー', ko: '개인정보', zh: '隐私' }[loc]);
     });
   }
 
@@ -383,7 +383,7 @@ test.describe('public APIs', () => {
     test(`/${loc}/terms loads`, async ({ page }) => {
       const r = await page.goto(`/${loc}/terms`);
       expect(r.status()).toBe(200);
-      await expect(page.locator('h1')).toHaveText('Terms');
+      await expect(page.locator('h1')).toHaveText({ en: 'Terms', ja: '利用規約', ko: '이용약관', zh: '服务条款' }[loc]);
     });
   }
 

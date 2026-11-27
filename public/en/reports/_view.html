@@ -256,7 +256,7 @@
       const res = await window.kiraCheckout.start({ endpoint: '/api/library-buy', body: { slug, locale }, item: 'report', id: slug, name: slug });
       if (res.error) {
         const K = window.kiraCheckout;
-        alert(res.error === 'network' ? K.t('network', locale) : K.t('startFail', locale) + ' (' + res.error + ').');
+        alert(res.error === 'waiver' ? K.t('waiverNeeded', locale) : res.error === 'network' ? K.t('network', locale) : K.t('startFail', locale) + ' (' + res.error + ').');
         ['buy-btn', 'preview-buy-btn', 'unlock-modal-buy'].forEach(id => { const el = document.getElementById(id); if (el) el.disabled = false; });
       }
     }
@@ -492,7 +492,7 @@
           const free = owns || r.locked === false;
           return '<li class="' + (free ? 'free' : '') + '"><span class="num">' + escapeHtml(r.num) + '</span>' +
             '<button type="button"' + tocAttrs(r, owns) + '>' + escapeHtml(r.name) + '</button>' +
-            (free ? '<span style="font-size:12px;color:var(--muted-dim)">' + escapeHtml(r.pages || '') + '</span>' : R.icon('lock')) + '</li>';
+            '<span data-pgref style="font-size:12px;color:var(--muted-dim);' + (free ? '' : 'display:none') + '">' + escapeHtml(r.pages || '') + '</span>' + (free ? '' : R.icon('lock')) + '</li>';
         }).join('') + '</ol></div>';
     }
     function renderRail(toc, owns) {
@@ -590,6 +590,30 @@
     }
     // Build the viewer sequence from the preview file: every page of the report except the cover
     // (the cover is only the small thumbnail), free pages readable, the rest locked placeholders.
+    // Contents rows follow the curated free pages, not the old first-5 rule stored in toc.locked.
+    // A row spans from its start page ("PG 04") to the start of the next row; it is free when one of its pages is free.
+    let curToc = null;
+    function syncTocFlags(freeSrc) {
+      if (!Array.isArray(curToc) || !curToc.length) return;
+      const free = new Set(freeSrc.map(i => i + 1));
+      const starts = curToc.map(r => { const m = String(r.pages || '').match(/(\d+)/); return m ? Number(m[1]) : null; });
+      if (starts.some(x => x === null)) return;                       // unknown page refs: leave stored flags alone
+      curToc.forEach((r, k) => {
+        const from = starts[k], to = k + 1 < starts.length ? starts[k + 1] : Infinity;
+        let isFree = false;
+        free.forEach(pg => { if (pg >= from && pg < to) isFree = true; });
+        r.locked = !isFree;
+      });
+      document.querySelectorAll('.rd-contents li, .rd-toc li').forEach((li, idx) => {
+        const r = curToc[idx % curToc.length]; const btn = li.querySelector('button'); if (!r || !btn) return;
+        btn.removeAttribute('data-preview'); btn.removeAttribute('data-locked');
+        if (r.locked) btn.setAttribute('data-locked', r.name); else btn.setAttribute('data-preview', '');
+        li.classList.toggle('free', !r.locked); btn.classList.toggle('free', !r.locked);
+        const lock = li.querySelector('svg'); const pg = li.querySelector('span[data-pgref]');
+        if (lock) lock.style.display = r.locked ? '' : 'none';
+        if (pg) pg.style.display = r.locked ? 'none' : '';
+      });
+    }
     function buildSeq(wrap, box, doc, pages) {
       let meta = null;
       try { meta = JSON.parse(doc.getElementById('kira-preview-meta').textContent); } catch (_e) { /* old file */ }
@@ -602,6 +626,7 @@
       // Free pages first (the viewer opens on the executive summary), then the locked ones in report order.
       const seq = bySrc.filter(p => p.free).concat(bySrc.filter(p => !p.free));
       wrap._seq = seq;
+      syncTocFlags(meta.free);
       wrap.dataset.total = String(seq.length);
       wrap.dataset.page = '0';
       wrap.dataset.all = String(meta.total);
@@ -777,6 +802,7 @@
     function render(d, purchaseState, fullContent, captureResult) {
       const owns = !!purchaseState.purchased;
       d.toc = normToc(d.toc);
+      curToc = owns ? null : d.toc;
       const crumbs = '<nav class="r-crumbs" aria-label="Breadcrumb">' +
         '<a href="/' + locale + '/library">' + escapeHtml(t('library')) + '</a>' +
         (d.country ? '<span class="sep">›</span><a href="/' + locale + '/library?country=' + encodeURIComponent(d.country.toLowerCase()) + '">' + escapeHtml(R.country(d.country)) + '</a>' : '') +
@@ -1012,11 +1038,15 @@
         document.body.style.overflow = '';
         if (opener) opener.focus();
       }
-      document.querySelectorAll('[data-locked]').forEach(el => el.addEventListener('click', () => { trackPv('lock_hit', { via: 'toc' }); openModal(el.dataset.locked, el); }));
-      document.querySelectorAll('[data-preview]').forEach(el => el.addEventListener('click', () => {
-        const target = document.getElementById('preview');
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }));
+      // Delegated, because syncTocFlags() can switch a row between free and locked after the preview loads.
+      document.addEventListener('click', e => {
+        const lk = e.target.closest && e.target.closest('[data-locked]');
+        if (lk) { trackPv('lock_hit', { via: 'toc' }); openModal(lk.dataset.locked, lk); return; }
+        if (e.target.closest && e.target.closest('[data-preview]')) {
+          const target = document.getElementById('preview');
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
       closeBtn.addEventListener('click', closeModal);
       modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });

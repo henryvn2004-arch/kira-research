@@ -181,6 +181,7 @@
       const items = (c.by_item || []).map(x => `<tr><td>${esc(x.item)}</td><td class="n">${n(x.purchases)}</td><td class="n">$${n(x.revenue)}</td></tr>`).join('');
       return `<h2 class="fn-sec">Checkout steps<small>sessions per step, last ${c.days || ''} days</small></h2>
         <div class="fn-card"><div class="fn-wrap"><table class="fn"><thead><tr><th>Step</th><th class="n">Sessions</th></tr></thead><tbody>${rows}</tbody></table></div>
+        ${c.avg_page_reached ? `<p class="fn-note">Reached page ${esc(String(c.avg_page_reached))} of the report on average (deepest preview page per session).${c.lock_by_via && Object.keys(c.lock_by_via).length ? ' Lock hits by source: ' + Object.entries(c.lock_by_via).map(([k, v]) => esc(k) + ' ' + n(v)).join(', ') + '.' : ''}</p>` : ''}
         <p class="fn-note">Revenue seen by purchase events: <b>$${n(c.revenue)}</b>. The purchase table below (database) is the truth; events miss browsers that block tracking.</p>
         ${items ? `<div class="fn-wrap"><table class="fn"><thead><tr><th>Item</th><th class="n">Purchases</th><th class="n">Revenue</th></tr></thead><tbody>${items}</tbody></table></div>` : ''}</div>`;
     }

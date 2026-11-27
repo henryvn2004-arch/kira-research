@@ -60,7 +60,7 @@
     if (document.getElementById('bc-css')) return;
     const st = document.createElement('style'); st.id = 'bc-css';
     st.textContent = '.bc{margin-top:10px;font-size:13px;line-height:1.55;color:var(--muted)}.bc p{margin:0 0 6px}.bc .bc-why{color:var(--text)}' +
-      '.bc a{color:var(--primary);text-decoration:none}.bc .bc-eu{font-size:12px;opacity:.9}' +
+      '.bc a{color:var(--primary);text-decoration:none}.bc .bc-eu{font-size:12px;opacity:.9}.bc .bc-waiver{display:flex;gap:8px;align-items:flex-start;cursor:pointer}.bc .bc-waiver input{margin-top:3px;flex:none}' +
       '.bc-more{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;line-height:1.55;color:var(--muted)}' +
       '.bc-more h4{margin:0 0 6px;font-size:13px;color:var(--text)}.bc-more ul{margin:0 0 8px;padding-left:18px}.bc-more li{margin-bottom:4px}.bc-more a{color:var(--primary);text-decoration:none}';
     document.head.appendChild(st);
@@ -92,7 +92,7 @@
     return '<div class="bc" data-bc="' + esc(kind) + '">' +
       (r ? '<p class="bc-why">' + esc(S.whyPrice) + ' ' + esc(r) + '</p>' : '') +
       '<p>' + esc(S.refund) + ' <a href="/' + L + '/terms#refunds">' + esc(S.refundLink) + '</a></p>' +
-      '<p class="bc-eu">' + esc(S.eu) + '</p></div>';
+      '<label class="bc-eu bc-waiver"><input type="checkbox" class="kc-waiver"> <span>' + esc(S.eu) + '</span></label></div>';
   }
 
   // Report pages: three bullets under the buy box. The Excel/PowerPoint bullet only where the report has chart data.

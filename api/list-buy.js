@@ -1,6 +1,6 @@
 // ============================================================
 // KIRA RESEARCH — api/list-buy.js
-// PayPal checkout for one market-map company list (Excel), $36 up to 500 companies, $57 above (api/_lib/pricing.js).
+// PayPal checkout for one market-map company list (Excel), price from the company count (api/_lib/pricing.js).
 // Same shape as api/transcript-buy.js.
 //
 //   POST /api/list-buy?action=create   body { slug: '<country>/<segment>', loc?, licence? }   (Bearer optional: guest checkout)
@@ -58,6 +58,8 @@ export default async function handler(req, res) {
       if (typeof slug !== 'string' || !SLUG_RE.test(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
       if (!(await getConfig('checkout.list_enabled'))) { res.status(403).json({ error: 'checkout_closed' }); return; }
       const licence = normLicence(body.licence);
+      // EU/UK withdrawal acknowledgement: the buy box makes the tick required; the server refuses an order without it.
+      if (body.consent !== true) { res.status(400).json({ error: 'consent_required' }); return; }
       const buyer = await createBuyer(req);   // signed-in buyer, or a guest nonce: the order is bound to it (custom_id)
       if (buyer.guest && guestOrderLimited(req)) { res.status(429).json({ error: 'too_many_orders' }); return; }
       const rows = await sb(`market_maps?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=id,slug,n_companies,definition:stats->meta->definition&limit=1`);
@@ -70,7 +72,7 @@ export default async function handler(req, res) {
         method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           intent: 'CAPTURE',
-          purchase_units: [{ amount: { currency_code: 'USD', value: amount }, description: `KIRA RESEARCH — company list ${slug}`, custom_id: buildCustomId('list', slug, loc, buyer.ownerId, licence) }],
+          purchase_units: [{ amount: { currency_code: 'USD', value: amount }, description: `KIRA RESEARCH — company list ${slug}`, custom_id: buildCustomId('list', slug, loc, buyer.ownerId, licence, true) }],
           application_context: { brand_name: 'KIRA RESEARCH', landing_page: 'BILLING', user_action: 'PAY_NOW',
             return_url: `${APP_URL}/${loc}/market-maps/${slug}?paypal=success`, cancel_url: `${APP_URL}/${loc}/market-maps/${slug}?paypal=cancel` },
         }),
@@ -127,7 +129,7 @@ export default async function handler(req, res) {
 
       const row = { user_id: userId, map_id: map.id, slug, n_companies: map.n_companies, amount: paid, currency: 'USD',
         paypal_order_id: orderId, status: 'completed', captured_at: new Date().toISOString(),
-        licence, guest: !!buyer.guest, attribution: cleanAttr(body.attr) };
+        licence, guest: !!buyer.guest, attribution: cleanAttr(body.attr), withdrawal_waiver: !!cap.parsed.waiver };
       let purchase, fresh = false;
       try {
         const ins = await sb('list_purchases', 'POST', row);

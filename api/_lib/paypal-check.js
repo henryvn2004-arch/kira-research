@@ -21,18 +21,19 @@ const UID_RE = /^[0-9a-f-]{36}$/i;
  * hands to the browser at create time; only the browser that holds it can capture the order.
  * licence ('team' | 'company') is a 4th segment, left out for 'single' so older orders still parse.
  */
-export function buildCustomId(kind, item, locale, userId, licence) {
+export function buildCustomId(kind, item, locale, userId, licence, waiver) {
   const base = `${kind}:${item}|${locale || ''}|${userId}`;
+  if (waiver) return `${base}|${licence || 'single'}|w`;      // 5th segment: buyer ticked the EU/UK withdrawal acknowledgement
   return licence && licence !== 'single' ? `${base}|${licence}` : base;
 }
 
-/** Returns { item, locale, userId } or null when the id is not of this kind / malformed. */
+/** Returns { item, locale, userId, licence, waiver } or null when the id is not of this kind / malformed. */
 export function parseCustomId(kind, customId) {
   const s = String(customId || '');
   if (!s.startsWith(kind + ':')) return null;
-  const [item, locale, userId, licence] = s.slice(kind.length + 1).split('|');
+  const [item, locale, userId, licence, waiver] = s.slice(kind.length + 1).split('|');
   if (!item || !UID_RE.test(userId || '')) return null;
-  return { item, locale: locale || '', userId: userId.toLowerCase(), licence: licence === 'team' || licence === 'company' ? licence : 'single' };
+  return { item, locale: locale || '', userId: userId.toLowerCase(), licence: licence === 'team' || licence === 'company' ? licence : 'single', ...(waiver === 'w' ? { waiver: true } : {}) };
 }
 
 /** Checks the capture inside a purchase unit. Returns { ok, paid } or { ok:false, reason }. */
