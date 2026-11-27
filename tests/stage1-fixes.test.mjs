@@ -1,7 +1,7 @@
 // Stage 1 fixes: withdrawal waiver in the PayPal custom_id, localized terms/privacy pages, no hard-coded prices in public copy.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { buildCustomId, parseCustomId } from '../api/_lib/paypal-check.js';
 
@@ -56,10 +56,10 @@ test('public copy has no hard-coded prices (they come from the price data)', () 
   const re = /(US\$|\$ ?)(14|18|28|29|31|36|38|39|45|49|57|78|99|149|299|1,?190)\b/;
   const bad = [];
   const walk = (d) => {
-    for (const n of readdirSync(d)) {
-      const p = join(d, n);
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const n = e.name, p = join(d, n);
       if (skip.test(p)) continue;
-      if (statSync(p).isDirectory()) { walk(p); continue; }
+      if (e.isDirectory()) { walk(p); continue; }
       if (!/\.(html|js|json)$/.test(n)) continue;
       readFileSync(p, 'utf8').split('\n').forEach((l, i) => { if (re.test(l)) bad.push(`${p}:${i + 1}`); });
     }

@@ -64,8 +64,9 @@ export function splitPages(html) {
 
 // ── Classification ──────────────────────────────────────────
 
-const decode = s => String(s).replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-  .replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&#x27;/g, "'");
+// One pass, so '&amp;lt;' becomes '&lt;' and never '<' (no double unescaping). Used for keyword matching only.
+const ENT = { nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'", '#039': "'", '#x27': "'" };
+const decode = s => String(s).replace(/&(nbsp|amp|lt|gt|quot|#0?39|#x27);/g, (m, k) => ENT[k] ?? m);
 const text = s => decode(String(s).replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 const grab = (html, re) => { const m = html.match(re); return m ? text(m[1]) : ''; };
 

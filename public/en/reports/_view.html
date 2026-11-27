@@ -622,7 +622,7 @@
       if (!meta || !stamped.length) return;                       // uncurated file: keep the first-5 behaviour
       const freeSet = new Set(meta.free);
       const bySrc = meta.pages.filter(p => p.i !== meta.cover)
-        .map(p => ({ src: p.i, free: freeSet.has(p.i), type: p.t, title: p.h }));
+        .map(p => ({ src: Number(p.i) | 0, free: freeSet.has(p.i), type: String(p.t || ''), title: String(p.h || '') }));
       if (!bySrc.some(p => p.free)) return;
       // Free pages first (the viewer opens on the executive summary), then the locked ones in report order.
       const seq = bySrc.filter(p => p.free).concat(bySrc.filter(p => !p.free));
