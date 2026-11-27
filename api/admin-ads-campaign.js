@@ -14,13 +14,13 @@
 //   GET /api/admin-ads-campaign?kind=dsa-negatives → text: negatives for the DSA campaign (incl. cross-negatives with BizDirect)
 //   GET /api/admin-ads-campaign?format=json        → { groups, keywords, skipped, priceOn, etaDays } for a preview
 //
-// The "from $49" headline is only written while single-report checkout is on
+// The "Report from $X" headline (X = the lowest price on sale now, read from the data) is only written while single-report checkout is on
 // (config checkout.single_report_enabled), the "ready in about N days" one uses ondemand.target_days.
 // Auth: Bearer <supabase-jwt>, email in ADMIN_EMAILS.
 // ============================================================
 
 import { getConfig } from './_lib/config.js';
-import { REPORT_PRICE_MIN, TRANSCRIPT_PRICE } from './_lib/pricing.js';
+import { REPORT_PRICE_MIN, TRANSCRIPT_PRICE_MIN } from './_lib/pricing.js';
 import { buildCampaignCsv, NEGATIVES } from './_lib/ads-campaign.js';
 import { buildPageFeed, buildDsaCsv, negativesText, DEFAULT_LOCATIONS } from './_lib/ads-dsa.js';
 
@@ -77,7 +77,7 @@ export default async function handler(req, res) {
         const [rOn, tOn] = await Promise.all([getConfig('checkout.single_report_enabled'), getConfig('checkout.transcript_enabled')]);
         const locs = String(query.locations || '').split(',').map(x => x.replace(/[^A-Za-z .]/g, '').trim()).filter(Boolean);
         const out = buildDsaCsv({ budget: num(query.budget, 1, 500, 10), maxCpc: num(query.cpc, 0.1, 20, 1.5).toFixed(2),
-          locations: locs.length ? locs : DEFAULT_LOCATIONS, reportPrice: rOn ? REPORT_PRICE_MIN : null, transcriptPrice: tOn ? TRANSCRIPT_PRICE : null });
+          locations: locs.length ? locs : DEFAULT_LOCATIONS, reportPrice: rOn ? REPORT_PRICE_MIN : null, transcriptPrice: tOn ? TRANSCRIPT_PRICE_MIN : null });
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', 'attachment; filename="kira-ads-dsa-campaign.csv"');
         res.status(200).send(out.csv);
@@ -97,7 +97,7 @@ export default async function handler(req, res) {
       const [maps, reps, trs] = await Promise.all([
         mapsOn ? get('market_maps?status=eq.published&indexable=eq.true&n_companies=gte.50&commentary=not.is.null&select=slug,country,n_companies,indexable,commentary:commentary_built_at') : [],
         get('living_reports?status=eq.published&select=slug,country,price,status,report_translations!inner(locale,status)&report_translations.locale=eq.en&report_translations.status=eq.published'),
-        get('expert_transcripts?status=eq.published&select=slug,market,status,expert_transcript_translations!inner(locale,status)&expert_transcript_translations.locale=eq.en&expert_transcript_translations.status=eq.published')
+        get('expert_transcripts?status=eq.published&select=slug,market,status,price,expert_transcript_translations!inner(locale,status)&expert_transcript_translations.locale=eq.en&expert_transcript_translations.status=eq.published')
       ]);
       const out = buildPageFeed({
         maps,
@@ -136,11 +136,17 @@ export default async function handler(req, res) {
       .slice(offset, offset + limit);
 
     const priceOn = await getConfig('checkout.single_report_enabled');
+    let fromPrice = REPORT_PRICE_MIN;
+    try {
+      const pr = await fetch(`${SUPABASE_URL}/rest/v1/living_reports?status=eq.published&price=gt.0&select=price&order=price.asc&limit=1`, { headers: H() });
+      const row = pr.ok ? (await pr.json())[0] : null;
+      if (row && row.price > 0) fromPrice = Number(row.price);
+    } catch (_e) { /* the rule's floor is used */ }
     const etaDays = await getConfig('ondemand.target_days');
     const out = buildCampaignCsv(topics, {
       campaign: 'KIRA Reports - Pilot', budget: num(query.budget, 1, 500, 20), maxCpc: num(query.cpc, 0.1, 20, 1).toFixed(2),
       languages: String(query.languages || 'English').replace(/[^A-Za-z ,]/g, '').slice(0, 60) || 'English',
-      priceOn, price: REPORT_PRICE_MIN, etaDays
+      priceOn, price: fromPrice, etaDays
     });
 
     if (query.format === 'json') {

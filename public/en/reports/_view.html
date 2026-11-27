@@ -33,6 +33,7 @@
   <!-- Supabase client + kiraAuth (for purchase state) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/auth.js"></script>
+  <script src="/js/checkout.js"></script>
 
   <link rel="stylesheet" href="/css/research.css" />
 </head>
@@ -62,6 +63,8 @@
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
   <script src="/js/research-i18n.js" defer></script>
+  <script src="/js/buy-copy.js" defer></script>
+  <script src="/js/report-alert.js" defer></script>
   <script src="/js/coming-soon.js" defer></script>
   <script src="/js/market-panel.js" defer></script>
 
@@ -217,7 +220,8 @@
     // ══════════════════════════════════════════════════════
     async function bearerHeaders() {
       const session = (await window.db.auth.getSession()).data.session;
-      return session ? { 'Authorization': 'Bearer ' + session.access_token } : {};
+      // A guest buyer has no session: the purchase-scoped token of THIS report opens it (see /js/checkout.js).
+      return { ...window.kiraCheckout.guestHeaders('report', slug), ...(session ? { 'Authorization': 'Bearer ' + session.access_token } : {}) };
     }
 
     async function verifyPurchase(slug, locale) {
@@ -243,58 +247,18 @@
     }
 
     async function capturePurchase(orderId) {
-      // Capture REQUIRES the user to be signed in. If they aren't, prompt
-      // login first and pass the order through sessionStorage so we can
-      // resume the capture once they're back.
-      const session = (await window.db.auth.getSession()).data.session;
-      if (!session) {
-        sessionStorage.setItem('kira_pending_capture', orderId);
-        sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
-        window.location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to finalise your purchase');
-        throw new Error('redirecting_to_login');
-      }
-      try {
-        const r = await fetch('/api/library-buy?action=capture', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
-          body:    JSON.stringify({ orderId })
-        });
-        const body = await r.json();
-        if (r.ok && body.order && window.kiraPurchase) window.kiraPurchase({ id: body.order.id, value: body.order.amount, currency: body.order.currency, slug: body.purchase && body.purchase.slug, name: body.purchase && body.purchase.slug, kind: 'report' });
-        return { ok: r.ok, ...body };
-      } catch (err) {
-        return { ok: false, error: 'network' };
-      }
+      // No sign-in needed: the server files the purchase under the payer's PayPal email and, for a guest,
+      // returns a one-time token that signs this browser in (see /js/checkout.js).
+      const res = await window.kiraCheckout.finish({ endpoint: '/api/library-buy', orderId, item: 'report', id: slug, name: slug });
+      return res.ok ? { ok: true, guestEmail: res.guestEmail } : { ok: false, error: res.error };
     }
 
     async function startCheckout(slug, locale) {
-      // Require login first — capture step needs auth anyway.
-      const user = await window.kiraAuth.getUser();
-      if (!user) {
-        sessionStorage.setItem('kira_redirect_after_login', window.location.pathname);
-        window.location.href = '/auth.html?msg=' + encodeURIComponent('Sign in to purchase this report');
-        return;
-      }
-      try {
-        const sess = (await window.db.auth.getSession()).data.session;
-        const r = await fetch('/api/library-buy?action=create', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (sess ? sess.access_token : '') },
-          body:   JSON.stringify({ slug, locale })
-        });
-        if (!r.ok) {
-          const body = await r.json().catch(() => ({}));
-          alert('Could not start checkout (' + (body.error || r.status) + ').');
-          return;
-        }
-        const body = await r.json();
-        if (body.approveUrl) {
-          window.location.href = body.approveUrl;
-        } else {
-          alert('Checkout error: no approval URL returned.');
-        }
-      } catch (err) {
-        alert('Network error starting checkout. Please retry.');
+      const res = await window.kiraCheckout.start({ endpoint: '/api/library-buy', body: { slug, locale }, item: 'report', id: slug, name: slug });
+      if (res.error) {
+        const K = window.kiraCheckout;
+        alert(res.error === 'waiver' ? K.t('waiverNeeded', locale) : res.error === 'network' ? K.t('network', locale) : K.t('startFail', locale) + ' (' + res.error + ').');
+        ['buy-btn', 'preview-buy-btn', 'unlock-modal-buy'].forEach(id => { const el = document.getElementById(id); if (el) el.disabled = false; });
       }
     }
 
@@ -381,7 +345,7 @@
             ...(PER_REPORT_PURCHASE ? {
               offers: {
                 '@type':        'Offer',
-                price:          String(d.price || 49),
+                price:          String(d.price),
                 priceCurrency:  'USD',
                 availability:   'https://schema.org/InStock',
                 url
@@ -529,7 +493,7 @@
           const free = owns || r.locked === false;
           return '<li class="' + (free ? 'free' : '') + '"><span class="num">' + escapeHtml(r.num) + '</span>' +
             '<button type="button"' + tocAttrs(r, owns) + '>' + escapeHtml(r.name) + '</button>' +
-            (free ? '<span style="font-size:12px;color:var(--muted-dim)">' + escapeHtml(r.pages || '') + '</span>' : R.icon('lock')) + '</li>';
+            '<span data-pgref style="font-size:12px;color:var(--muted-dim);' + (free ? '' : 'display:none') + '">' + escapeHtml(r.pages || '') + '</span>' + (free ? '' : R.icon('lock')) + '</li>';
         }).join('') + '</ol></div>';
     }
     function renderRail(toc, owns) {
@@ -543,10 +507,16 @@
     // Preview viewer: the source HTML is 1280×720 per page. One page at a time,
     // scaled to the full content width (and to the viewport height), with
     // previous / next and full screen.
+    // Page-type label for the locked-page cards (types come from api/_lib/preview-pages.js).
+    function typeLabel(type) {
+      const m = t('pvTypes') || {};
+      return m[type] || m.other || '';
+    }
+    function trackPv(name, extra) { try { if (window.kiraTrack) window.kiraTrack(name, extra); } catch (_e) { /* tracking never breaks the page */ } }
     function renderPreviewFrame(d, currentLocale) {
       const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) + '&locale=' + encodeURIComponent(currentLocale);
       const cta = PER_REPORT_PURCHASE
-        ? '<button class="r-btn r-btn-primary" id="preview-buy-btn">$' + (d.price || 49) + '</button>'
+        ? '<button class="r-btn r-btn-primary" id="preview-buy-btn">$' + d.price + '</button>'
         : SUBSCRIPTION
           ? '<a class="r-btn r-btn-primary" href="/' + locale + '/subscription">' + escapeHtml(subCta()) + R.icon('arrow') + '</a>'
           : '<a class="r-btn r-btn-primary" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>';
@@ -567,10 +537,11 @@
           '</div></div>' +
           '<div class="rd-preview-bar">' +
             '<div class="rd-pv-ctl">' + navBtn(-1, t('prev')) + '<span class="rd-pv-pg">1 / ' + total + '</span>' + navBtn(1, t('next')) +
-              '<span class="rd-pv-note">' + escapeHtml(t('freePages', PREVIEW_PAGES)) + '</span></div>' +
+              '<span class="rd-pv-note"></span></div>' +
             '<div class="rd-pv-ctl"><span class="rd-pv-zoom">' + zoomBtn('out', '−', 'Zoom out') + zoomBtn('in', '+', 'Zoom in') + '</span>' +
               '<button type="button" class="rd-pv-nav" data-pv="fs" aria-label="Full screen">' + R.icon('expand') + R.icon('x') + '</button>' + cta + '</div>' +
           '</div>' +
+          '<div class="rd-pv-strip" hidden aria-label="' + escapeHtml(t('stripTitle')) + '"></div>' +
         '</div></section>';
     }
     function fitPreviewFrame() {
@@ -590,23 +561,88 @@
         box.querySelectorAll('[data-pv="zoom-out"]').forEach(b => { b.disabled = zoom <= 1; });
         box.querySelectorAll('[data-pv="zoom-in"]').forEach(b => { b.disabled = scale * PREVIEW_ZOOM_STEP > PREVIEW_MAX_SCALE; });
         const page = Number(wrap.dataset.page) || 0;
-        const total = Number(wrap.dataset.total) || PREVIEW_PAGES;
-        const locked = page >= PREVIEW_PAGES;
-        // A locked page shows one of the free pages 2–5, blurred, under the lock card.
-        const shown = locked ? 1 + ((page - PREVIEW_PAGES) % (PREVIEW_PAGES - 1)) : page;
+        const seq = wrap._seq || null;           // curated preview: [{src, free, type, title}] per viewer page
+        const total = seq ? seq.length : (Number(wrap.dataset.total) || PREVIEW_PAGES);
+        const pageTotal = Number(wrap.dataset.all) || total;
+        const cur = seq ? seq[Math.min(page, seq.length - 1)] : { src: page, free: page < PREVIEW_PAGES };
+        const locked = !cur.free;
         const tops = wrap._tops || [];
-        const top = tops[shown] != null ? tops[shown] : shown * PREVIEW_PAGE_H;
-        iframe.style.filter = locked ? 'blur(7px)' : '';
+        const top = tops[cur.src] != null ? tops[cur.src] : cur.src * PREVIEW_PAGE_H;
+        // A locked page is a designed placeholder (page number, title, type): the page itself never reaches the browser.
+        iframe.style.visibility = locked ? 'hidden' : '';
+        wrap.classList.toggle('is-locked', locked);
         const lock = wrap.querySelector('.rd-pv-lock');
-        if (lock) { lock.hidden = !locked; lock.querySelector('.k').textContent = t('pageOf', page + 1, total); }
+        if (lock) {
+          lock.hidden = !locked;
+          lock.querySelector('.k').textContent = t('pageOf', cur.src + 1, pageTotal) + (cur.type ? ' · ' + typeLabel(cur.type) : '');
+          const h3 = lock.querySelector('h3');
+          h3.textContent = cur.title || t('lockedTitle');
+        }
         wrap.style.width = Math.round(PREVIEW_PAGE_W * scale) + 'px';
         wrap.style.height = Math.round(PREVIEW_PAGE_H * scale) + 'px';
         iframe.style.transform = 'translateY(' + (-top * scale) + 'px) scale(' + scale + ')';
         const pg = box.querySelector('.rd-pv-pg');
-        if (pg) pg.textContent = (page + 1) + ' / ' + total;
+        if (pg) pg.textContent = (cur.src + 1) + ' / ' + pageTotal;
+        box.querySelectorAll('.rd-pv-strip button').forEach(b => b.classList.toggle('on', Number(b.dataset.pos) === page));
         box.querySelectorAll('[data-pv="-1"]').forEach(b => { b.disabled = page === 0; });
         box.querySelectorAll('[data-pv="1"]').forEach(b => { b.disabled = page === total - 1; });
+        wrap._shown = page;
       });
+    }
+    // Build the viewer sequence from the preview file: every page of the report except the cover
+    // (the cover is only the small thumbnail), free pages readable, the rest locked placeholders.
+    // Contents rows follow the curated free pages, not the old first-5 rule stored in toc.locked.
+    // A row spans from its start page ("PG 04") to the start of the next row; it is free when one of its pages is free.
+    let curToc = null;
+    function syncTocFlags(freeSrc) {
+      if (!Array.isArray(curToc) || !curToc.length) return;
+      const free = new Set(freeSrc.map(i => i + 1));
+      const starts = curToc.map(r => { const m = String(r.pages || '').match(/(\d+)/); return m ? Number(m[1]) : null; });
+      if (starts.some(x => x === null)) return;                       // unknown page refs: leave stored flags alone
+      curToc.forEach((r, k) => {
+        const from = starts[k], to = k + 1 < starts.length ? starts[k + 1] : Infinity;
+        let isFree = false;
+        free.forEach(pg => { if (pg >= from && pg < to) isFree = true; });
+        r.locked = !isFree;
+      });
+      document.querySelectorAll('.rd-contents li, .rd-toc li').forEach((li, idx) => {
+        const r = curToc[idx % curToc.length]; const btn = li.querySelector('button'); if (!r || !btn) return;
+        btn.removeAttribute('data-preview'); btn.removeAttribute('data-locked');
+        if (r.locked) btn.setAttribute('data-locked', r.name); else btn.setAttribute('data-preview', '');
+        li.classList.toggle('free', !r.locked); btn.classList.toggle('free', !r.locked);
+        const lock = li.querySelector('svg'); const pg = li.querySelector('span[data-pgref]');
+        if (lock) lock.style.display = r.locked ? '' : 'none';
+        if (pg) pg.style.display = r.locked ? 'none' : '';
+      });
+    }
+    function buildSeq(wrap, box, doc, pages) {
+      let meta = null;
+      try { meta = JSON.parse(doc.getElementById('kira-preview-meta').textContent); } catch (_e) { /* old file */ }
+      const stamped = pages.filter(el => el.hasAttribute('data-src-page'));
+      if (!meta || !stamped.length) return;                       // uncurated file: keep the first-5 behaviour
+      const freeSet = new Set(meta.free);
+      const bySrc = meta.pages.filter(p => p.i !== meta.cover)
+        .map(p => ({ src: Number(p.i) | 0, free: freeSet.has(p.i), type: String(p.t || ''), title: String(p.h || '') }));
+      if (!bySrc.some(p => p.free)) return;
+      // Free pages first (the viewer opens on the executive summary), then the locked ones in report order.
+      const seq = bySrc.filter(p => p.free).concat(bySrc.filter(p => !p.free));
+      wrap._seq = seq;
+      syncTocFlags(meta.free);
+      wrap.dataset.total = String(seq.length);
+      wrap.dataset.page = '0';
+      wrap.dataset.all = String(meta.total);
+      const nFree = seq.filter(p => p.free).length;
+      trackPv('preview_page', { pg: seq[0].src + 1, via: 'load' });
+      const note = box.querySelector('.rd-pv-note');
+      if (note) note.textContent = t('curatedNote', nFree);
+      const strip = box.querySelector('.rd-pv-strip');
+      if (strip) {
+        strip.innerHTML = bySrc.map(p =>
+          '<button type="button" data-pos="' + seq.indexOf(p) + '" class="' + (p.free ? 'free' : 'locked') + '">' +
+          '<span class="n">' + (p.src + 1) + '</span><span class="h">' + escapeHtml(p.title || typeLabel(p.type)) + '</span>' +
+          (p.free ? '' : R.icon('lock')) + '</button>').join('');
+        strip.hidden = false;
+      }
     }
     function wirePreview() {
       const box = document.querySelector('.rd-preview');
@@ -620,8 +656,15 @@
           const doc = iframe.contentDocument;
           const pages = [...doc.querySelectorAll('.page')].filter(el => !el.parentElement.closest('.page'));
           if (pages.length) {
-            wrap._tops = pages.map(el => el.getBoundingClientRect().top + doc.defaultView.scrollY);
+            // The preview file stamps each page with its number in the full report (data-src-page) and carries
+            // the list of every page's type + title (#kira-preview-meta), so server and viewer agree.
+            wrap._tops = [];
+            pages.forEach((el, k) => {
+              const src = el.hasAttribute('data-src-page') ? Number(el.getAttribute('data-src-page')) : k;
+              wrap._tops[src] = el.getBoundingClientRect().top + doc.defaultView.scrollY;
+            });
             iframe.height = String(doc.documentElement.scrollHeight);
+            buildSeq(wrap, box, doc, pages);
           }
         } catch (_) { /* cross-origin or blocked: fall back to n × 720 */ }
         fitPreviewFrame();
@@ -629,9 +672,14 @@
       const stage = wrap.parentElement;
       const go = step => {
         const total = Number(wrap.dataset.total) || PREVIEW_PAGES;
-        wrap.dataset.page = String(Math.max(0, Math.min(total - 1, (Number(wrap.dataset.page) || 0) + step)));
+        goTo(Math.max(0, Math.min(total - 1, (Number(wrap.dataset.page) || 0) + step)), 'viewer');
+      };
+      const goTo = (pos, via) => {
+        wrap.dataset.page = String(pos);
         stage.scrollTo(0, 0);
         fitPreviewFrame();
+        const cur = wrap._seq ? wrap._seq[pos] : { src: pos, free: pos < PREVIEW_PAGES };
+        if (cur) trackPv(cur.free ? 'preview_page' : 'lock_hit', { pg: cur.src + 1, via: via });
       };
       const setFull = on => {
         box.classList.toggle('is-full', on);
@@ -643,6 +691,8 @@
         box.focus();
       };
       box.addEventListener('click', e => {
+        const sb = e.target.closest('.rd-pv-strip button');
+        if (sb) return goTo(Number(sb.dataset.pos) || 0, 'strip');
         const b = e.target.closest('[data-pv]');
         if (!b) return;
         const pv = b.dataset.pv;
@@ -716,9 +766,11 @@
       }
       if (PER_REPORT_PURCHASE) {
         return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3>' +
-          '<p style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + (d.price || 49) + '</p>' +
+          '<p id="buy-price" style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + d.price + '</p>' +
+          window.kiraCheckout.licenceHtml(d.price, locale) +
           (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
-          '<button class="r-btn r-btn-primary r-btn-block" id="buy-btn">' + escapeHtml(t('accessTitle')) + R.icon('arrow') + '</button>' + incl + subBox + '</div>';
+          '<button class="r-btn r-btn-primary r-btn-block" id="buy-btn">' + escapeHtml(t('accessTitle')) + R.icon('arrow') + '</button>' +
+          '<p class="small" style="margin-top:8px">' + escapeHtml(window.kiraCheckout.t('guestNote', locale)) + '</p>' + (window.kiraBuyCopy ? kiraBuyCopy.block('report', { pages: d.pages, exhibits: d.exhibits }) + kiraBuyCopy.why({ hasExhibits: !!d.exhibits }) : '') + incl + subBox + '</div>';
       }
       return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3><p>' + escapeHtml(t('accessBody')) + '</p>' +
         (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
@@ -751,6 +803,7 @@
     function render(d, purchaseState, fullContent, captureResult) {
       const owns = !!purchaseState.purchased;
       d.toc = normToc(d.toc);
+      curToc = owns ? null : d.toc;
       const crumbs = '<nav class="r-crumbs" aria-label="Breadcrumb">' +
         '<a href="/' + locale + '/library">' + escapeHtml(t('library')) + '</a>' +
         (d.country ? '<span class="sep">›</span><a href="/' + locale + '/library?country=' + encodeURIComponent(d.country.toLowerCase()) + '">' + escapeHtml(R.country(d.country)) + '</a>' : '') +
@@ -761,9 +814,10 @@
       let banners = '';
       if (captureResult) {
         banners += captureResult.ok
-          ? '<div class="rd-banner"><strong>Purchase complete.</strong> Your full report is unlocked below.</div>'
+          ? '<div class="rd-banner"><strong>Purchase complete.</strong> Your full report is unlocked below.' + (captureResult.guestEmail ? ' ' + escapeHtml(window.kiraCheckout.t('doneGuest', locale).replace('{email}', captureResult.guestEmail)) : '') + '</div>'
           : '<div class="rd-banner warn"><strong>We could not finalise your purchase.</strong> Please retry, or email hello@kiraresearch.com with your PayPal receipt.</div>';
       } else if (paypalReturn === 'cancel') {
+        window.kiraCheckout.cancelSeen('report');
         banners += '<div class="rd-banner warn">Checkout cancelled. Your card was not charged.</div>';
       }
       if (d.isFallback) banners += '<div class="rd-banner">' + escapeHtml(t('fallback')) + '</div>';
@@ -851,6 +905,10 @@
 
       const buyBtn = document.getElementById('buy-btn');
       if (buyBtn) buyBtn.addEventListener('click', () => { buyBtn.disabled = true; startCheckout(d.slug, locale); });
+      window.kiraCheckout.bindLicence(document, (lic) => {
+        const pe = document.getElementById('buy-price');
+        if (pe) pe.textContent = '$' + window.kiraCheckout.licencePrice(d.price, lic);
+      });
       const subscribeBtn = document.getElementById('subscribe-btn');
       if (subscribeBtn) subscribeBtn.addEventListener('click', async () => {
         subscribeBtn.disabled = true;
@@ -912,6 +970,10 @@
 
       wireUnlockModal(d, purchaseState);
       wireTabs();
+      // "New reports on this market" alert (stage 1), at the very end of the page.
+      if (window.kiraReportAlert && d.country && !d.isFallback) window.kiraReportAlert.mount(root, { country: d.country, industry: d.industry });
+      // ?buy=1 (links in our emails): bring the buy box into view, nothing is charged or started.
+      if (qs.get('buy') === '1' && !purchaseState.purchased) { const bb = document.getElementById('buy-btn'); if (bb) { bb.scrollIntoView({ behavior: 'smooth', block: 'center' }); bb.focus({ preventScroll: true }); } }
       wireCover();
       wirePreview();
       fitPreviewFrame();
@@ -962,7 +1024,7 @@
       const bodyEl = document.getElementById('unlock-modal-body');
       if (!modal || !closeBtn || !buyBtn || !titleEl || !bodyEl) return;
       document.getElementById('unlock-modal-eyebrow').textContent = t('lockedTitle');
-      buyBtn.textContent = PER_REPORT_PURCHASE ? t('accessTitle') + ' — $' + (d.price || 49) : SUBSCRIPTION ? subCta() : t('requestAccess');
+      buyBtn.textContent = PER_REPORT_PURCHASE ? t('accessTitle') + ' — $' + d.price : SUBSCRIPTION ? subCta() : t('requestAccess');
       closeBtn.setAttribute('aria-label', t('close'));
       const foot = modal.querySelector('.unlock-modal-footnote');
       if (foot) foot.textContent = PER_REPORT_PURCHASE || SUBSCRIPTION ? '' : t('nothingCharged');
@@ -981,11 +1043,15 @@
         document.body.style.overflow = '';
         if (opener) opener.focus();
       }
-      document.querySelectorAll('[data-locked]').forEach(el => el.addEventListener('click', () => openModal(el.dataset.locked, el)));
-      document.querySelectorAll('[data-preview]').forEach(el => el.addEventListener('click', () => {
-        const target = document.getElementById('preview');
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }));
+      // Delegated, because syncTocFlags() can switch a row between free and locked after the preview loads.
+      document.addEventListener('click', e => {
+        const lk = e.target.closest && e.target.closest('[data-locked]');
+        if (lk) { trackPv('lock_hit', { via: 'toc' }); openModal(lk.dataset.locked, lk); return; }
+        if (e.target.closest && e.target.closest('[data-preview]')) {
+          const target = document.getElementById('preview');
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
       closeBtn.addEventListener('click', closeModal);
       modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });

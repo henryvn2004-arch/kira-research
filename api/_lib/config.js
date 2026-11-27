@@ -79,6 +79,26 @@ export const CONFIG = {
     label: 'Send the daily "new company moves" emails (Kira Data alerts)',
     help: 'Off: nothing is sent and every alert keeps its place, so readers get the moves they missed when you switch it back on. Readers sign up on the moves and corridor pages and confirm by email first.'
   },
+  'notify.seq_alerts_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Weekly "new reports on <country>" alerts (sign-ups + digest)',
+    help: 'On: the small form on report, insight and market-map pages accepts sign-ups (double opt-in) and a weekly digest goes to confirmed alerts. Off: the form answers "paused", the digest sends nothing and keeps each alert where it was.'
+  },
+  'notify.seq_topic_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Follow-ups to coming-soon requesters (+3 days reminder, +10 days related reports)',
+    help: 'Sent only to people who asked to be told about a report that is now published, who have not bought it and have not opted out. Off: nothing is sent; people inside the window simply miss that step.'
+  },
+  'notify.seq_buyers_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'One follow-up to buyers (+3 days: two related items, no discount)',
+    help: 'One email per buyer, three days after the purchase. Off: nothing is sent.'
+  },
+  'notify.seq_abandoned_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Abandoned-checkout reminders (+1 hour, +24 hours)',
+    help: 'Only for signed-in buyers who started a PayPal order and did not finish it (guests are not reminded: we have no email before the payment). Off: nothing is sent.'
+  },
   'notify.chain_ready_enabled': {
     group: 'Emails', type: 'bool', default: true,
     label: 'Send the daily "your value chain is ready" emails',
@@ -125,24 +145,24 @@ export const CONFIG = {
     help: 'Off: report pages show "Request access" and coming-soon pages show no price; nothing can be bought. On: report pages show the price and the PayPal button, and coming-soon pages say what the report will cost. Turn it on only after you have read /en/terms and are happy with the refund policy.'
   },
   'transcripts.public_full': {
-    group: 'Checkout', type: 'bool', default: true,
+    group: 'Checkout', type: 'bool', default: false,
     label: 'Expert-interview transcripts are fully public',
-    help: 'On (owner decision 2026-11-11): the whole dialogue of every transcript is readable and indexable by anyone, and search and AI engines see it in the page HTML. Off: only the opening share of each transcript is public, the rest needs a subscription or a purchase.'
+    help: 'Off (owner decision 2026-11-27): the summary and the opening ~15% of each transcript are public, the rest needs a purchase. On (the 2026-11-11 setting): the whole dialogue of every transcript is readable and indexable by anyone, and nothing is for sale.'
   },
   'checkout.transcript_enabled': {
     group: 'Checkout', type: 'bool', default: false,
     label: 'Sell expert-interview transcripts (PayPal checkout)',
-    help: 'Off: a locked transcript still points to the waitlist. On: the lock card offers the full transcript for $29 (one purchase covers every language) and the PayPal button works. Turn it on after /en/terms (it also covers transcripts) is approved.'
+    help: 'Off: a locked transcript still points to the waitlist. On: the lock card offers the full transcript at its own price (14 to 28 dollars by length; one purchase covers every language) and the PayPal button works. Turn it on after /en/terms (it also covers transcripts) is approved.'
   },
   'checkout.subscription_enabled': {
     group: 'Checkout', type: 'bool', default: false,
     label: 'Sell the Month subscription ($149, PayPal Subscriptions)',
-    help: 'Off: the Month card on the pricing page keeps the early-access form and nobody can start a subscription; people who already subscribed keep their access. On: the Month card becomes "Subscribe" (sign-in, then PayPal) and report pages offer it. Read /en/terms first (it covers the subscription), and make one live test subscription before you advertise it.'
+    help: 'Off (owner decision 2026-11-27, items are sold one by one): the Month plan is not shown on the public site and nobody can start a subscription; people who already subscribed keep their access and can still manage it at /subscription. On: the Month card becomes "Subscribe" (sign-in, then PayPal) and report pages offer it. Read /en/terms first (it covers the subscription), and make one live test subscription before you advertise it.'
   },
   'checkout.annual_enabled': {
     group: 'Checkout', type: 'bool', default: false,
     label: 'Sell the Annual subscription ($1,190 a year, PayPal Subscriptions)',
-    help: 'Off: the Annual card on the pricing page keeps the early-access form and nobody can start an Annual plan; people who already subscribed keep their access. On: the Annual card becomes "Subscribe" (sign-in, then PayPal) on the subscription page. It needs the same setup as the Month plan (PayPal Subscriptions enabled, /en/terms read) and is separate from the Month switch. A reader can hold one subscription at a time; moving from Month to Annual means cancelling Month and subscribing to Annual when its paid period ends.'
+    help: 'Off (owner decision 2026-11-27): the Annual plan is not shown on the public site and nobody can start one; people who already subscribed keep their access. On: the Annual card becomes "Subscribe" (sign-in, then PayPal) on the subscription page. It needs the same setup as the Month plan (PayPal Subscriptions enabled, /en/terms read) and is separate from the Month switch. A reader can hold one subscription at a time; moving from Month to Annual means cancelling Month and subscribing to Annual when its paid period ends.'
   },
   'subscription.pdf_per_year': {
     group: 'Checkout', type: 'int', min: 1, max: 1000, default: 60, unit: 'PDFs per billing year',
@@ -151,7 +171,7 @@ export const CONFIG = {
   },
   'checkout.list_enabled': {
     group: 'Checkout', type: 'bool', default: false,
-    label: 'Sell market-map company lists (Excel, $36 or $57)',
+    label: 'Sell market-map company lists (Excel, $18 to $38 by number of companies)',
     help: 'Off: every market map shows a "Request this list" form (the email goes to the same request list as the coming-soon pages) and nothing can be bought. On: the map shows the price and a "Get the list" button (sign-in, PayPal, then a download link valid 7 days for up to 5 downloads; it also appears under My Library). The file is built by the BizDirect partner build API, which is not connected yet: until it is, a purchase stays pending and the buyer is told the file is being prepared. Leave this off until the build API works.'
   },
   'marketmaps.indexing_enabled': {

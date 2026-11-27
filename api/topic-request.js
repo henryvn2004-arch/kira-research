@@ -51,12 +51,12 @@ async function count(path) {
 }
 
 // Send the "we got your request" email unless this address or IP already had its share; never throws.
-async function confirm({ id, email, ip, title, url, eta }) {
+async function confirm({ id, email, ip, title, url, eta, locale }) {
   try {
     const day = new Date(Date.now() - 86400000).toISOString(), hour = new Date(Date.now() - 3600000).toISOString();
     if (await count(`topic_requests?email=eq.${encodeURIComponent(email)}&confirmed_at=gte.${day}&select=id`) >= CONFIRM_PER_EMAIL_DAY) return;
     if (ip && await count(`topic_requests?ip_address=eq.${encodeURIComponent(ip)}&confirmed_at=gte.${hour}&select=id`) >= CONFIRM_PER_IP_HOUR) return;
-    if (await sendTopicRequestConfirmation({ to: email, title, url, eta })) {
+    if (await sendTopicRequestConfirmation({ to: email, title, url, eta, locale })) {
       await sb(`topic_requests?id=eq.${id}`, 'PATCH', { confirmed_at: new Date().toISOString() });
     }
   } catch (err) { console.error('[topic-request] confirmation failed:', err.message); }
@@ -113,7 +113,7 @@ export default async function handler(req, res) {
         eta = await topicEta(topic.id);                // after the insert, so this request counts as "asked now"
         await recordPromise(topic, eta);
       }
-      await confirm({ id: saved[0].id, email, ip, title, url, eta: eta ? formatEtaEn(eta.date) : null });
+      await confirm({ id: saved[0].id, email, ip, title, url, locale, eta: eta ? formatEtaEn(eta.date) : null });
     }
     return res.status(200).json({ ok: true });
   } catch (err) {

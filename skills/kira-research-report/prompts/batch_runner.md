@@ -484,9 +484,9 @@ Expects HTTP 200 + `{"Key": "reports-pdfs/<report_id>/<locale>.pdf", "Id": "<uui
 
 **5.3b-2 — Upload one preview HTML file per locale to Supabase Storage bucket `reports-html`.**
 
-The report page on /<locale>/reports/<slug> embeds an iframe showing the first 5 pages of the source HTML. Without this step, the iframe loads empty and the page looks broken.
+The report page on /<locale>/reports/<slug> embeds an iframe showing the curated free preview of the source HTML (executive summary + the first chart/comparison pages, at most 20% of the report, 4-7 pages; `api/_lib/preview-pages.js`). Without this step, the iframe loads empty and the page looks broken.
 
-Path: `<report_id>/<locale>.html`. The script slices the first 5 `<div class="page">` blocks before upload, so only preview-safe content lands in the bucket.
+Path: `<report_id>/<locale>.html`. The script builds the curated preview (stamped pages, never more than 7 plus the cover) before upload, so only preview-safe content lands in the bucket; `api/_lib/preview-slice.js` re-enforces it on every response.
 
 ```bash
 for loc in ${PUBLISH_LANGS}; do
@@ -580,6 +580,15 @@ node skills/kira-research-report/scripts/make-insight.mjs --pending 5
 ```
 
 Cuts the report's executive-summary page and its first chart page out of the finished HTML into an insight, in every language that was just published (nothing is written or translated by a model), and renders its cover slides. `--pending 5` takes the 5 newest published reports that lack an insight (or a language of it): the report just published is the newest, the rest are retries. Prints one JSON line per report and a `summary` line; a report whose layout the insight styles do not cover prints `status: skipped` (fine, nothing to do). NOT fatal, and never delays the queue: note any `failed` line (slug + reason) in the fire summary and continue. Details: `prompts/insight_runner.md`.
+
+**5.3b-6c — Backfill curated previews of older reports (temporary).**
+
+```bash
+export KIRA_BRAIN_DIR=/home/user/kira-pipeline/brain
+node skills/kira-research-report/scripts/backfill-curated-preview.mjs --pending 5 --apply
+```
+
+Older published reports still have the old first-5-pages preview. Each fire takes the 5 newest reports whose preview file has no `data-src-page` stamp, restores the folder from the archive (same lookup as 5.3b-6), rebuilds the curated preview for every locale and uploads it. Prints one JSON line per report and a `summary` line; refuses any output that is unstamped or has more than 8 pages. NOT fatal, never delays the queue: note any `failed`/`partial` line (slug + reason) in the fire summary and continue. Once every report is curated it prints `nothing pending`; the step is then no longer needed and can be removed.
 
 **5.3b-6b — Ping IndexNow (new pages, optional).**
 

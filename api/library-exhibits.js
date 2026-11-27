@@ -12,6 +12,7 @@
 // ============================================================
 
 import { activeSubscription } from './_lib/subscription.js';
+import { guestOwns } from './_lib/guest-access.js';
 import { verifyBearer, SLUG_RE } from './_lib/transcripts.js';
 import { buildXlsx, buildPptx } from './_lib/exhibits.js';
 import { downloadNameFor, nameParts } from './_lib/report-pdf.js';
@@ -37,13 +38,14 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
   if (req.method !== 'GET') { res.status(405).json({ error: 'method_not_allowed' }); return; }
 
-  const user = await verifyBearer(req);
-  if (!user) { res.status(401).json({ error: 'unauthenticated' }); return; }
-
   const url = new URL(req.url, `https://${req.headers.host || 'x'}`);
   const slug = url.searchParams.get('slug') || '';
   const format = url.searchParams.get('format') || '';
   if (!SLUG_RE.test(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
+  // A signed-in reader, or a guest buyer holding the purchase-scoped token for THIS report.
+  const user = await verifyBearer(req);
+  const guestRow = user ? null : await guestOwns(req, 'report', slug).catch(() => null);
+  if (!user && !guestRow) { res.status(401).json({ error: 'unauthenticated' }); return; }
   if (!TYPES[format]) { res.status(400).json({ error: 'bad_format' }); return; }
 
   try {
@@ -51,7 +53,8 @@ export default async function handler(req, res) {
     if (!base) { res.status(404).json({ error: 'report_not_found' }); return; }
 
     const admins = (process.env.ADMIN_EMAILS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
-    let allowed = admins.includes(user.email);
+    let allowed = !!guestRow;   // a guest token never reaches the admin or subscription checks
+    if (!allowed) allowed = admins.includes(user.email);
     if (!allowed) allowed = (await sb(`purchases?user_id=eq.${user.id}&slug=eq.${encodeURIComponent(slug)}&status=eq.completed&select=id&limit=1`)).length > 0;
     if (!allowed) allowed = !!(await activeSubscription(user.id));
     if (!allowed) { res.status(402).json({ error: 'not_purchased' }); return; }

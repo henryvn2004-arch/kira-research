@@ -13,6 +13,7 @@
 // ============================================================
 
 import { activeSubscription } from './_lib/subscription.js';
+import { guestOwns } from './_lib/guest-access.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -66,6 +67,14 @@ export default async function handler(req, res) {
   // Not signed in → just say "not purchased" so the page can show the buy box.
   const user = await verifyBearer(req);
   if (!user) {
+    // Guest buyer: a purchase-scoped token (api/_lib/guest-access.js) proves this item only.
+    const g = await guestOwns(req, 'report', slug).catch(() => null);
+    if (g) {
+      res.status(200).json(g.locale === locale
+        ? { purchased: true, purchasedAt: g.created_at, anyLocale: true }
+        : { purchased: false, anyLocale: true, ownedLocale: g.locale });
+      return;
+    }
     res.status(200).json({ purchased: false, anyLocale: false });
     return;
   }

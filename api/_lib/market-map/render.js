@@ -355,8 +355,10 @@ function buyBox(S, opts) {
   const keyword = `List: ${S.country} ${S.segment}`.slice(0, 80);
   if (b.enabled) {
     return `<div class="buy" id="buy"><b style="font-size:20px">${esc(t.buyHead(N(n), p))}</b>${cols}
-<button class="btn" type="button" id="mm-buy">${esc(t.buyBtn(p))}</button><div class="msg" id="mm-msg" role="status"></div>
-<div class="sub" style="margin-top:8px">${esc(t.buyNote(S.built))}</div></div>`;
+<div id="mm-lic" data-base="${esc(String(p))}"></div><button class="btn" type="button" id="mm-buy" disabled>${esc(t.buyBtn(p))}</button><div class="msg" id="mm-msg" role="status"></div>
+<div class="sub" style="margin-top:8px">${esc(t.buyNote(S.built))}</div>
+<div class="sub" style="margin-top:6px">${esc(t.refundLine)} <a href="/${loc}/terms#refunds">${esc(t.refundLink)}</a></div>
+<label class="sub" style="margin-top:6px;font-size:12px;display:flex;gap:8px;align-items:flex-start;cursor:pointer"><input type="checkbox" class="kc-waiver" style="margin-top:3px;flex:none"> <span>${esc(t.euLine)}</span></label></div>`;
   }
   const msgs = { bad: t.reqBad, ok: t.reqOk, fail: t.reqFail };
   return `<div class="buy" id="buy"><b style="font-size:20px">${esc(t.buyHead(N(n), null))}</b>${cols}
@@ -478,6 +480,7 @@ ${buyBox(S, { ...opts, loc })}
 ${listsBlockHtml(opts.bdLists, loc, 'bd-lists mm-bd')}
 ${sec8}
 ${citeHtml(t.citeTitle(seg, cn), S.built, opts.canonical || `${BASE}/${loc}/market-maps/${S.meta?.slug}`, loc)}
+<div id="report-alert" data-country="${esc(countrySlug(S))}" data-industry=""></div><script src="/js/report-alert.js" defer></script>
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>${bdCredit(loc)} · ${esc(t.snap(S.built))}</span></div>
 </main>`;
 }
@@ -544,7 +547,7 @@ export function renderDocument(S, C, opts = {}) {
   ];
   return shell({ loc, title: mapTitle(S, o), description: mapDescription(S, buyOn, o), canonical, robots: opts.robots || 'noindex,follow', ld, alternates: opts.alternates || [],
     body: renderBody(S, C, { ...opts, loc, countryName: cn, segName: seg }),
-    buyScripts: buyOn ? '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/auth.js"></script><script src="/js/market-map-buy.js" defer></script>\n' : '' });
+    buyScripts: buyOn ? '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/auth.js"></script><script src="/js/checkout.js"></script><script src="/js/market-map-buy.js" defer></script>\n' : '' });
 }
 
 // ── hub and country hubs ──

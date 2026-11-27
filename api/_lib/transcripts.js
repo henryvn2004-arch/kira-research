@@ -36,7 +36,7 @@ export function pickLocale(url) {
 export async function loadTranscript(slug, locale) {
   const rows = await sb(
     `expert_transcripts?slug=eq.${encodeURIComponent(slug)}&status=eq.published` +
-    `&select=id,slug,interview_type,country_code,market,industry,expert_group,format,published_at&limit=1`
+    `&select=id,slug,interview_type,country_code,market,industry,expert_group,format,published_at,price&limit=1`
   );
   const base = rows[0];
   if (!base) return null;

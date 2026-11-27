@@ -41,6 +41,7 @@
   <!--/SSR--></div>
 
   <script src="/js/nav.js" defer></script>
+  <script src="/js/report-alert.js" defer></script>
   <script src="/js/i18n.js" defer></script>
   <script src="/js/research-i18n.js" defer></script>
 
@@ -301,6 +302,8 @@
               '<p style="margin:12px 0 0"><a class="r-link" href="/' + locale + '/insights/">' + escapeHtml(t('viewAll')) + ' →</a></p></div>' +
           '</aside>' +
         '</div></div>';
+
+      if (window.kiraReportAlert && d.country) window.kiraReportAlert.mount(root, { country: d.country, industry: d.industry });
 
       const copyBtn = document.getElementById('art-copy');
       if (copyBtn) copyBtn.addEventListener('click', () => {

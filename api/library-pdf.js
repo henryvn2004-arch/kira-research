@@ -14,6 +14,7 @@
 // ============================================================
 
 import { resolvePdfUrl, downloadNameFor, nameParts } from './_lib/report-pdf.js';
+import { guestOwns } from './_lib/guest-access.js';
 import { activeSubscription, claimPdf } from './_lib/subscription.js';
 import { verifyBearer, LOCALES } from './_lib/transcripts.js';
 
@@ -33,20 +34,21 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
   if (req.method !== 'GET') { res.status(405).json({ error: 'method_not_allowed' }); return; }
 
-  const user = await verifyBearer(req);
-  if (!user) { res.status(401).json({ error: 'unauthenticated' }); return; }
-
   const url = new URL(req.url, `https://${req.headers.host || 'x'}`);
   const slug = url.searchParams.get('slug') || '';
   const locale = LOCALES.has(url.searchParams.get('locale')) ? url.searchParams.get('locale') : 'en';
   if (!/^[a-z0-9][a-z0-9-]+$/.test(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
+  // A signed-in reader, or a guest buyer holding the purchase-scoped token for THIS report.
+  const user = await verifyBearer(req);
+  const guestRow = user ? null : await guestOwns(req, 'report', slug).catch(() => null);
+  if (!user && !guestRow) { res.status(401).json({ error: 'unauthenticated' }); return; }
 
   try {
     const baseRows = await sb(`living_reports?slug=eq.${encodeURIComponent(slug)}&select=id,slug,code,country,industry,segment,year&limit=1`);
     const base = baseRows[0];
     if (!base) { res.status(404).json({ error: 'report_not_found' }); return; }
 
-    const bought = await sb(`purchases?user_id=eq.${user.id}&slug=eq.${encodeURIComponent(slug)}&status=eq.completed&select=id&limit=1`);
+    const bought = guestRow ? [guestRow] : await sb(`purchases?user_id=eq.${user.id}&slug=eq.${encodeURIComponent(slug)}&status=eq.completed&select=id&limit=1`);
     let via = 'purchase', allowance = null;
     if (!bought.length) {
       const sub = await activeSubscription(user.id);

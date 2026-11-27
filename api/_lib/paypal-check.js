@@ -15,18 +15,25 @@ export const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live'
 
 const UID_RE = /^[0-9a-f-]{36}$/i;
 
-/** kind: 'report' | 'transcript' | 'list'; item: slug; locale optional. */
-export function buildCustomId(kind, item, locale, userId) {
-  return `${kind}:${item}|${locale || ''}|${userId}`;
+/**
+ * kind: 'report' | 'transcript' | 'list'; item: slug; locale optional.
+ * userId is the signed-in buyer's id, or for a guest checkout a random nonce (uuid) the server
+ * hands to the browser at create time; only the browser that holds it can capture the order.
+ * licence ('team' | 'company') is a 4th segment, left out for 'single' so older orders still parse.
+ */
+export function buildCustomId(kind, item, locale, userId, licence, waiver) {
+  const base = `${kind}:${item}|${locale || ''}|${userId}`;
+  if (waiver) return `${base}|${licence || 'single'}|w`;      // 5th segment: buyer ticked the EU/UK withdrawal acknowledgement
+  return licence && licence !== 'single' ? `${base}|${licence}` : base;
 }
 
-/** Returns { item, locale, userId } or null when the id is not of this kind / malformed. */
+/** Returns { item, locale, userId, licence, waiver } or null when the id is not of this kind / malformed. */
 export function parseCustomId(kind, customId) {
   const s = String(customId || '');
   if (!s.startsWith(kind + ':')) return null;
-  const [item, locale, userId] = s.slice(kind.length + 1).split('|');
+  const [item, locale, userId, licence, waiver] = s.slice(kind.length + 1).split('|');
   if (!item || !UID_RE.test(userId || '')) return null;
-  return { item, locale: locale || '', userId: userId.toLowerCase() };
+  return { item, locale: locale || '', userId: userId.toLowerCase(), licence: licence === 'team' || licence === 'company' ? licence : 'single', ...(waiver === 'w' ? { waiver: true } : {}) };
 }
 
 /** Checks the capture inside a purchase unit. Returns { ok, paid } or { ok:false, reason }. */
@@ -42,7 +49,7 @@ export function validateCapture(unit, expectedAmount) {
 }
 
 /**
- * opts: { token, orderId, kind, userId, priceFor(parsed) -> Promise<{ expected:number, ...item } | null>, fetchImpl? }
+ * opts: { token, orderId, kind, userId (account id, or the guest nonce), priceFor(parsed) -> Promise<{ expected:number, ...item } | null>, fetchImpl? }
  * Returns { status, error } on failure, or { parsed, item, paid, unit } on success.
  */
 export async function captureOrder(opts) {
@@ -80,5 +87,5 @@ export async function captureOrder(opts) {
     console.error('[paypal] REJECTED capture, check/refund order', opts.orderId, v.reason, 'user', opts.userId);
     return { status: 400, error: 'payment_mismatch' };
   }
-  return { parsed, item, paid: v.paid, unit };
+  return { parsed, item, paid: v.paid, unit, payer: order.payer || null };
 }

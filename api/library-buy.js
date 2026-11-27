@@ -2,21 +2,27 @@
 // KIRA RESEARCH — api/library-buy.js
 // PayPal checkout for library reports (one report × one locale).
 //
-//   POST /api/library-buy?action=create   body { slug, locale }   Authorization: Bearer (REQUIRED)
-//       → { approveUrl, orderId, amount, currency }
+//   POST /api/library-buy?action=create   body { slug, locale, licence? }   Authorization: Bearer (optional)
+//       → { approveUrl, orderId, amount, currency, licence, nonce? }   (nonce only for a guest buyer)
 //
-//   POST /api/library-buy?action=capture  body { orderId, slug, locale }
-//       Authorization: Bearer <supabase-jwt>   (REQUIRED)
-//       → { ok, purchase: { id, slug, locale } }
+//   POST /api/library-buy?action=capture  body { orderId, nonce?, attr? }
+//       Authorization: Bearer <supabase-jwt>  OR  nonce from create (guest checkout)
+//       → { ok, purchase: { id, slug, locale }, guest?: { email (masked), accessToken } }
 //
-// The PayPal `custom_id` carries "report:slug|locale|userId" so the capture step can
+// No account is needed to buy (stage 0, 2026-11-27): a guest pays with PayPal, and after a verified capture
+// the account is found or created from the payer's email (api/_lib/guest-checkout.js).
+// The PayPal `custom_id` carries "report:slug|locale|userId-or-nonce[|licence]" so the capture step can
 // rebuild context without trusting the client (see api/_lib/paypal-check.js).
 // ============================================================
 
 import { sendPurchaseReceipt } from './_lib/email.js';
+import { recordCheckoutOrder } from './_lib/checkout-orders.js';
 import { getConfig } from './_lib/config.js';
 import { REPORT_PRICE_DEFAULT } from './_lib/pricing.js';
 import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
+import { licencePrice, normLicence } from './_lib/licence.js';
+import { signGuestToken, maskEmail } from './_lib/guest-access.js';
+import { createBuyer, captureBuyer, ensureGuestAccount, payerEmail, guestOrderLimited, cleanAttr } from './_lib/guest-checkout.js';
 
 const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live'
   ? 'https://api-m.paypal.com'
@@ -62,19 +68,6 @@ async function sb(path, method = 'GET', body = null) {
   return res.status === 204 ? null : res.json();
 }
 
-// ── JWT verify ───────────────────────────────────────────
-async function verifyBearer(req) {
-  const auth = req.headers['authorization'] || '';
-  const m = auth.match(/^Bearer\s+(.+)$/i);
-  if (!m) return null;
-  const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-    headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${m[1]}` }
-  });
-  if (!r.ok) return null;
-  const u = await r.json();
-  return u && u.id ? { id: u.id, email: (u.email || '').toLowerCase() } : null;
-}
-
 function cors(res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -105,9 +98,12 @@ export default async function handler(req, res) {
       const locale = LOCALES.has(body.locale) ? body.locale : 'en';
       if (!isSlug(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
       if (!(await getConfig('checkout.single_report_enabled'))) { res.status(403).json({ error: 'checkout_closed' }); return; }
-      // Orders are bound to the signed-in buyer (custom_id carries the user id; capture must match).
-      const buyer = await verifyBearer(req);
-      if (!buyer) { res.status(401).json({ error: 'unauthenticated' }); return; }
+      const licence = normLicence(body.licence);
+      // EU/UK withdrawal acknowledgement: the buy box makes the tick required; the server refuses an order without it.
+      if (body.consent !== true) { res.status(400).json({ error: 'consent_required' }); return; }
+      // Signed-in buyer, or a guest: the order is bound to the user id / the guest nonce (custom_id; capture must match).
+      const buyer = await createBuyer(req);
+      if (buyer.guest && guestOrderLimited(req)) { res.status(429).json({ error: 'too_many_orders' }); return; }
 
       // Look up the report — price + status come from DB, never from client.
       const rows = await sb(
@@ -117,7 +113,7 @@ export default async function handler(req, res) {
       const report = Array.isArray(rows) ? rows[0] : null;
       if (!report) { res.status(404).json({ error: 'report_not_found' }); return; }
 
-      const amount   = (report.price || REPORT_PRICE_DEFAULT).toFixed(2);
+      const amount   = licencePrice(report.price || REPORT_PRICE_DEFAULT, licence).toFixed(2);
       const currency = report.currency || 'USD';
 
       const token = await getPayPalToken();
@@ -130,7 +126,7 @@ export default async function handler(req, res) {
             amount: { currency_code: currency, value: amount },
             description: `KIRA RESEARCH — ${slug} (${locale})`,
             // We re-derive item + locale + buyer from this field at capture time.
-            custom_id: buildCustomId('report', slug, locale, buyer.id)
+            custom_id: buildCustomId('report', slug, locale, buyer.ownerId, licence, true)
           }],
           application_context: {
             brand_name:   'KIRA RESEARCH',
@@ -146,55 +142,76 @@ export default async function handler(req, res) {
       const approveUrl = (order.links || []).find(l => l.rel === 'approve')?.href;
       if (!approveUrl) throw new Error('no_approve_url');
 
+      await recordCheckoutOrder({ buyer, orderId: order.id, kind: 'report', slug, locale, amount, currency });   // signed-in only: abandoned-checkout reminders
+
       res.status(200).json({
         approveUrl,
         orderId: order.id,
         amount: Number(amount),
         currency,
         slug,
-        locale
+        locale,
+        licence,
+        ...(buyer.guest ? { nonce: buyer.guest.nonce } : {})
       });
       return;
     }
 
     // ── CAPTURE ─────────────────────────────────────────
     if (action === 'capture') {
-      // Capture REQUIRES auth; the order must have been created by this same user (custom_id).
-      const user = await verifyBearer(req);
-      if (!user) { res.status(401).json({ error: 'unauthenticated' }); return; }
+      // The caller is the signed-in buyer, or the guest holding the nonce from create; either way the
+      // order's custom_id must match (checked by captureOrder before any money moves).
+      const buyer = await captureBuyer(req, body);
+      if (!buyer) { res.status(401).json({ error: 'unauthenticated' }); return; }
 
       const orderId = body.orderId;
-      if (!orderId || typeof orderId !== 'string') {
+      if (!orderId || typeof orderId !== 'string' || !/^[A-Za-z0-9_-]{5,64}$/.test(orderId)) {
         res.status(400).json({ error: 'bad_order_id' }); return;
       }
 
-      // An order already recorded: same buyer gets it back, anyone else is refused.
-      const prior = await sb(`purchases?paypal_order_id=eq.${encodeURIComponent(orderId)}&select=*&limit=1`);
-      if (prior && prior[0]) {
-        if (prior[0].user_id !== user.id) { res.status(409).json({ error: 'order_already_used' }); return; }
-        res.status(200).json({ ok: true, purchase: { id: prior[0].id, slug: prior[0].slug, locale: prior[0].locale } });
-        return;
+      // A signed-in buyer's order already recorded: same buyer gets it back, anyone else is refused.
+      // (A guest goes through captureOrder first, which proves the nonce; see below.)
+      if (buyer.user) {
+        const prior = await sb(`purchases?paypal_order_id=eq.${encodeURIComponent(orderId)}&select=*&limit=1`);
+        if (prior && prior[0]) {
+          if (prior[0].user_id !== buyer.user.id) { res.status(409).json({ error: 'order_already_used' }); return; }
+          res.status(200).json({ ok: true, purchase: { id: prior[0].id, slug: prior[0].slug, locale: prior[0].locale }, licence: prior[0].licence });
+          return;
+        }
       }
 
       const token = await getPayPalToken();
       const cap = await captureOrder({
-        token, orderId, kind: 'report', userId: user.id,
-        priceFor: async ({ item }) => {
+        token, orderId, kind: 'report', userId: buyer.ownerId,
+        priceFor: async ({ item, licence }) => {
           if (!isSlug(item)) return null;
           const rows = await sb(`living_reports?slug=eq.${encodeURIComponent(item)}&select=id,price,currency&limit=1`);
           const r = Array.isArray(rows) ? rows[0] : null;
-          return r ? { ...r, expected: Number((r.price || REPORT_PRICE_DEFAULT).toFixed(2)) } : null;
+          return r ? { ...r, expected: Number(licencePrice(r.price || REPORT_PRICE_DEFAULT, licence).toFixed(2)) } : null;
         }
       });
       if (cap.error) { res.status(cap.status).json({ error: cap.error }); return; }
       const slug   = cap.parsed.item;
       const locale = LOCALES.has(cap.parsed.locale) ? cap.parsed.locale : 'en';
+      const licence = cap.parsed.licence;
       const report = cap.item;
       const paidAmount = cap.paid;
 
+      // Guest: the account comes from the payer's email (PayPal verified it), only now that the payment is verified.
+      let userId, userEmail, guestEmail = null, signInUrl = null;
+      if (buyer.guest) {
+        const acct = await ensureGuestAccount(payerEmail(cap.payer), { next: `/${locale}/reports/${slug}`, loc: locale });
+        if (acct.error) {
+          console.error('[library-buy] PAID but no account, order', orderId, acct.error);
+          res.status(500).json({ error: acct.error }); return;
+        }
+        userId = acct.userId; userEmail = acct.email; signInUrl = acct.signInUrl;
+        guestEmail = acct.email;
+      } else { userId = buyer.user.id; userEmail = buyer.user.email; }
+
       // Upsert purchase row. Unique index prevents dupes.
       const purchaseRow = {
-        user_id:         user.id,
+        user_id:         userId,
         slug,
         locale,
         report_id:       report.id,
@@ -203,30 +220,39 @@ export default async function handler(req, res) {
         currency:        report.currency || 'USD',
         paypal_order_id: orderId,
         status:          'completed',
-        captured_at:     new Date().toISOString()
+        captured_at:     new Date().toISOString(),
+        licence,
+        guest:           !!buyer.guest,
+        attribution:     cleanAttr(body.attr),
+        withdrawal_waiver: !!cap.parsed.waiver
       };
 
-      let purchase;
+      let purchase, fresh = false;
       try {
         const inserted = await sb('purchases', 'POST', purchaseRow);
         purchase = Array.isArray(inserted) ? inserted[0] : inserted;
+        fresh = true;
       } catch (err) {
         // Likely a unique index hit (same order, or same user+report+locale bought twice).
-        const sameOrder = await sb(`purchases?paypal_order_id=eq.${encodeURIComponent(orderId)}&select=id,user_id&limit=1`);
-        if (sameOrder && sameOrder[0] && sameOrder[0].user_id !== user.id) { res.status(409).json({ error: 'order_already_used' }); return; }
-        const existing = await sb(
-          `purchases?user_id=eq.${user.id}&slug=eq.${encodeURIComponent(slug)}` +
-          `&locale=eq.${locale}&status=eq.completed&select=*&limit=1`
-        );
-        purchase = Array.isArray(existing) ? existing[0] : null;
-        if (!purchase) throw err;
+        const sameOrder = await sb(`purchases?paypal_order_id=eq.${encodeURIComponent(orderId)}&select=*&limit=1`);
+        if (sameOrder && sameOrder[0]) {
+          // The order id is already filed. For a guest, captureOrder proved this browser owns the order.
+          if (!buyer.guest && sameOrder[0].user_id !== userId) { res.status(409).json({ error: 'order_already_used' }); return; }
+          purchase = sameOrder[0];
+        } else {
+          const existing = await sb(
+            `purchases?user_id=eq.${userId}&slug=eq.${encodeURIComponent(slug)}` +
+            `&locale=eq.${locale}&status=eq.completed&select=*&limit=1`
+          );
+          purchase = Array.isArray(existing) ? existing[0] : null;
+          if (!purchase) throw err;
+          console.error('[library-buy] DOUBLE PURCHASE, refund order', orderId, 'user', userId, 'slug', slug);
+        }
       }
 
-      // Fire-and-forget receipt email — never block the success response or
-      // propagate failures. The helper itself absorbs errors; the .catch() is
-      // belt-and-suspenders. Best-effort title fetch — falls back to slug if
-      // the translation row is missing or the lookup errors out.
-      (async () => {
+      // Fire-and-forget receipt email (a guest gets the sign-in link in the same mail) — never block the
+      // success response. Only for a purchase recorded just now, so a retry does not mail twice.
+      if (fresh) (async () => {
         let reportTitle = null;
         try {
           const t = await sb(
@@ -238,12 +264,14 @@ export default async function handler(req, res) {
           console.warn('[library-buy] title fetch for receipt failed', e.message);
         }
         return sendPurchaseReceipt({
-          buyerEmail:  user.email,
+          buyerEmail:  userEmail,
           slug:        purchase.slug,
           locale:      purchase.locale,
           amount:      purchase.amount,
           currency:    purchase.currency,
-          reportTitle
+          reportTitle,
+          licence,
+          signInUrl
         });
       })().catch(e =>
         console.error('[library-buy] receipt threw despite absorber:', e.message)
@@ -252,7 +280,10 @@ export default async function handler(req, res) {
       res.status(200).json({
         ok: true,
         purchase: { id: purchase.id, slug: purchase.slug, locale: purchase.locale },
-        order: { id: purchase.id, amount: Number(purchase.amount) || 0, currency: purchase.currency || 'USD' }
+        licence: purchase.licence || licence,
+        amount: Number(purchase.amount),
+        order: { id: purchase.id, amount: Number(purchase.amount) || 0, currency: purchase.currency || 'USD' },
+        ...(guestEmail ? { guest: { email: maskEmail(guestEmail), accessToken: signGuestToken({ kind: 'report', slug, pid: purchase.id }) } } : {})
       });
       return;
     }

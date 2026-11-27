@@ -31,6 +31,9 @@ const ADMIN_EMAILS   = (process.env.ADMIN_EMAILS || '')
   .map(s => s.trim())
   .filter(Boolean);
 
+import { tr, noun as nounOf } from './email-i18n.js';
+import { renderMail, unsubHeaders } from './email-layout.js';
+
 // Addresses that hard-bounced or marked us as spam (email_suppressions, filled by /api/email-webhook).
 // Sending to them again hurts the domain's reputation. Fails open: if the lookup breaks, mail still goes out.
 async function dropSuppressed(recipients) {
@@ -47,7 +50,7 @@ async function dropSuppressed(recipients) {
 }
 
 // ── Low-level POST to Resend ─────────────────────────────
-async function resendSend({ to, subject, html, text, replyTo, headers }) {
+export async function resendSend({ to, subject, html, text, replyTo, headers }) {
   if (!RESEND_API_KEY) {
     console.warn('[email] RESEND_API_KEY not set — skipping send to', to);
     return false;
@@ -114,51 +117,40 @@ export async function sendPurchaseReceipt({
   reportTitle,
   downloadUrl,
   kind = 'report',           // 'report' | 'transcript' (expert-interview transcript, S19) | 'list' (market-map company list)
-  pending = false            // list only: paid, the file is not ready yet
+  pending = false,           // list only: paid, the file is not ready yet
+  licence = 'single',        // 'single' | 'team' | 'company' (shown on the receipt)
+  signInUrl = null           // guest checkout: one-time sign-in link, the same mail doubles as the sign-in email
 }) {
   if (!buyerEmail) return false;
 
+  // Language = the page the buyer paid on (EN / JA / KO / ZH); the text lives in email-i18n.js.
+  const L = locale;
   const niceAmount = typeof amount === 'number' ? amount.toFixed(2) : String(amount || '');
   const title = reportTitle || slug;
   const isTranscript = kind === 'transcript';
   const isList = kind === 'list';
-  const noun = isTranscript ? 'transcript' : isList ? 'company list' : 'report';
-  const reportUrl = isTranscript ? `${APP_URL}/${locale}/experts/transcripts/${slug}` : isList ? `${APP_URL}/en/market-maps/${slug}` : `${APP_URL}/${locale}/reports/${slug}`;
-  const listNote = !isList ? '' : pending ? 'We are preparing your Excel file and will email the download link as soon as it is ready. You do not need to do anything.' : 'Your Excel file is ready. The link works for 7 days and for up to 5 downloads; you can also find it under My Library in your profile.';
+  const noun = nounOf(L, kind);
+  const reportUrl = isTranscript ? `${APP_URL}/${locale}/experts/transcripts/${slug}` : isList ? `${APP_URL}/${locale}/market-maps/${slug}` : `${APP_URL}/${locale}/reports/${slug}`;
+  const listNote = !isList ? '' : tr(L, pending ? 'receipt.listPending' : 'receipt.listReady');
 
-  const subject = `Your KIRA RESEARCH ${noun} — ${title}`;
+  const subject = tr(L, 'receipt.subject', { noun, title });
+  const licenceLabel = licence === 'team' ? tr(L, 'receipt.licenceTeam') : licence === 'company' ? tr(L, 'receipt.licenceCompany') : '';
+  const openUrl = isList && downloadUrl ? downloadUrl : (signInUrl || reportUrl);
+  const signInNote = signInUrl ? tr(L, 'receipt.signInNote') : '';
+  const facts = [[noun, title], [tr(L, 'receipt.amount'), `${niceAmount} ${currency}`]];
+  if (licenceLabel) facts.push([tr(L, 'receipt.licence'), licenceLabel]);
 
-  const text = [
-    `Thanks for your purchase.`,
-    ``,
-    `You bought: ${title}`,
-    `Amount: ${niceAmount} ${currency}`,
-    ``,
-    `View your ${noun}: ${reportUrl}`,
-    isList ? listNote : '',
-    downloadUrl ? (isList ? `Download your Excel list: ${downloadUrl}` : `Direct PDF download: ${downloadUrl}`) : '',
-    ``,
-    `If you have any questions, just reply to this email.`,
-    ``,
-    `— The KIRA RESEARCH team`
-  ].filter(Boolean).join('\n');
-
-  const html = `
-<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
-  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
-  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Thanks for your purchase.</h1>
-  <p style="margin:0 0 18px;">${isList ? 'Thank you for buying' : 'You now have access to'} <strong>${esc(title)}</strong>.</p>
-  <table style="border-collapse:collapse;margin:0 0 24px;">
-    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">${isTranscript ? 'Transcript' : isList ? 'Company list' : 'Report'}</td><td style="padding:4px 0;font-size:14px;">${esc(title)}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;">Amount</td><td style="padding:4px 0;font-size:14px;">${esc(niceAmount)} ${esc(currency)}</td></tr>
-  </table>
-  <p style="margin:0 0 12px;"><a href="${esc(isList && downloadUrl ? downloadUrl : reportUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">${isList ? (downloadUrl ? 'Download your Excel list' : 'View the list page') : `Open your ${noun}`}</a></p>
-  ${isList ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">${esc(listNote)}</p>` : ''}
-  ${downloadUrl && !isList ? `<p style="margin:0 0 18px;font-size:13px;color:#666;">Direct PDF link (expires in 1 hour): <a href="${esc(downloadUrl)}">download</a></p>` : ''}
-  <p style="margin:24px 0 6px;font-size:13px;color:#666;">If you have any questions, just reply to this email.</p>
-  <p style="margin:0;font-size:13px;color:#666;">— The KIRA RESEARCH team</p>
-</body></html>`.trim();
-
+  const blocks = [
+    { h: tr(L, 'receipt.thanks') },
+    { p: `${tr(L, isList ? 'receipt.thankBuy' : 'receipt.access')} ${title}` },
+    { facts },
+    { cta: { url: openUrl, label: isList ? tr(L, downloadUrl ? 'receipt.listDownload' : 'receipt.listView') : tr(L, signInUrl ? 'receipt.openSignedIn' : 'receipt.open', { noun }) } }
+  ];
+  if (signInNote) blocks.push({ small: signInNote });
+  if (isList) blocks.push({ small: listNote });
+  if (downloadUrl && !isList) blocks.push({ small: `${tr(L, 'receipt.pdfDirect')}: ${downloadUrl}` });
+  blocks.push({ small: tr(L, 'refund') }, { small: tr(L, 'receipt.questions') });
+  const { html, text } = renderMail({ loc: L, blocks });
   return resendSend({ to: buyerEmail, subject, html, text });
 }
 
@@ -364,86 +356,43 @@ export async function sendWaitlistNotification(entry) {
 // ── "We got your request" — sent the moment a reader leaves an email on a coming-soon page ──
 // Two jobs: the reader sees right away whether our mail lands in the inbox or in spam, and the
 // reply-to is a real inbox. Plain on purpose (one link, no images) so it is not filtered.
-export async function sendTopicRequestConfirmation({ to, title, url, eta }) {
+export async function sendTopicRequestConfirmation({ to, title, url, eta, locale = 'en' }) {
   if (!to || !title || !url) return false;
   const replyTo = ADMIN_EMAILS[0] || undefined;
   // Never echo reader-typed text into the subject (mail relay / phishing risk): fixed subject.
-  const subject = 'We got your request';
-  const text = [
-    `You asked to be told when this report is published:`,
-    ``,
-    title,
-    ``,
-    eta ? `We expect to publish it by ${eta}, and we will email you once, on the day it is ready. You can check its status any time here:`
-        : `We will email you once, on the day it is ready. You can check its status any time here:`,
-    url,
-    ``,
-    `If our emails land in spam, mark this one as "not spam" and add noreply@kiraresearch.com to your contacts so the next one reaches you.`,
-    `Not you? Ignore this message; we will only send one more email about this report.`,
-    ``,
-    `— The KIRA RESEARCH team`
-  ].join('\n');
-  const html = `
-<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
-  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
-  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">We got your request.</h1>
-  <p style="margin:0 0 8px;">You asked to be told when this report is published:</p>
-  <p style="margin:0 0 20px;"><strong>${esc(title)}</strong></p>
-  <p style="margin:0 0 16px;">${eta ? `We expect to publish it by <strong>${esc(eta)}</strong>, and we` : 'We'} will email you once, on the day it is ready. You can check its status any time: <a href="${esc(url)}">${esc(url)}</a></p>
-  <p style="margin:0 0 16px;font-size:13px;color:#555;">If our emails land in spam, mark this one as "not spam" and add noreply@kiraresearch.com to your contacts so the next one reaches you.</p>
-  <p style="margin:24px 0 0;font-size:13px;color:#666;">Not you? Ignore this message; we will only send one more email about this report.</p>
-</body></html>`.trim();
-  return resendSend({ to, subject, html, text, replyTo });
+  const { html, text } = renderMail({ loc: locale, blocks: [
+    { h: tr(locale, 'req.heading') }, { p: tr(locale, 'req.lead') }, { strong: title },
+    { p: tr(locale, eta ? 'req.eta' : 'req.noEta', { eta }) }, { p: url },
+    { small: tr(locale, 'req.spam') }, { small: tr(locale, 'req.notYou') }
+  ] });
+  return resendSend({ to, subject: tr(locale, 'req.subject'), html, text, replyTo });
 }
 
 // ── Coming-soon topic is now published ────────────────────
 // Sent once to each reader who asked to be told (topic_requests).
-export async function sendTopicPublishedEmail({ to, title, url }) {
+// Sequence A, step 0. price/reason make it a buy email: price, why it costs that, and a direct buy link
+// (the report page opens its buy box with ?buy=1).
+export async function sendTopicPublishedEmail({ to, title, url, locale = 'en', price = null, reason = '', unsubUrl = null }) {
   if (!to || !url) return false;
-  const subject = `Now published — ${title}`;
-  const text = [
-    `The report you asked about is now available:`,
-    ``,
-    title,
-    url,
-    ``,
-    `The executive summary is free to read.`,
-    ``,
-    `— The KIRA RESEARCH team`
-  ].join('\n');
-  const html = `
-<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
-  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
-  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">The report you asked about is now published.</h1>
-  <p style="margin:0 0 20px;"><strong>${esc(title)}</strong></p>
-  <p style="margin:0 0 12px;"><a href="${esc(url)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open the report</a></p>
-  <p style="margin:24px 0 0;font-size:13px;color:#666;">The executive summary is free to read. You are receiving this once because you asked to be told when it was ready.</p>
-</body></html>`.trim();
-  return resendSend({ to, subject, html, text });
+  const p = price ? `$${price}` : null;
+  const buyUrl = p ? `${url}${url.includes('?') ? '&' : '?'}buy=1` : url;
+  const blocks = [{ h: tr(locale, 'pub.heading') }, { strong: title }];
+  if (p && reason) blocks.push({ p: tr(locale, 'pub.priceLine', { price: p, reason }) });
+  blocks.push({ cta: { url: buyUrl, label: p ? tr(locale, 'pub.cta', { price: p }) : tr(locale, 'pub.free') } });
+  if (p) blocks.push({ small: `${tr(locale, 'pub.free')}: ${url}` });
+  blocks.push({ small: p ? tr(locale, 'pub.reason', { price: p }) : tr(locale, 'chain.once') }, { small: tr(locale, 'refund') });
+  const { html, text } = renderMail({ loc: locale, blocks, unsubUrl });
+  return resendSend({ to, subject: tr(locale, 'pub.subject', { title }), html, text, headers: unsubHeaders(unsubUrl) });
 }
 
 // ── A Kira Chain a reader asked for is now published ──────
 // Sent once to each reader who left an email on a chain search that found nothing (chain_requests).
-export async function sendChainPublishedEmail({ to, title, url }) {
+export async function sendChainPublishedEmail({ to, title, url, locale = 'en' }) {
   if (!to || !url) return false;
-  const subject = `Now available — ${title}`;
-  const text = [
-    `The value chain you searched for is now available:`,
-    ``,
-    title,
-    url,
-    ``,
-    `— The KIRA RESEARCH team`
-  ].join('\n');
-  const html = `
-<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
-  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
-  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">The value chain you searched for is now available.</h1>
-  <p style="margin:0 0 20px;"><strong>${esc(title)}</strong></p>
-  <p style="margin:0 0 12px;"><a href="${esc(url)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Open the chain</a></p>
-  <p style="margin:24px 0 0;font-size:13px;color:#666;">You are receiving this once because you asked to be told when it was ready.</p>
-</body></html>`.trim();
-  return resendSend({ to, subject, html, text });
+  const { html, text } = renderMail({ loc: locale, blocks: [
+    { h: tr(locale, 'chain.heading') }, { strong: title }, { cta: { url, label: tr(locale, 'chain.cta') } }, { small: tr(locale, 'chain.once') }
+  ] });
+  return resendSend({ to, subject: tr(locale, 'chain.subject', { title }), html, text });
 }
 
 // ── "Pipeline went silent" alert to the admins (api/cron-pipeline-watch.js) ──
@@ -495,56 +444,24 @@ export async function sendCrmMessage({ to, subject, text, replyTo }) {
 
 // ── Kira Data: "email me new moves" (moves_alerts, migration 063) ──────────
 // Double opt-in: the first email only asks the reader to confirm; nothing else is sent until they click.
-export async function sendMovesAlertConfirm({ to, label, confirmUrl }) {
+export async function sendMovesAlertConfirm({ to, label, confirmUrl, locale = 'en' }) {
   if (!to || !confirmUrl) return false;
-  const subject = `Confirm your alert: ${label}`;
-  const text = [
-    `You asked us to email you when we publish new company moves:`,
-    ``,
-    label,
-    ``,
-    `Confirm with this link (nothing is sent until you do):`,
-    confirmUrl,
-    ``,
-    `Not you? Ignore this message and you will not hear from us again.`,
-    ``,
-    `— The KIRA RESEARCH team`
-  ].join('\n');
-  const html = `
-<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:540px;margin:0 auto;padding:32px 24px;">
-  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
-  <h1 style="font-size:20px;margin:0 0 16px;font-weight:600;">Confirm your alert</h1>
-  <p style="margin:0 0 8px;">You asked us to email you when we publish new company moves:</p>
-  <p style="margin:0 0 20px;"><strong>${esc(label)}</strong></p>
-  <p style="margin:0 0 12px;"><a href="${esc(confirmUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">Confirm the alert</a></p>
-  <p style="margin:24px 0 0;font-size:13px;color:#666;">Nothing is sent until you confirm. Not you? Ignore this message and you will not hear from us again.</p>
-</body></html>`.trim();
-  return resendSend({ to, subject, html, text });
+  const { html, text } = renderMail({ loc: locale, blocks: [
+    { h: tr(locale, 'mv.confirmHeading') }, { p: tr(locale, 'mv.confirmLead') }, { strong: label },
+    { cta: { url: confirmUrl, label: tr(locale, 'mv.confirmBtn') } }, { small: tr(locale, 'mv.confirmNote') }
+  ] });
+  return resendSend({ to, subject: tr(locale, 'mv.confirmSubject', { label }), html, text });
 }
 
 // One email per alert with the moves published since the last one. Every email carries the unsubscribe link,
 // in the body and as a List-Unsubscribe header (one-click unsubscribe in Gmail / Yahoo).
-export async function sendMovesDigest({ to, label, moves, pageUrl, unsubUrl }) {
+export async function sendMovesDigest({ to, label, moves, pageUrl, unsubUrl, locale = 'en' }) {
   if (!to || !moves || !moves.length || !unsubUrl) return false;
-  const subject = moves.length === 1 ? `New move: ${moves[0].title}`.slice(0, 140) : `${moves.length} new company moves: ${label}`;
-  const text = [
-    `New company moves we published (${label}):`,
-    ``,
-    ...moves.map((m) => `• ${m.date} — ${m.title}\n  ${m.url}`),
-    ``,
-    `All moves: ${pageUrl}`,
-    ``,
-    `Stop these emails: ${unsubUrl}`,
-    `— The KIRA RESEARCH team`
-  ].join('\n');
-  const html = `
-<!doctype html><html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#111;max-width:560px;margin:0 auto;padding:32px 24px;">
-  <p style="margin:0 0 18px;font-size:13px;color:#666;letter-spacing:.08em;text-transform:uppercase;">KIRA RESEARCH</p>
-  <h1 style="font-size:20px;margin:0 0 6px;font-weight:600;">New company moves</h1>
-  <p style="margin:0 0 20px;color:#555;">${esc(label)}</p>
-  ${moves.map((m) => `<p style="margin:0 0 14px;"><span style="font-size:13px;color:#666;">${esc(m.date)}${m.type ? ' · ' + esc(m.type) : ''}</span><br><a href="${esc(m.url)}" style="color:#111;">${esc(m.title)}</a></p>`).join('')}
-  <p style="margin:20px 0 0;"><a href="${esc(pageUrl)}">See all moves</a></p>
-  <p style="margin:28px 0 0;font-size:12px;color:#777;">You get this because you confirmed an alert on kiraresearch.com. <a href="${esc(unsubUrl)}" style="color:#777;">Stop these emails</a>.</p>
-</body></html>`.trim();
-  return resendSend({ to, subject, html, text, headers: { 'List-Unsubscribe': `<${unsubUrl}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } });
+  const subject = moves.length === 1 ? tr(locale, 'mv.digestOne', { title: moves[0].title }).slice(0, 140) : tr(locale, 'mv.digestMany', { n: moves.length, label });
+  const { html, text } = renderMail({ loc: locale, why: tr(locale, 'mv.why'), unsubUrl, blocks: [
+    { h: tr(locale, 'mv.digestHeading') }, { small: label },
+    { items: moves.map((m) => ({ title: m.title, url: m.url, meta: [m.date, m.type].filter(Boolean).join(' · ') })) },
+    { cta: { url: pageUrl, label: tr(locale, 'mv.digestAll') } }
+  ] });
+  return resendSend({ to, subject, html, text, headers: unsubHeaders(unsubUrl) });
 }

@@ -15,13 +15,12 @@ import { logJobRun } from './_lib/jobs.js';
 import { getConfig } from './_lib/config.js';
 import { alertLabel, alertPath } from './_lib/moves/alerts.js';
 import { cronAuthorized } from './_lib/cron-auth.js';
+import { tr } from './_lib/email-i18n.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const APP_URL              = process.env.APP_URL || 'https://kiraresearch.com';
 const PER_EMAIL = 10, MAX_EMAILS = 500;
-const TYPE = { acquisition: 'Acquisition', stake: 'Stake', investment: 'Investment', plant: 'New plant', jv: 'Joint venture',
-  subsidiary: 'New subsidiary or office', expansion: 'Expansion', exit: 'Exit', other: '' };
 
 async function sb(path, method = 'GET', body) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -67,9 +66,10 @@ export default async function handler(req, res) {
       const ok = await sendMovesDigest({
         to: a.email,
         label: alertLabel(a).replace(/^Company moves: /, ''),
-        moves: mine.slice(0, PER_EMAIL).map((e) => ({ title: e.title, url: e.url, date: e.event_date, type: TYPE[e.type] || '' })),
+        moves: mine.slice(0, PER_EMAIL).map((e) => ({ title: e.title, url: e.url, date: e.event_date, type: e.type && e.type !== 'other' ? tr(a.locale, 'mv.type.' + e.type) : '' })),
         pageUrl: APP_URL + alertPath(a),
-        unsubUrl: `${APP_URL}/api/moves-alert?t=${a.token}&a=unsub`
+        unsubUrl: `${APP_URL}/api/moves-alert?t=${a.token}&a=unsub`,
+        locale: a.locale
       });
       if (ok) { await sb(`moves_alerts?id=eq.${a.id}`, 'PATCH', { last_event_id: maxId, last_sent_at: new Date().toISOString() }); sent++; }
       else failed++;

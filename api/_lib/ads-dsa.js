@@ -10,7 +10,7 @@
 // ============================================================
 
 import { SITE, NEGATIVES } from './ads-campaign.js';
-import { listPrice, TRANSCRIPT_PRICE } from './pricing.js';
+import { listPrice, transcriptPriceOf, REPORT_PRICE_DEFAULT } from './pricing.js';
 
 // ── Cross-negatives with BizDirect (same owner: one query may not show two of our ads) ──────────────────────
 // BizDirect sells company contacts (distributor lists, supplier directories, emails, phones). KIRA sells the
@@ -48,11 +48,11 @@ export function feedItems({ maps = [], reports = [], transcripts = [] }) {
   }
   for (const r of reports) {
     if (!r.slug || r.status !== 'published' || !r.hasEn) continue;
-    out.push({ url: `${SITE}/en/reports/${r.slug}`, kind: 'report', country: slugify(r.country), price: Math.round(Number(r.price) || 0) || 49 });
+    out.push({ url: `${SITE}/en/reports/${r.slug}`, kind: 'report', country: slugify(r.country), price: Math.round(Number(r.price) || 0) || REPORT_PRICE_DEFAULT });
   }
   for (const t of transcripts) {
     if (!t.slug || t.status !== 'published' || !t.hasEn) continue;
-    out.push({ url: `${SITE}/en/experts/transcripts/${t.slug}`, kind: 'transcript', country: slugify(t.market), price: TRANSCRIPT_PRICE });
+    out.push({ url: `${SITE}/en/experts/transcripts/${t.slug}`, kind: 'transcript', country: slugify(t.market), price: transcriptPriceOf(t) });
   }
   return out;
 }

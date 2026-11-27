@@ -27,10 +27,10 @@ test('feed has only indexable EN pages, right paths, labels and prices', () => {
     'https://kiraresearch.com/en/reports/a-2026',
     'https://kiraresearch.com/en/experts/transcripts/t1'
   ]);
-  assert.deepEqual(labelsFor(items[0]), ['kind_map', 'country_japan', 'price_36']);
-  assert.deepEqual(labelsFor(items[1]), ['kind_map', 'country_viet-nam', 'price_57']);
+  assert.deepEqual(labelsFor(items[0]), ['kind_map', 'country_japan', 'price_28']);
+  assert.deepEqual(labelsFor(items[1]), ['kind_map', 'country_viet-nam', 'price_38']);
   assert.deepEqual(labelsFor(items[2]), ['kind_report', 'country_vietnam', 'price_49']);
-  assert.deepEqual(labelsFor(items[3]), ['kind_transcript', 'country_thailand', 'price_29']);
+  assert.deepEqual(labelsFor(items[3]), ['kind_transcript', 'country_thailand', 'price_14']);
   for (const i of items) assert.ok(!/noindex|thin|draft|nocomment|admin|coming-soon|\/(ja|ko|zh)\//.test(i.url));
 });
 
@@ -38,7 +38,7 @@ test('page feed CSV format and counts', () => {
   const f = buildPageFeed({ maps, reports, transcripts });
   const lines = f.csv.trim().split('\n');
   assert.equal(lines[0], 'Page URL,Custom label');
-  assert.equal(lines[1], 'https://kiraresearch.com/en/market-maps/japan/coffee-chains,kind_map;country_japan;price_36');
+  assert.equal(lines[1], 'https://kiraresearch.com/en/market-maps/japan/coffee-chains,kind_map;country_japan;price_28');
   assert.deepEqual(f.counts, { map: 2, report: 1, transcript: 1 });
   assert.equal(f.total, 4);
 });
@@ -68,7 +68,7 @@ test('DSA campaign: paused, $10, 6 locations (no UK), page-feed targets, copy ru
     assert.ok(d.length <= 90, `${d.length}: ${d}`);
     assert.ok(!/\bAI\b|platform|claude|mckinsey|mordor|frost|euromonitor|ipsos|synovate/i.test(d), d);
   }
-  assert.ok(descriptions.map[0].includes('$36'));
+  assert.ok(descriptions.map[0].includes('$18'));
 });
 
 test('no report/transcript price in copy while those checkouts are off', () => {
