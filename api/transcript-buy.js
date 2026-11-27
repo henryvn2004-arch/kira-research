@@ -162,7 +162,7 @@ export default async function handler(req, res) {
         // Paid twice for the same transcript with two different orders: tell the owner to refund one.
         if (purchase.paypal_order_id !== orderId) console.error('[transcript-buy] DOUBLE PURCHASE, refund order', orderId, 'user', user.id, 'slug', slug);
       }
-      res.status(200).json({ ok: true, purchase: { id: purchase.id, slug: purchase.slug } });
+      res.status(200).json({ ok: true, purchase: { id: purchase.id, slug: purchase.slug }, order: { id: purchase.id, amount: Number(purchase.amount ?? paid) || 0, currency: 'USD' } });
       return;
     }
 

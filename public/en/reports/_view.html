@@ -260,6 +260,7 @@
           body:    JSON.stringify({ orderId })
         });
         const body = await r.json();
+        if (r.ok && body.order && window.kiraPurchase) window.kiraPurchase({ id: body.order.id, value: body.order.amount, currency: body.order.currency, slug: body.purchase && body.purchase.slug, name: body.purchase && body.purchase.slug, kind: 'report' });
         return { ok: r.ok, ...body };
       } catch (err) {
         return { ok: false, error: 'network' };

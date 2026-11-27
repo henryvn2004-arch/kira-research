@@ -70,6 +70,7 @@ export default async function handler(req, res) {
         pdfPerMonth: plans.month.pdfLimit,
         plans,
         subscription: row ? {
+          id: row.id,
           plan: row.plan === 'year' ? 'year' : 'month',
           status: row.status,
           entitled,

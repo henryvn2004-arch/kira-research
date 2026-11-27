@@ -59,6 +59,7 @@
       try { sessionStorage.removeItem('kira_pending_tcapture'); } catch (_e) { /* storage blocked */ }
       history.replaceState({}, '', location.pathname);
       paidNote = cr.ok ? 'ok' : 'failed';
+      if (cr.ok) { try { const cb = await cr.clone().json(); if (cb && cb.order && window.kiraPurchase) window.kiraPurchase({ id: cb.order.id, value: cb.order.amount, currency: cb.order.currency, slug: slug, name: slug, kind: 'transcript' }); } catch (_e) { /* ignore */ } }
     } else if (qs.get('paypal') === 'cancel') {
       history.replaceState({}, '', location.pathname);
     }

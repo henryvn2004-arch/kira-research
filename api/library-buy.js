@@ -251,7 +251,8 @@ export default async function handler(req, res) {
 
       res.status(200).json({
         ok: true,
-        purchase: { id: purchase.id, slug: purchase.slug, locale: purchase.locale }
+        purchase: { id: purchase.id, slug: purchase.slug, locale: purchase.locale },
+        order: { id: purchase.id, amount: Number(purchase.amount) || 0, currency: purchase.currency || 'USD' }
       });
       return;
     }
