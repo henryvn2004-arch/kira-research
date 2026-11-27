@@ -45,8 +45,8 @@ test('static pages (home, about, methodology x 4) carry the current Organization
 test('about pages mention the sister company with a plain link, no ownership wording', () => {
   for (const l of ['en', 'ja', 'ko', 'zh']) {
     const html = readFileSync(new URL(`../public/${l}/about.html`, import.meta.url), 'utf8');
-    assert.match(html, /<a href="https:\/\/bizdirectasia\.com" rel="noopener">BizDirect Asia<\/a>/);
+    assert.ok(html.includes('<a href="https://bizdirectasia.com" rel="noopener">BizDirect Asia</a>'));
     const loc = JSON.parse(readFileSync(new URL(`../public/locales/${l}.json`, import.meta.url), 'utf8'));
-    assert.match(loc.about.sisterBody, /bizdirectasia\.com/);
+    assert.ok(loc.about.sisterBody.includes('<a href="https://bizdirectasia.com" rel="noopener">BizDirect Asia</a>'));
   }
 });
