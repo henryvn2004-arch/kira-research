@@ -5,7 +5,7 @@
 //   POST /api/transcript-buy?action=create   body { slug, locale, licence? }   (Bearer optional: guest checkout)
 //       → { approveUrl, orderId, amount, currency, licence, nonce? }   (403 checkout_closed while off)
 //   POST /api/transcript-buy?action=capture  body { orderId, nonce?, attr? }   Bearer OR the guest nonce from create
-//       → { ok, purchase: { id, slug }, guest?: { email, tokenHash } }
+//       → { ok, purchase: { id, slug }, guest?: { email (masked), accessToken } }
 // Guest checkout: see api/_lib/guest-checkout.js (account from the payer's email after a verified capture).
 //
 // Selling is switched by config `checkout.transcript_enabled` (/en/admin/config → Checkout, default
@@ -20,6 +20,7 @@ import { getConfig } from './_lib/config.js';
 import { TRANSCRIPT_PRICE } from './_lib/pricing.js';
 import { SLUG_RE, LOCALES } from './_lib/transcripts.js';
 import { licencePrice, normLicence } from './_lib/licence.js';
+import { signGuestToken, maskEmail } from './_lib/guest-access.js';
 import { createBuyer, captureBuyer, ensureGuestAccount, payerEmail, guestOrderLimited, cleanAttr } from './_lib/guest-checkout.js';
 
 const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live'
@@ -145,12 +146,12 @@ export default async function handler(req, res) {
       const paid = cap.paid;
 
       // Guest: account from the payer's email, only now that the payment is verified.
-      let userId, userEmail, guestOut = null, signInUrl = null;
+      let userId, userEmail, guestEmail = null, signInUrl = null;
       if (buyer.guest) {
         const acct = await ensureGuestAccount(payerEmail(cap.payer), { next: `/${locale}/experts/transcripts/${slug}`, loc: locale });
         if (acct.error) { console.error('[transcript-buy] PAID but no account, order', orderId, acct.error); res.status(500).json({ error: acct.error }); return; }
         userId = acct.userId; userEmail = acct.email; signInUrl = acct.signInUrl;
-        guestOut = { email: acct.email, tokenHash: acct.browserTokenHash };
+        guestEmail = acct.email;
       } else { userId = buyer.user.id; userEmail = buyer.user.email; }
 
       const row = {
@@ -183,7 +184,7 @@ export default async function handler(req, res) {
           console.error('[transcript-buy] DOUBLE PURCHASE, refund order', orderId, 'user', userId, 'slug', slug);
         }
       }
-      res.status(200).json({ ok: true, purchase: { id: purchase.id, slug: purchase.slug }, licence: purchase.licence || licence, amount: Number(purchase.amount), ...(guestOut ? { guest: guestOut } : {}) });
+      res.status(200).json({ ok: true, purchase: { id: purchase.id, slug: purchase.slug }, licence: purchase.licence || licence, amount: Number(purchase.amount), ...(guestEmail ? { guest: { email: maskEmail(guestEmail), accessToken: signGuestToken({ kind: 'transcript', slug, pid: purchase.id }) } } : {}) });
       return;
     }
 

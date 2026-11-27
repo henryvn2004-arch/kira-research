@@ -7,7 +7,7 @@
 //
 //   POST /api/library-buy?action=capture  body { orderId, nonce?, attr? }
 //       Authorization: Bearer <supabase-jwt>  OR  nonce from create (guest checkout)
-//       → { ok, purchase: { id, slug, locale }, guest?: { email, tokenHash } }
+//       → { ok, purchase: { id, slug, locale }, guest?: { email (masked), accessToken } }
 //
 // No account is needed to buy (stage 0, 2026-11-27): a guest pays with PayPal, and after a verified capture
 // the account is found or created from the payer's email (api/_lib/guest-checkout.js).
@@ -20,6 +20,7 @@ import { getConfig } from './_lib/config.js';
 import { REPORT_PRICE_DEFAULT } from './_lib/pricing.js';
 import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
 import { licencePrice, normLicence } from './_lib/licence.js';
+import { signGuestToken, maskEmail } from './_lib/guest-access.js';
 import { createBuyer, captureBuyer, ensureGuestAccount, payerEmail, guestOrderLimited, cleanAttr } from './_lib/guest-checkout.js';
 
 const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live'
@@ -192,7 +193,7 @@ export default async function handler(req, res) {
       const paidAmount = cap.paid;
 
       // Guest: the account comes from the payer's email (PayPal verified it), only now that the payment is verified.
-      let userId, userEmail, guestOut = null, signInUrl = null;
+      let userId, userEmail, guestEmail = null, signInUrl = null;
       if (buyer.guest) {
         const acct = await ensureGuestAccount(payerEmail(cap.payer), { next: `/${locale}/reports/${slug}`, loc: locale });
         if (acct.error) {
@@ -200,7 +201,7 @@ export default async function handler(req, res) {
           res.status(500).json({ error: acct.error }); return;
         }
         userId = acct.userId; userEmail = acct.email; signInUrl = acct.signInUrl;
-        guestOut = { email: acct.email, tokenHash: acct.browserTokenHash };
+        guestEmail = acct.email;
       } else { userId = buyer.user.id; userEmail = buyer.user.email; }
 
       // Upsert purchase row. Unique index prevents dupes.
@@ -275,7 +276,7 @@ export default async function handler(req, res) {
         purchase: { id: purchase.id, slug: purchase.slug, locale: purchase.locale },
         licence: purchase.licence || licence,
         amount: Number(purchase.amount),
-        ...(guestOut ? { guest: guestOut } : {})
+        ...(guestEmail ? { guest: { email: maskEmail(guestEmail), accessToken: signGuestToken({ kind: 'report', slug, pid: purchase.id }) } } : {})
       });
       return;
     }

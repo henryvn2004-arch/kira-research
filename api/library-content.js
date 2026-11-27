@@ -14,6 +14,7 @@
 // ============================================================
 
 import { resolvePdfUrl, downloadNameFor, nameParts } from './_lib/report-pdf.js';
+import { guestOwns } from './_lib/guest-access.js';
 import { activeSubscription, pdfUsage } from './_lib/subscription.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
@@ -59,11 +60,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
   if (req.method !== 'GET')     { res.status(405).json({ error: 'method_not_allowed' }); return; }
 
-  // 1) Auth.
-  const user = await verifyBearer(req);
-  if (!user) { res.status(401).json({ error: 'unauthenticated' }); return; }
-
-  // 2) Inputs.
+  // 1) Inputs.
   const url    = new URL(req.url, `https://${req.headers.host || 'x'}`);
   const slug   = url.searchParams.get('slug');
   const locale = LOCALES.has(url.searchParams.get('locale')) ? url.searchParams.get('locale') : 'en';
@@ -71,6 +68,11 @@ export default async function handler(req, res) {
     res.status(400).json({ error: 'bad_slug' });
     return;
   }
+
+  // 2) Auth: a signed-in reader, or a guest buyer holding the purchase-scoped token for THIS report.
+  const user = await verifyBearer(req);
+  const guestRow = user ? null : await guestOwns(req, 'report', slug).catch(() => null);
+  if (!user && !guestRow) { res.status(401).json({ error: 'unauthenticated' }); return; }
 
   try {
     // 3) Find the base report.
@@ -92,7 +94,7 @@ export default async function handler(req, res) {
 
     // 4) Verify purchase. We accept "owned in any locale" — re-buying just for
     //    a language switch would be hostile UX given the same research.
-    const purchases = await sb(
+    const purchases = guestRow ? [guestRow] : await sb(
       `purchases?user_id=eq.${user.id}` +
       `&slug=eq.${encodeURIComponent(slug)}` +
       `&status=eq.completed&select=locale,created_at&limit=1`

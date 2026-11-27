@@ -6,7 +6,7 @@
 //   POST /api/list-buy?action=create   body { slug: '<country>/<segment>', loc?, licence? }   (Bearer optional: guest checkout)
 //       → { approveUrl, orderId, amount, currency, licence, nonce? }   (403 checkout_closed while off)
 //   POST /api/list-buy?action=capture  body { orderId, nonce?, attr? }   Bearer OR the guest nonce from create
-//       → { ok, purchase: { id, slug, status: 'ready'|'pending', downloadUrl? }, guest?: { email, tokenHash } }
+//       → { ok, purchase: { id, slug, status: 'ready'|'pending', downloadUrl? }, guest?: { email (masked), accessToken } }
 //   POST /api/list-buy?action=build    body { purchaseId }  Authorization: Bearer …   (retry a build that did not finish)
 //
 // Selling is switched by config `checkout.list_enabled` (/en/admin/config → Checkout, default off). The price
@@ -19,6 +19,7 @@ import { getConfig } from './_lib/config.js';
 import { listPrice } from './_lib/pricing.js';
 import { verifyBearer } from './_lib/transcripts.js';
 import { licencePrice, normLicence } from './_lib/licence.js';
+import { maskEmail } from './_lib/guest-access.js';
 import { createBuyer, captureBuyer, ensureGuestAccount, payerEmail, guestOrderLimited, cleanAttr } from './_lib/guest-checkout.js';
 import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
 import { sb, SLUG_RE, finishBuild, linkLive, downloadUrl } from './_lib/lists.js';
@@ -115,13 +116,13 @@ export default async function handler(req, res) {
       const paid = cap.paid;
 
       // Guest: account from the payer's email, only now that the payment is verified.
-      let userId, userEmail, guestOut = null, signInUrl = null;
+      let userId, userEmail, guestEmail = null, signInUrl = null;
       if (buyer.guest) {
         const loc = ['en', 'ja', 'ko', 'zh'].includes(cap.parsed.locale) ? cap.parsed.locale : 'en';
         const acct = await ensureGuestAccount(payerEmail(cap.payer), { next: `/${loc}/market-maps/${slug}`, loc });
         if (acct.error) { console.error('[list-buy] PAID but no account, order', orderId, acct.error); res.status(500).json({ error: acct.error }); return; }
         userId = acct.userId; userEmail = acct.email; signInUrl = acct.signInUrl;
-        guestOut = { email: acct.email, tokenHash: acct.browserTokenHash };
+        guestEmail = acct.email;
       } else { userId = buyer.user.id; userEmail = buyer.user.email; }
 
       const row = { user_id: userId, map_id: map.id, slug, n_companies: map.n_companies, amount: paid, currency: 'USD',
@@ -137,7 +138,7 @@ export default async function handler(req, res) {
         if (!purchase) throw err;
       }
       if (fresh) purchase = await finishBuild(purchase, userEmail, `${map.title} (company list)`, { licence, signInUrl });
-      res.status(200).json({ ok: true, purchase: view(purchase), licence: purchase.licence || licence, amount: Number(purchase.amount), ...(guestOut ? { guest: guestOut } : {}) });
+      res.status(200).json({ ok: true, purchase: view(purchase), licence: purchase.licence || licence, amount: Number(purchase.amount), ...(guestEmail ? { guest: { email: maskEmail(guestEmail) } } : {}) });
       return;
     }
 

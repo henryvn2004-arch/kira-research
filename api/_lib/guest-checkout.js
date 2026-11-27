@@ -7,9 +7,9 @@
 //           the order (api/_lib/paypal-check.js checks custom_id against the caller).
 //  capture: after PayPal says COMPLETED and the amount matches, the buyer identity is the payer's email
 //           (PayPal verified). ensureGuestAccount() finds or creates the Supabase user for it (admin API),
-//           the purchase is recorded against that user, and the browser gets a one-time token hash it
-//           exchanges for a session (supabase.auth.verifyOtp), so the item opens in the same browser at
-//           once. A second one-time token goes into the receipt email as the sign-in link.
+//           the purchase is recorded against that user. The browser gets a purchase-scoped access token
+//           (api/_lib/guest-access.js), never a login session: the payer email is not verified by PayPal
+//           guest card checkout. The receipt email carries the one-time sign-in link (inbox owner only).
 //  Access is never granted before a verified capture: nothing here runs until captureOrder() succeeded.
 // ============================================================
 import { randomUUID } from 'node:crypto';
@@ -70,34 +70,25 @@ export function safeNext(p) {
 }
 
 /**
- * Find or create the account for a payer email and mint two one-time tokens:
- *   browserTokenHash  - returned to the buyer's browser (verifyOtp type 'magiclink')
- *   signInUrl         - goes in the receipt email (our own auth page; verifyOtp type 'recovery')
- * → { userId, email, browserTokenHash, signInUrl } or { error }.
+ * Find or create the account for a payer email and mint ONE one-time sign-in link for the receipt email.
+ * PayPal guest card checkout does not verify the typed email, so nothing here signs the browser in: the link
+ * goes only to the inbox of that address. The user is created confirmed but password-less and never admin.
+ * → { userId, email, signInUrl } or { error }.
  */
 export async function ensureGuestAccount(rawEmail, { next = '/', loc = 'en' } = {}) {
   const email = String(rawEmail || '').trim().toLowerCase();
   if (!EMAIL_RE.test(email)) return { error: 'payer_email_missing' };
-  // 1) create (confirmed: PayPal verified the address); an existing account answers 422 email_exists.
   const created = await admin('users', { email, email_confirm: true });
   if (!created.ok && !(created.status === 422 || created.status === 409)) {
     console.error('[guest] create user failed', created.status);
     return { error: 'account_failed' };
   }
-  // 2) one-time token for this browser (also gives us the user id, new or existing)
-  const a = await admin('generate_link', { type: 'magiclink', email });
+  const a = await admin('generate_link', { type: 'recovery', email });
   const userId = (a.j && (a.j.id || (a.j.user && a.j.user.id))) || (created.ok ? created.j.id : null);
   if (!a.ok || !userId) { console.error('[guest] generate_link failed', a.status); return { error: 'account_failed' }; }
-  // 3) a second token for the email link (separate type so it does not overwrite the first, where GoTrue keeps them apart)
-  const b = await admin('generate_link', { type: 'recovery', email });
-  const emailTok = b.ok && b.j && b.j.hashed_token ? b.j.hashed_token : null;
   const q = new URLSearchParams({ next: safeNext(next), lang: ['en', 'ja', 'ko', 'zh'].includes(loc) ? loc : 'en', email });
-  if (emailTok) { q.set('token_hash', emailTok); q.set('type', 'recovery'); }
-  return {
-    userId, email,
-    browserTokenHash: a.j.hashed_token || null,
-    signInUrl: `${APP_URL}/auth.html?${q.toString()}`
-  };
+  if (a.j.hashed_token) { q.set('token_hash', a.j.hashed_token); q.set('type', 'recovery'); }
+  return { userId, email, signInUrl: `${APP_URL}/auth.html?${q.toString()}` };
 }
 
 /** The payer's email from a PayPal order (verified by PayPal). */

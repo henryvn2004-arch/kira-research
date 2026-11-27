@@ -218,7 +218,8 @@
     // ══════════════════════════════════════════════════════
     async function bearerHeaders() {
       const session = (await window.db.auth.getSession()).data.session;
-      return session ? { 'Authorization': 'Bearer ' + session.access_token } : {};
+      // A guest buyer has no session: the purchase-scoped token of THIS report opens it (see /js/checkout.js).
+      return { ...window.kiraCheckout.guestHeaders('report', slug), ...(session ? { 'Authorization': 'Bearer ' + session.access_token } : {}) };
     }
 
     async function verifyPurchase(slug, locale) {

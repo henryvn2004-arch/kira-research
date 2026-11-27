@@ -58,9 +58,10 @@
   try {
     await whenReady();
     const session = window.db ? (await window.db.auth.getSession()).data.session : null;
-    if (session) {
-      const r = await fetch('/api/transcript-content?slug=' + encodeURIComponent(slug) + '&locale=' + locale,
-        { headers: { Authorization: 'Bearer ' + session.access_token } });
+    // A guest buyer has no session: the purchase-scoped token of THIS transcript opens it.
+    const headers = Object.assign({}, window.kiraCheckout.guestHeaders('transcript', slug), session ? { Authorization: 'Bearer ' + session.access_token } : {});
+    if (session || headers['X-Guest-Token']) {
+      const r = await fetch('/api/transcript-content?slug=' + encodeURIComponent(slug) + '&locale=' + locale, { headers });
       if (r.ok) full = await r.json();
     }
   } catch (_e) { /* the free view still works */ }

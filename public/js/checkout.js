@@ -11,7 +11,7 @@
 //
 // No account is needed to buy. The server hands a guest a nonce at create time (kept here in localStorage,
 // per order); at capture the server finds or creates the account from the payer's PayPal email and returns a
-// one-time token that signs this same browser in, so the purchase opens at once. The price is always computed
+// purchase-scoped access token (never a login session; the payer email is unverified) so the purchase opens at once in this browser. The account is reached through the emailed link. The price is always computed
 // on the server; the numbers shown by the licence picker mirror api/_lib/licence.js (display only).
 // ============================================================
 (function () {
@@ -25,7 +25,7 @@
       licHead: 'Licence', single: 'Single user', team: 'Team (up to 10 people, same company)', company: 'Company-wide',
       guestNote: 'No account needed. After payment we create one from your PayPal email and send your receipt and a sign-in link.',
       finalising: 'Finalising your purchase…', dontClose: 'Please do not close this tab.',
-      done: 'Purchase complete.', doneGuest: 'We sent your receipt and a sign-in link to {email}.',
+      done: 'Purchase complete.', doneGuest: 'We emailed a sign-in link to {email} to keep this in My Library.',
       failed: 'We could not finish the purchase. If PayPal charged you, email hello@kiraresearch.com with the PayPal receipt and we will fix it.',
       startFail: 'Could not start checkout', network: 'Network error starting checkout. Please retry.', cancelled: 'Checkout cancelled. You were not charged.'
     },
@@ -33,7 +33,7 @@
       licHead: 'ライセンス', single: '個人利用(1名)', team: 'チーム(同一企業で最大10名)', company: '全社利用',
       guestNote: 'アカウント登録は不要です。お支払い後、PayPalのメールアドレスでアカウントを作成し、領収書とサインイン用リンクをお送りします。',
       finalising: 'ご購入を確定しています…', dontClose: 'このタブを閉じないでください。',
-      done: 'ご購入ありがとうございます。', doneGuest: '領収書とサインイン用リンクを {email} に送信しました。',
+      done: 'ご購入ありがとうございます。', doneGuest: 'マイライブラリに保存するためのサインイン用リンクを {email} に送信しました。',
       failed: '購入を完了できませんでした。PayPalで請求済みの場合は、PayPalの領収書を添えて hello@kiraresearch.com までご連絡ください。',
       startFail: 'チェックアウトを開始できませんでした', network: '通信エラーが発生しました。もう一度お試しください。', cancelled: 'チェックアウトをキャンセルしました。請求は発生していません。'
     },
@@ -41,7 +41,7 @@
       licHead: '라이선스', single: '개인 (1인)', team: '팀 (같은 회사 최대 10명)', company: '전사 라이선스',
       guestNote: '계정이 필요 없습니다. 결제 후 PayPal 이메일로 계정을 만들고 영수증과 로그인 링크를 보내 드립니다.',
       finalising: '구매를 마무리하는 중입니다…', dontClose: '이 탭을 닫지 마세요.',
-      done: '구매가 완료되었습니다.', doneGuest: '영수증과 로그인 링크를 {email} (으)로 보냈습니다.',
+      done: '구매가 완료되었습니다.', doneGuest: '내 라이브러리에 보관할 수 있도록 로그인 링크를 {email} (으)로 보냈습니다.',
       failed: '구매를 완료하지 못했습니다. PayPal에서 결제되었다면 PayPal 영수증과 함께 hello@kiraresearch.com 으로 문의해 주세요.',
       startFail: '결제를 시작하지 못했습니다', network: '네트워크 오류가 발생했습니다. 다시 시도해 주세요.', cancelled: '결제가 취소되었습니다. 요금은 청구되지 않았습니다.'
     },
@@ -49,7 +49,7 @@
       licHead: '授权', single: '个人(1人)', team: '团队(同一公司最多10人)', company: '全公司授权',
       guestNote: '无需注册账号。付款后,我们会用您的PayPal邮箱创建账号,并发送收据和登录链接。',
       finalising: '正在确认您的购买…', dontClose: '请不要关闭此标签页。',
-      done: '购买完成。', doneGuest: '收据和登录链接已发送至 {email}。',
+      done: '购买完成。', doneGuest: '我们已向 {email} 发送登录链接,用于将其保存在“我的资料库”。',
       failed: '未能完成购买。如果PayPal已扣款,请把PayPal收据发到 hello@kiraresearch.com,我们会处理。',
       startFail: '无法开始结账', network: '网络错误,请重试。', cancelled: '结账已取消,未产生扣款。'
     }
@@ -141,14 +141,13 @@
     } catch (_e) { return { ok: false, error: 'network' }; }
     if (!r.ok) return { ok: false, error: b.error || String(r.status), body: b };
 
+    // A guest gets a purchase-scoped access token (this item only), never a login session; the account is reached
+    // through the link emailed to the payer. Send it as X-Guest-Token (see guestHeaders).
     var guestEmail = null;
-    if (b.guest && b.guest.tokenHash) {
+    if (b.guest) {
       guestEmail = b.guest.email || null;
-      // Sign this browser in as the payer so the item opens now (skip when already signed in as that address).
-      var cur = s && s.user && (s.user.email || '').toLowerCase();
-      if (!cur || cur !== String(b.guest.email || '').toLowerCase()) {
-        try { await window.db.auth.verifyOtp({ token_hash: b.guest.tokenHash, type: 'magiclink' }); } catch (_e) { /* the emailed link still works */ }
-      }
+      var gslug = o.id;
+      if (b.guest.accessToken && gslug) ls('set', 'kira_gt_' + (o.item || '') + '_' + gslug, b.guest.accessToken);
     }
     ls('remove', 'kira_gn_' + orderId);
     // Purchase event once per order (a reload must not count twice).
@@ -164,7 +163,14 @@
     return { ok: true, body: b, guestEmail: guestEmail };
   }
 
+    // Headers for the access endpoints: the guest token of THIS item (kind = report | transcript), if this browser paid as a guest.
+  function guestHeaders(kind, slug) {
+    var t = ls('get', 'kira_gt_' + kind + '_' + slug);
+    return t ? { 'X-Guest-Token': t } : {};
+  }
+
   window.kiraCheckout = {
+    guestHeaders: guestHeaders,
     start: start, finish: finish, orderFromUrl: orderFromUrl, cancelSeen: cancelSeen,
     licenceHtml: licenceHtml, bindLicence: bindLicence, licence: function () { return chosen; },
     licencePrice: licencePrice, t: t, track: track, gtag: gtag
