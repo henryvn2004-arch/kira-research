@@ -14,6 +14,7 @@ import {
 import { answerBlock, claimItem, modelledNote } from './geo-html.js';
 import { T, countryName, companyDataHtml } from './geo-i18n.js';
 import { rankAnswers } from './geo-rank.js';
+import { getBizdirectLists, listsBlockHtml } from './bizdirect-lists.js';
 
 const CSS = '<style>.geo-slot{padding-block:8px 48px;max-width:860px}.geo-slot h2{font-size:22px;margin:32px 0 12px}.geo-slot h3{font-size:17px;line-height:1.35;margin:20px 0 6px}.geo-slot p{margin:0 0 6px;line-height:1.6}.geo-slot .geo-src,.geo-slot .geo-basis{color:var(--muted);font-size:13px}.geo-slot .geo-basis{display:block}.geo-slot .geo-claims{list-style:none;padding:0}.geo-slot .geo-claims li{margin:0 0 14px;line-height:1.6}</style>';
 
@@ -102,11 +103,24 @@ export async function companiesHtml(seg, loc = 'en') {
   return `${CSS}<div class="r-container geo-slot" lang="${loc === 'zh' ? 'zh-Hans' : loc}"><h2>${esc(L.companiesHere)}</h2><ul class="geo-claims">${rows.slice(0, 5).join('')}</ul><p class="geo-src">${companyDataHtml(L)}</p></div>`;
 }
 
-export async function reportCompaniesHtml(slug, loc = 'en') {
+// Join-key version (migration 077: market_map_country + market_map_segment on the report / transcript): up to 3 list links from the
+// BizDirect partner API for exactly that country and segment. '' when there is no key, the partner is down, or it has no list.
+export async function keyedCompaniesHtml(row, loc = 'en') {
+  const country = row && row.market_map_country, segment = row && row.market_map_segment;
+  if (!country || !segment) return '';
+  const html = listsBlockHtml(await getBizdirectLists(country, segment), loc, 'bd-lists');
+  return html ? `${CSS}<div class="r-container geo-slot" lang="${loc === 'zh' ? 'zh-Hans' : loc}">${html}</div>` : '';
+}
+
+export async function reportCompaniesHtml(slug, loc = 'en', row = null) {
+  const keyed = await keyedCompaniesHtml(row, loc).catch(() => '');
+  if (keyed) return keyed;
   const answers = await answersForDoc(slug, 15);
   return companiesHtml(answers.find((a) => a.segment_key), loc);
 }
-export async function transcriptCompaniesHtml(slug, loc = 'en') {
+export async function transcriptCompaniesHtml(slug, loc = 'en', row = null) {
+  const keyed = await keyedCompaniesHtml(row, loc).catch(() => '');
+  if (keyed) return keyed;
   const [seg] = await sb(`kira_answers?status=eq.published&source_ref->>slug=eq.${encodeURIComponent(slug)}&segment_key=not.is.null&select=country_code,segment_key&limit=1`);
   return companiesHtml(seg, loc);
 }
