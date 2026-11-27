@@ -258,14 +258,16 @@ test('buy box: same price rule in every language, request form posts the page la
   for (const loc of ['en', 'ja', 'ko', 'zh']) {
     const S = mockStats();
     const on = renderDocument(S, null, { loc, buy: { enabled: true }, canonical: `https://kiraresearch.com/${loc}/market-maps/vietnam/soft-drinks` });
-    assert.match(on, /id="mm-buy"/); assert.match(on, /\$36/); assert.match(on, /\$57/); assert.match(on, /data-msgs="/);
+    assert.match(on, /id="mm-buy"/); assert.ok(on.includes('$' + S.price_usd)); assert.match(on, /data-msgs="/);
+    assert.ok(on.includes(`/${loc}/terms#refunds`), `${loc}: refund line next to the buy button`);
+    assert.match(on, /7/);
     assert.ok(on.includes('market-map-buy.js'));
     const off = renderDocument(S, null, { loc, buy: { enabled: false } });
     assert.match(off, new RegExp(`locale:"${loc}"|"locale":"${loc}"`));
     assert.match(off, /id="mm-req"/); assert.doesNotMatch(off, /id="mm-buy"/);
   }
-  const big = renderDocument(mockStats({ companies: 900, price_usd: 57 }), null, { loc: 'zh', buy: { enabled: true } });
-  assert.match(big, /\$57/);
+  const big = renderDocument(mockStats({ companies: 900, price_usd: 38 }), null, { loc: 'zh', buy: { enabled: true } });
+  assert.match(big, /\$38/);
 });
 
 test('every language renders every exhibit block without throwing (marimekko, heatmap, stacked, brands, channels, geography, certificates, origins)', () => {

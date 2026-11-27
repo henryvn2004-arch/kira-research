@@ -122,12 +122,11 @@
           ? '<h3>Read the full interview</h3>' +
             '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. Buy the full transcript, with every marked source, for $' + data.purchase.price + '. One purchase covers every language it is published in.</p>' +
             '<button class="r-btn r-btn-primary" id="tv-buy" type="button">Buy full transcript — $' + data.purchase.price + '</button>' +
-            (subOn ? '<button class="r-btn r-btn-outline" id="tv-subscribe" type="button">Or subscribe — $' + data.subscription.price + '/month, every transcript and report included</button>'
-                   : '<a class="alt" href="' + WAITLIST + '">Or request early access to the subscription</a>')
-          : '<h3>The rest of this interview is for subscribers</h3>' +
-            '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. The full transcript, with every marked source, is part of the KIRA subscription.</p>' +
-            (subOn ? '<button class="r-btn r-btn-primary" id="tv-subscribe" type="button">Subscribe — $' + data.subscription.price + '/month</button>'
-                   : '<a class="r-btn r-btn-primary" href="' + WAITLIST + '">Request early access</a>')) +
+            (window.kiraBuyCopy ? window.kiraBuyCopy.block('transcript', { length_label: data.length_label }) : '') +
+            (subOn ? '<button class="r-btn r-btn-outline" id="tv-subscribe" type="button">Or subscribe — $' + data.subscription.price + '/month, every transcript and report included</button>' : '')
+          : '<h3>Read the full interview</h3>' +
+            '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. The full transcript, with every marked source, is not on sale yet; leave your email and we will write when it is.</p>' +
+            '<a class="r-btn r-btn-primary" href="' + WAITLIST + '">Tell me when it is on sale</a>') +
         '<a class="alt" href="/auth.html" id="tv-signin">Already have access? Sign in</a>' +
       '</div></div>' +
     '</div>';

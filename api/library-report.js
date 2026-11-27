@@ -252,6 +252,7 @@ export default async function handler(req, res) {
       industry:       base.industry || '',
       year:           base.year || null,
       price:          base.price || REPORT_PRICE_DEFAULT,
+      exhibits:       base.exhibits > 0 ? base.exhibits : null,   // chart count; also tells the page the report has exhibit data (Excel / PowerPoint)
       purchaseEnabled: await getConfig('checkout.single_report_enabled'),
       subscription:   { enabled: await getConfig('checkout.subscription_enabled'), price: SUBSCRIPTION_MONTH_PRICE, pdfPerMonth: await getConfig('subscription.pdf_per_month') },
       pages:          base.pages || null,

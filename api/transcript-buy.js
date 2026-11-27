@@ -1,6 +1,6 @@
 // ============================================================
 // KIRA RESEARCH — api/transcript-buy.js
-// PayPal checkout for one Kira Experts transcript (all its languages), $29 (api/_lib/pricing.js).
+// PayPal checkout for one Kira Experts transcript (all its languages), its price (expert_transcripts.price, api/_lib/pricing.js).
 //
 //   POST /api/transcript-buy?action=create   body { slug, locale }
 //       → { approveUrl, orderId, amount, currency }          (403 checkout_closed while off)
@@ -16,7 +16,7 @@
 import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
 import { sendPurchaseReceipt } from './_lib/email.js';
 import { getConfig } from './_lib/config.js';
-import { TRANSCRIPT_PRICE } from './_lib/pricing.js';
+import { transcriptPriceOf } from './_lib/pricing.js';
 import { SLUG_RE, LOCALES, verifyBearer } from './_lib/transcripts.js';
 
 const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live'
@@ -77,10 +77,10 @@ export default async function handler(req, res) {
       const buyer = await verifyBearer(req);   // the order is bound to the signed-in buyer (custom_id)
       if (!buyer) { res.status(401).json({ error: 'unauthenticated' }); return; }
 
-      const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=id,slug&limit=1`);
+      const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=id,slug,price&limit=1`);
       if (!rows[0]) { res.status(404).json({ error: 'transcript_not_found' }); return; }
 
-      const amount = TRANSCRIPT_PRICE.toFixed(2);
+      const amount = transcriptPriceOf(rows[0]).toFixed(2);
       const token = await getPayPalToken();
       const orderRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
         method: 'POST',
@@ -127,8 +127,8 @@ export default async function handler(req, res) {
         token, orderId, kind: 'transcript', userId: user.id,
         priceFor: async ({ item }) => {
           if (!SLUG_RE.test(item)) return null;
-          const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(item)}&select=id,slug&limit=1`);
-          return rows[0] ? { ...rows[0], expected: TRANSCRIPT_PRICE } : null;
+          const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(item)}&select=id,slug,price&limit=1`);
+          return rows[0] ? { ...rows[0], expected: transcriptPriceOf(rows[0]) } : null;
         }
       });
       if (cap.error) { res.status(cap.status).json({ error: cap.error }); return; }
