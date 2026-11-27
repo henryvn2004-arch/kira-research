@@ -63,6 +63,7 @@
   <script src="/js/nav.js" defer></script>
   <script src="/js/i18n.js" defer></script>
   <script src="/js/research-i18n.js" defer></script>
+  <script src="/js/buy-copy.js" defer></script>
   <script src="/js/coming-soon.js" defer></script>
   <script src="/js/market-panel.js" defer></script>
 
@@ -343,7 +344,7 @@
             ...(PER_REPORT_PURCHASE ? {
               offers: {
                 '@type':        'Offer',
-                price:          String(d.price || 49),
+                price:          String(d.price),
                 priceCurrency:  'USD',
                 availability:   'https://schema.org/InStock',
                 url
@@ -514,7 +515,7 @@
     function renderPreviewFrame(d, currentLocale) {
       const src = '/api/preview-html?slug=' + encodeURIComponent(d.slug) + '&locale=' + encodeURIComponent(currentLocale);
       const cta = PER_REPORT_PURCHASE
-        ? '<button class="r-btn r-btn-primary" id="preview-buy-btn">$' + (d.price || 49) + '</button>'
+        ? '<button class="r-btn r-btn-primary" id="preview-buy-btn">$' + d.price + '</button>'
         : SUBSCRIPTION
           ? '<a class="r-btn r-btn-primary" href="/' + locale + '/subscription">' + escapeHtml(subCta()) + R.icon('arrow') + '</a>'
           : '<a class="r-btn r-btn-primary" href="' + WAITLIST_URL + '">' + escapeHtml(t('requestAccess')) + R.icon('arrow') + '</a>';
@@ -739,11 +740,11 @@
       }
       if (PER_REPORT_PURCHASE) {
         return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3>' +
-          '<p id="buy-price" style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + (d.price || 49) + '</p>' +
-          window.kiraCheckout.licenceHtml(d.price || 49, locale) +
+          '<p id="buy-price" style="font-size:28px;font-weight:800;color:var(--text);margin:0 0 12px">$' + d.price + '</p>' +
+          window.kiraCheckout.licenceHtml(d.price, locale) +
           (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
           '<button class="r-btn r-btn-primary r-btn-block" id="buy-btn">' + escapeHtml(t('accessTitle')) + R.icon('arrow') + '</button>' +
-          '<p class="small" style="margin-top:8px">' + escapeHtml(window.kiraCheckout.t('guestNote', locale)) + '</p>' + incl + subBox + '</div>';
+          '<p class="small" style="margin-top:8px">' + escapeHtml(window.kiraCheckout.t('guestNote', locale)) + '</p>' + (window.kiraBuyCopy ? kiraBuyCopy.block('report', { pages: d.pages, exhibits: d.exhibits }) + kiraBuyCopy.why({ hasExhibits: !!d.exhibits }) : '') + incl + subBox + '</div>';
       }
       return '<div class="rd-box rd-access"><h3>' + escapeHtml(t('accessTitle')) + '</h3><p>' + escapeHtml(t('accessBody')) + '</p>' +
         (state.anyLocale ? '<p>' + escapeHtml(t('owned')) + ' (' + escapeHtml((state.ownedLocale || 'en').toUpperCase()) + ')</p>' : '') +
@@ -879,7 +880,7 @@
       if (buyBtn) buyBtn.addEventListener('click', () => { buyBtn.disabled = true; startCheckout(d.slug, locale); });
       window.kiraCheckout.bindLicence(document, (lic) => {
         const pe = document.getElementById('buy-price');
-        if (pe) pe.textContent = '$' + window.kiraCheckout.licencePrice(d.price || 49, lic);
+        if (pe) pe.textContent = '$' + window.kiraCheckout.licencePrice(d.price, lic);
       });
       const subscribeBtn = document.getElementById('subscribe-btn');
       if (subscribeBtn) subscribeBtn.addEventListener('click', async () => {
@@ -992,7 +993,7 @@
       const bodyEl = document.getElementById('unlock-modal-body');
       if (!modal || !closeBtn || !buyBtn || !titleEl || !bodyEl) return;
       document.getElementById('unlock-modal-eyebrow').textContent = t('lockedTitle');
-      buyBtn.textContent = PER_REPORT_PURCHASE ? t('accessTitle') + ' — $' + (d.price || 49) : SUBSCRIPTION ? subCta() : t('requestAccess');
+      buyBtn.textContent = PER_REPORT_PURCHASE ? t('accessTitle') + ' — $' + d.price : SUBSCRIPTION ? subCta() : t('requestAccess');
       closeBtn.setAttribute('aria-label', t('close'));
       const foot = modal.querySelector('.unlock-modal-footnote');
       if (foot) foot.textContent = PER_REPORT_PURCHASE || SUBSCRIPTION ? '' : t('nothingCharged');

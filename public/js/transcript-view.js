@@ -114,6 +114,7 @@
             window.kiraCheckout.licenceHtml(data.purchase.price, locale) +
             '<button class="r-btn r-btn-primary" id="tv-buy" type="button">Buy full transcript — $' + data.purchase.price + '</button>' +
             '<p class="alt" style="font-size:12px">' + esc(window.kiraCheckout.t('guestNote', locale)) + '</p>' +
+            (window.kiraBuyCopy ? window.kiraBuyCopy.block('transcript', { length_label: data.length_label }) : '') +
             (subOn ? '<button class="r-btn r-btn-outline" id="tv-subscribe" type="button">Or subscribe — $' + data.subscription.price + '/month, every transcript and report included</button>'
                    : '<a class="alt" href="' + WAITLIST + '">Or request early access to the subscription</a>')
           : '<h3>The rest of this interview is for subscribers</h3>' +

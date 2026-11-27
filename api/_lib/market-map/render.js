@@ -352,7 +352,9 @@ function buyBox(S, opts) {
   if (b.enabled) {
     return `<div class="buy" id="buy"><b style="font-size:20px">${esc(t.buyHead(N(n), p))}</b>${cols}
 <div id="mm-lic" data-base="${esc(String(p))}"></div><button class="btn" type="button" id="mm-buy">${esc(t.buyBtn(p))}</button><div class="msg" id="mm-msg" role="status"></div>
-<div class="sub" style="margin-top:8px">${esc(t.buyNote(S.built))}</div></div>`;
+<div class="sub" style="margin-top:8px">${esc(t.buyNote(S.built))}</div>
+<div class="sub" style="margin-top:6px">${esc(t.refundLine)} <a href="/${loc}/terms#refunds">${esc(t.refundLink)}</a></div>
+<div class="sub" style="margin-top:6px;font-size:12px">${esc(t.euLine)}</div></div>`;
   }
   const msgs = { bad: t.reqBad, ok: t.reqOk, fail: t.reqFail };
   return `<div class="buy" id="buy"><b style="font-size:20px">${esc(t.buyHead(N(n), null))}</b>${cols}

@@ -10,7 +10,7 @@
 //   GET /api/admin-ads-campaign?kind=negatives     → text: the shared negative keywords, one per line
 //   GET /api/admin-ads-campaign?format=json        → { groups, keywords, skipped, priceOn, etaDays } for a preview
 //
-// The "from $49" headline is only written while single-report checkout is on
+// The "Report from $X" headline (X = the lowest price on sale now, read from the data) is only written while single-report checkout is on
 // (config checkout.single_report_enabled), the "ready in about N days" one uses ondemand.target_days.
 // Auth: Bearer <supabase-jwt>, email in ADMIN_EMAILS.
 // ============================================================
@@ -80,11 +80,17 @@ export default async function handler(req, res) {
       .slice(offset, offset + limit);
 
     const priceOn = await getConfig('checkout.single_report_enabled');
+    let fromPrice = REPORT_PRICE_MIN;
+    try {
+      const pr = await fetch(`${SUPABASE_URL}/rest/v1/living_reports?status=eq.published&price=gt.0&select=price&order=price.asc&limit=1`, { headers: H() });
+      const row = pr.ok ? (await pr.json())[0] : null;
+      if (row && row.price > 0) fromPrice = Number(row.price);
+    } catch (_e) { /* the rule's floor is used */ }
     const etaDays = await getConfig('ondemand.target_days');
     const out = buildCampaignCsv(topics, {
       campaign: 'KIRA Reports - Pilot', budget: num(query.budget, 1, 500, 20), maxCpc: num(query.cpc, 0.1, 20, 1).toFixed(2),
       languages: String(query.languages || 'English').replace(/[^A-Za-z ,]/g, '').slice(0, 60) || 'English',
-      priceOn, price: REPORT_PRICE_MIN, etaDays
+      priceOn, price: fromPrice, etaDays
     });
 
     if (query.format === 'json') {

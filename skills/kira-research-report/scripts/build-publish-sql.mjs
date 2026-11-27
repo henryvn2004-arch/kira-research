@@ -6,7 +6,10 @@
 // Usage:
 //   node skills/kira-research-report/scripts/build-publish-sql.mjs --id 2026-vn-coffee-chains \
 //     [--langs "en ja ko zh"] [--chart-page 18] [--price 49] > /tmp/insert.sql
-//   --price: default is set by length (under 20 pages $39, 20–29 $45, 30+ $49; same rule as api/_lib/pricing.js)
+//   --price: default comes from the effort rule in api/_lib/pricing.js reportPrice():
+//            (18 + 0.8 x pages + 0.5 x exhibits) x rarity x freshness, $31-78, whole dollars, never ending in 9.
+//            exhibits = the count in outputs/batch/<id>/exhibits.json when it exists (also stored in living_reports.exhibits),
+//            otherwise estimated from the pages; --rarity 1.0-1.3 (default 1.0); a new report is fresh (freshness 1.0).
 //
 // - title    <- <title> of each locale's HTML
 // - eyebrow  <- naming.eyebrow[locale]
@@ -20,6 +23,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { reportPrice } from '../../../api/_lib/pricing.js';
 
 const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d; };
 const id = arg('id');
@@ -114,15 +118,22 @@ function extract(loc) {
 const loc = Object.fromEntries(langs.map(l => [l, extract(l)]));
 const pageCount = loc.en ? loc.en.pageCount : Object.values(loc)[0].pageCount;
 for (const l of langs) if (loc[l].pageCount !== pageCount) { console.error(`${l}: ${loc[l].pageCount} pages vs ${pageCount}`); process.exit(2); }
-const price = arg('price') ? Number(arg('price')) : (pageCount < 20 ? 39 : pageCount < 30 ? 45 : 49);
+// Exhibit count: the report's own exhibit data when it exists, else null (the price then uses an estimate, the column stays empty).
+let exhibitCount = null;
+try {
+  const ex = JSON.parse(fs.readFileSync(path.join(dir, 'exhibits.json'), 'utf8'));
+  if (Array.isArray(ex.exhibits) && ex.exhibits.length) exhibitCount = ex.exhibits.length;
+} catch (_e) { /* no exhibit data for this report */ }
+const rarity = arg('rarity') ? Number(arg('rarity')) : 1.0;
+const price = arg('price') ? Number(arg('price')) : reportPrice({ pages: pageCount, exhibits: exhibitCount, rarity });
 
 const kw = '[' + naming.keywords.map(q).join(',') + ']';
 const tuples = langs.map(l => `(${q(l)}, ${q(loc[l].title)}, ${q(loc[l].eyebrow)}, ${q(JSON.stringify(loc[l].preview))}, ${q(JSON.stringify(loc[l].toc))})`).join(',\n  ');
 console.log(`WITH new_report AS (
-  INSERT INTO living_reports (slug, code, country, industry, industry_code, stage, report_type, segment, keywords, year, pages, price, currency, status, published_at)
-  VALUES (${q(naming.slug)}, ${q(naming.code)}, ${q(naming.country)}, ${q(naming.industry)}, ${q(naming.industry_code)}, ${q(naming.stage)}, ${q(naming.type)}, ${q(naming.segment)}, ARRAY${kw}::text[], ${naming.year}, ${pageCount}, ${price}, 'USD', 'published', now())
+  INSERT INTO living_reports (slug, code, country, industry, industry_code, stage, report_type, segment, keywords, year, pages, exhibits, rarity, price, currency, status, published_at)
+  VALUES (${q(naming.slug)}, ${q(naming.code)}, ${q(naming.country)}, ${q(naming.industry)}, ${q(naming.industry_code)}, ${q(naming.stage)}, ${q(naming.type)}, ${q(naming.segment)}, ARRAY${kw}::text[], ${naming.year}, ${pageCount}, ${exhibitCount == null ? 'NULL' : exhibitCount}, ${rarity}, ${price}, 'USD', 'published', now())
   ON CONFLICT (slug) DO UPDATE SET
-    updated_at = now(), published_at = now(), pages = EXCLUDED.pages, status = 'published',
+    updated_at = now(), published_at = now(), pages = EXCLUDED.pages, exhibits = coalesce(EXCLUDED.exhibits, living_reports.exhibits), status = 'published',
     code = coalesce(living_reports.code, EXCLUDED.code), keywords = EXCLUDED.keywords
   RETURNING id
 )
@@ -137,4 +148,4 @@ ON CONFLICT (report_id, locale) DO UPDATE SET
   title = EXCLUDED.title, eyebrow = EXCLUDED.eyebrow, preview = EXCLUDED.preview, toc = EXCLUDED.toc,
   pdf_url = EXCLUDED.pdf_url, status = 'published', published_at = now()
 RETURNING report_id, locale, title;`);
-console.error(`build-publish-sql: ${naming.slug} (${naming.code}) ${pageCount} pages, $${price}, locales ${langs.join(',')}, toc ${loc[langs[0]].toc.length} rows${chartPage ? ', chart from page ' + chartPage : ''}`);
+console.error(`build-publish-sql: ${naming.slug} (${naming.code}) ${pageCount} pages, ${exhibitCount == null ? 'no' : exhibitCount} exhibits, $${price}, locales ${langs.join(',')}, toc ${loc[langs[0]].toc.length} rows${chartPage ? ', chart from page ' + chartPage : ''}`);

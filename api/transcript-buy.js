@@ -1,6 +1,6 @@
 // ============================================================
 // KIRA RESEARCH — api/transcript-buy.js
-// PayPal checkout for one Kira Experts transcript (all its languages), $29 (api/_lib/pricing.js).
+// PayPal checkout for one Kira Experts transcript (all its languages), its price (expert_transcripts.price, api/_lib/pricing.js).
 //
 //   POST /api/transcript-buy?action=create   body { slug, locale, licence? }   (Bearer optional: guest checkout)
 //       → { approveUrl, orderId, amount, currency, licence, nonce? }   (403 checkout_closed while off)
@@ -17,7 +17,7 @@
 import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
 import { sendPurchaseReceipt } from './_lib/email.js';
 import { getConfig } from './_lib/config.js';
-import { TRANSCRIPT_PRICE } from './_lib/pricing.js';
+import { transcriptPriceOf } from './_lib/pricing.js';
 import { SLUG_RE, LOCALES } from './_lib/transcripts.js';
 import { licencePrice, normLicence } from './_lib/licence.js';
 import { signGuestToken, maskEmail } from './_lib/guest-access.js';
@@ -82,10 +82,10 @@ export default async function handler(req, res) {
       const buyer = await createBuyer(req);   // signed-in buyer, or a guest nonce: the order is bound to it (custom_id)
       if (buyer.guest && guestOrderLimited(req)) { res.status(429).json({ error: 'too_many_orders' }); return; }
 
-      const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=id,slug&limit=1`);
+      const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=id,slug,price&limit=1`);
       if (!rows[0]) { res.status(404).json({ error: 'transcript_not_found' }); return; }
 
-      const amount = licencePrice(TRANSCRIPT_PRICE, licence).toFixed(2);
+      const amount = licencePrice(transcriptPriceOf(rows[0]), licence).toFixed(2);
       const token = await getPayPalToken();
       const orderRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
         method: 'POST',
@@ -134,8 +134,8 @@ export default async function handler(req, res) {
         token, orderId, kind: 'transcript', userId: buyer.ownerId,
         priceFor: async ({ item, licence }) => {
           if (!SLUG_RE.test(item)) return null;
-          const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(item)}&select=id,slug&limit=1`);
-          return rows[0] ? { ...rows[0], expected: licencePrice(TRANSCRIPT_PRICE, licence) } : null;
+          const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(item)}&select=id,slug,price&limit=1`);
+          return rows[0] ? { ...rows[0], expected: licencePrice(transcriptPriceOf(rows[0]), licence) } : null;
         }
       });
       if (cap.error) { res.status(cap.status).json({ error: cap.error }); return; }

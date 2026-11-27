@@ -11,7 +11,7 @@ import { i18nCurrent } from './gate.js';
 import { countryLabel } from './i18n.js';
 
 export const PAGE_SIZE = 50;
-export const BANDS = [['u100', 'Under 100', 0, 99], ['b100', '100 to 299', 100, 299], ['b300', '300 to 500 ($36)', 300, 500], ['o500', 'Over 500 ($57)', 501, Infinity]];
+export const BANDS = [['u100', 'Under 100', 0, 99], ['b100', '100 to 299', 100, 299], ['b300', '300 to 500', 300, 500], ['o500', 'Over 500', 501, Infinity]];
 export const bandOf = (n) => (BANDS.find((b) => n >= b[2] && n <= b[3]) || BANDS[0])[0];
 export const TOP_FAMILIES = 12;
 export const SORTS = [['', 'Largest', 'largest first'], ['small', 'Smallest', 'smallest first'], ['az', 'A–Z', 'A to Z']];

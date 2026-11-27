@@ -36,6 +36,9 @@ try {
     { report_id: report.id, data, exhibit_count: data.exhibits.length, updated_at: new Date().toISOString() },
     { onConflict: 'report_id' });
   if (e2) throw new Error(`report_exhibits: ${e2.message}`);
+  // The report page shows the chart count and the Excel/PowerPoint line only when this is set (migration 079).
+  const { error: e3 } = await db.from('living_reports').update({ exhibits: data.exhibits.length }).eq('id', report.id);
+  if (e3) throw new Error(`living_reports.exhibits: ${e3.message}`);
   console.log(JSON.stringify({ ok: true, slug: naming.slug, report_id: report.id, exhibits: data.exhibits.length }));
 } catch (e) {
   console.log(JSON.stringify({ ok: false, error: String(e.message || e) }));
