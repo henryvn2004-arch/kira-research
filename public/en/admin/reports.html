@@ -53,9 +53,11 @@
     <div id="admin-root">
       <div class="admin-empty">Loading…</div>
     </div>
+    <div id="admin-prices"></div>
   </div>
 
   <script src="/js/nav.js" defer></script>
+  <script src="/js/admin-prices.js"></script>
 
   <script type="module">
     // Wait for auth helper.
@@ -99,11 +101,15 @@
     // ── Hash router ──────────────────────────────────────
     async function route() {
       const hash = window.location.hash || '';
+      const pbox = document.getElementById('admin-prices');
+      if (pbox) pbox.innerHTML = '';
       try {
         if (hash === '#new')                       return await renderEditor(null);
         const m = hash.match(/^#edit\/([0-9a-f-]{20,})$/);
         if (m)                                     return await renderEditor(m[1]);
-        return await renderList();
+        await renderList();
+        if (pbox && window.kiraAdminPrices) window.kiraAdminPrices.mount(pbox, 'report');
+        return;
       } catch (err) {
         renderFatal(err);
       }

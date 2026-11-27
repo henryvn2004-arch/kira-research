@@ -176,6 +176,7 @@
       const res = await K.start({ endpoint: '/api/transcript-buy', body: { slug, locale }, item: 'transcript', id: slug, name: data.title || slug });
       if (res.error) { alert(res.error === 'waiver' ? K.t('waiverNeeded', locale) : res.error === 'network' ? K.t('network', locale) : K.t('startFail', locale) + ' (' + res.error + ').'); buyBtn.disabled = false; }
     });
+    window.kiraCheckout.focusBuy('tv-buy');   // ?buy=1 from emails
   }
 
   const subBtn = document.getElementById('tv-subscribe');

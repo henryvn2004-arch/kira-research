@@ -87,9 +87,11 @@
     </nav>
 
     <div id="admin-root"><div class="pl-empty">Loading…</div></div>
+    <div id="admin-prices"></div>
   </div>
 
   <script src="/js/nav.js" defer></script>
+  <script src="/js/admin-prices.js"></script>
 
   <script type="module">
     while (!window.kiraAuth) await new Promise(r => setTimeout(r, 20));
@@ -161,7 +163,7 @@
       }));
     }
 
-    try { await load(); }
+    try { await load(); window.kiraAdminPrices.mount(document.getElementById('admin-prices'), 'transcript'); }
     catch (e) { root.innerHTML = `<div class="pl-empty">Could not load transcripts (${esc(e.message)}).</div>`; }
   </script>
 </body>
