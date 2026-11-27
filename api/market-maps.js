@@ -24,6 +24,7 @@ import { getIndex, getNames, parseParams, isFiltered, hubModel, countryModel, hu
 import { isIndexable, i18nCurrent } from './_lib/market-map/gate.js';
 import { ui, LOCS, countryLabel } from './_lib/market-map/i18n.js';
 import { listPrice } from './_lib/pricing.js';
+import { getBizdirectLists } from './_lib/bizdirect-lists.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -158,8 +159,9 @@ export default async function handler(req, res) {
   const langs = index ? LOCALES.filter(langOk) : [];
   row.stats.price_usd = listPrice(row.n_companies);   // the price is always the server rule, whatever the stats file says
   const C = loc === 'en' ? (row.commentary || null) : (current(loc) && row.i18n[loc].commentary) || null;
+  const bdLists = await getBizdirectLists(row.country, row.segment_key);   // [] when the partner is slow or down: the page is unchanged
   const html = renderDocument(row.stats, C, {
-    loc, canonical: `${BASE}/${loc}/market-maps/${row.slug}`, robots: index ? 'index,follow' : 'noindex,follow', buy,
+    loc, bdLists, canonical: `${BASE}/${loc}/market-maps/${row.slug}`, robots: index ? 'index,follow' : 'noindex,follow', buy,
     segName: loc === 'en' ? row.stats.segment : (segNames[loc] || row.stats.segment), countryName: countryLabel(row.country, row.stats.country, loc),
     alternates: alternatesFor(langs, (l) => `${BASE}/${l}/market-maps/${row.slug}`),
   });

@@ -547,6 +547,14 @@ Finds or creates each company in `entities` and writes this report's rows in `in
 
 Runs the same checks as `check-exhibits.mjs`, then writes the numbers behind this report's exhibits to `report_exhibits` (re-running replaces them); readers who own the report get Excel and PowerPoint download buttons. Prints one JSON line; `"ok": true` expected. NOT fatal: a report without exhibit data just has no download buttons, so note a failure (or a missing `exhibits.json`) in the fire summary and continue. Reports made before 2026-10-12 have none; skip them.
 
+**5.3b-4c — Link the report to its market map (migration 077; sister-site company lists).**
+
+```bash
+node scripts/match-market-maps.mjs --write --only reports --slug ${slug}
+```
+
+Fills `living_reports.market_map_country` / `market_map_segment` by a code match against the published market maps (same country, every word of the map's segment in the report's segment). An unclear match stays empty and the report simply shows no BizDirect links. Prints one JSON line. NOT fatal: note a failure (or `"matched": 0`) in the fire summary and continue. Needs `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` like the other publish scripts; skip while migration 077 is not applied.
+
 **5.3b-5 — Build the Kira Chain draft.**
 
 ```bash

@@ -137,7 +137,7 @@ async function renderTranscript(req, res, loc, slug) {
     hreflang: have.map((l) => ({ locale: l, url: `${BASE}/${l}/experts/transcripts/${base.slug}` })),
     xDefault: have.includes('en') ? `${BASE}/en/experts/transcripts/${base.slug}` : null,
     ld, content,
-    slots: { KP: await keyPointsHtml(base.slug, served).catch(() => ''), KB: await transcriptCompaniesHtml(base.slug, served).catch(() => '') },
+    slots: { KP: await keyPointsHtml(base.slug, served).catch(() => ''), KB: await transcriptCompaniesHtml(base.slug, served, await sbT(`expert_transcripts?id=eq.${base.id}&select=market_map_country,market_map_segment&limit=1`).then((r) => r[0] || null).catch(() => null)).catch(() => '') },
   });
   send(res, html);
   return true;
@@ -271,7 +271,7 @@ async function renderReport(req, res, loc, slug) {
     ogImage: cover && cover.full,
     hreflang: have.map((l) => ({ locale: l, url: `${BASE}/${l}/reports/${base.slug}` })),
     xDefault: `${BASE}/en/reports/${base.slug}`, ld, content,
-    slots: { KQ: await keyQuestionsHtml(base.slug, served).catch(() => ''), KB: await reportCompaniesHtml(base.slug, served).catch(() => '') },
+    slots: { KQ: await keyQuestionsHtml(base.slug, served).catch(() => ''), KB: await reportCompaniesHtml(base.slug, served, base).catch(() => '') },
   }));
   return true;
 }

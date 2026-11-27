@@ -20,6 +20,7 @@ import { BASE, esc, ldJson, HREFLANG, OG_LOCALE } from '../ssr.js';
 import { citeBlock, citationText } from '../cite.js';
 import { BANDS, SORTS, isFiltered, hubHref } from './hub.js';
 import { LOCS, ui, lab, labShort, nfLoc } from './i18n.js';
+import { listsBlockHtml } from '../bizdirect-lists.js';
 
 // "Company data: BizDirect Asia" with a link to the sister site (the pages are mostly English; the label follows opts.loc when given).
 const CD_LABEL = { en: 'Company data', ja: '企業データ', ko: '기업 데이터', zh: '企业数据' };
@@ -308,6 +309,7 @@ export const MM_CSS = `
 .mm .buy .msg{margin-top:8px;font-size:13px;color:var(--muted)}
 .mm .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 22px;margin-top:8px;font-size:13px;color:var(--muted)}
 .mm .method{display:grid;grid-template-columns:1fr 1fr;gap:24px}.mm .method h3{font-size:13px;border-top:2px solid var(--primary);padding-top:8px;margin-bottom:6px}.mm .method p,.mm .method li{font-size:12px;color:var(--muted)}.mm .method ul{padding-left:16px}
+.mm .mm-bd{margin:26px 0 0}.mm .mm-bd h2{font-size:18px;margin:0 0 4px}.mm .mm-bd .bd-sub{margin:0 0 8px;color:var(--muted);font-size:13px}.mm .mm-bd ul{margin:0;padding-left:18px;line-height:1.7}.mm .mm-bd a{color:var(--primary)}.mm .mm-bd .bd-n{color:var(--muted);font-size:13px}
 .mm .foot{margin-top:30px;border-top:2px solid var(--text);padding-top:10px;font-size:11px;color:var(--muted-dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .mm.r-container{max-width:1240px;padding:0 24px 40px}.mm .lib2{padding-block:28px 24px}
 .mm .lrow .chip{max-width:100%}.mm .lrow{grid-template-columns:52px minmax(0,1fr) auto}.mm .lrow::after{content:"View list →";border:1px solid var(--primary);color:var(--primary);border-radius:8px;padding:9px 16px;font-size:14px;font-weight:600;white-space:nowrap}.mm .lrow:hover::after{background:var(--primary);color:#fff}.mm .mm-sort{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}.mm .mm-sort a{white-space:nowrap;padding:4px 10px;border:1px solid var(--border-strong);border-radius:999px;color:var(--text)}.mm .mm-sort a.on{background:var(--primary);border-color:var(--primary);color:#fff}.mm .mm-bycountry{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:14px}.mm .mm-bycountry b{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.mm .mm-bycountry a{color:var(--primary)}.mm .lrow .meta b{color:var(--text);font-weight:600}.mm .mm-ico{width:52px;height:52px;border-radius:12px;background:var(--primary-soft,#EAF1FE);color:var(--primary);display:flex;align-items:center;justify-content:center;flex:none}.mm .mm-ico svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -469,6 +471,7 @@ ${showBrands ? `<figure><h3 class="at">${esc(Ti.brands)}</h3><div class="sub">${
 <div class="take" data-slot="takeaway"><div class="lab">${esc(t.takeLab)}</div><p>${esc(tk)}</p></div>
 ${sec1}${sec2}${sec3}${sec3b}${sec4}${sec5}${impl}${sec7}
 ${buyBox(S, { ...opts, loc })}
+${listsBlockHtml(opts.bdLists, loc, 'bd-lists mm-bd')}
 ${sec8}
 ${citeHtml(t.citeTitle(seg, cn), S.built, opts.canonical || `${BASE}/${loc}/market-maps/${S.meta?.slug}`, loc)}
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>${bdCredit(loc)} · ${esc(t.snap(S.built))}</span></div>
