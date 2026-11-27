@@ -35,7 +35,7 @@ test('getBizdirectLists: caches an answer', async () => {
 });
 test('listsBlockHtml: 4 languages, escapes, empty = ""', () => {
   const rows = parseLists(good);
-  for (const l of ['en', 'ja', 'ko', 'zh']) assert.match(listsBlockHtml(rows, l), /bizdirectasia\.com\/vietnam\/coffee-distributors/);
+  for (const l of ['en', 'ja', 'ko', 'zh']) assert.ok(listsBlockHtml(rows, l).includes('href="https://bizdirectasia.com/vietnam/coffee-distributors"'));
   assert.match(listsBlockHtml(rows, 'en'), /See the full lists on BizDirect Asia/);
   assert.equal(listsBlockHtml([], 'en'), '');
   assert.doesNotMatch(listsBlockHtml(rows, 'en'), /utm_|nofollow/);
