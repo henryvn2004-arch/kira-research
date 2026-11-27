@@ -69,9 +69,31 @@ test('helpers', () => {
 });
 
 test('a BizDirect press draft with a non-Latin company name and a local news domain passes the same guards', () => {
-  const row = draft({ source_key: 'bizdirect_press', url: 'https://vnexpress.net/tin-tuc/abc-123.html', company: 'トヨタ自動車' });
+  const row = draft({ source_key: 'bizdirect_press', url: 'https://vnexpress.net/tin-tuc/abc-123.html', company: 'トヨタ自動車', title: 'Toyota opens a plant in Vietnam', raw: { hq_country: 'JP' } });
   const r = checkDecision(row, publish(), [], NOW);
   assert.equal(r.ok, true);
   assert.equal(r.patch.status, 'published');
   assert.ok(companyKey('トヨタ自動車').length > 0);
+});
+
+test('bridge guards: aggregator url, domain mismatch, non-English title, investor vs HQ (Teneo case)', () => {
+  const b = (o = {}) => draft({ source_key: 'bizdirect_press', domain: 'example.com', title: 'Acme opens a plant in Vietnam', raw: { hq_country: 'JP' }, ...o });
+  assert.equal(checkDecision(b(), publish(), [], NOW).ok, true);
+  assert.equal(checkDecision(draft({ url: 'https://news.google.com/rss/articles/abc' }), publish(), [], NOW).error, 'aggregator_url');
+  assert.equal(checkDecision(b({ domain: 'news.google.com', url: 'https://news.google.com/x' }), publish(), [], NOW).error, 'aggregator_url');
+  assert.equal(checkDecision(b({ url: 'https://other.com/a' }), publish(), [], NOW).error, 'url_domain_mismatch');
+  assert.equal(checkDecision(b({ url: 'https://www.example.com/a' }), publish(), [], NOW).ok, true);
+  assert.equal(checkDecision(b({ title: '工場をベトナムに新設' }), publish(), [], NOW).error, 'title_not_english');
+  assert.equal(checkDecision(b({ raw: {} }), publish(), [], NOW).error, 'hq_country_missing');
+  assert.equal(checkDecision(b({ investor_country: 'AU', raw: { hq_country: 'US' } }), publish(), [], NOW).error, 'investor_mismatch_hq');
+  assert.equal(checkDecision(b({ investor_country: 'AU', raw: { hq_country: 'US' } }), publish({ investor_country: 'US' }), [], NOW).ok, true);
+  assert.equal(checkDecision(draft({ title: '工場' }), publish(), [], NOW).ok, true); // non-bridge sources keep their own rules
+});
+
+test('isEnglishTitle: Vietnamese and CJK titles fail, English passes', async () => {
+  const { isEnglishTitle } = await import('../api/_lib/moves/review.js');
+  assert.equal(isEnglishTitle('Samsung Electronics khai trương Business Experience Studio tại Việt Nam'), false);
+  assert.equal(isEnglishTitle('PepsiCo sắp sa thải 1.000 nhân viên'), false);
+  assert.equal(isEnglishTitle('工場をベトナムに新設'), false);
+  assert.equal(isEnglishTitle('Gamuda opens new plant in Vietnam'), true);
 });

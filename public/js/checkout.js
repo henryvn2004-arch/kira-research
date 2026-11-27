@@ -186,7 +186,7 @@
       var value = Number(b.amount != null ? b.amount : po.v);
       var item = o.item || po.it;
       track('purchase', { it: item, v: value });
-      gtag('purchase', { transaction_id: orderId, currency: 'USD', value: value, items: gaItem(item, o.id || po.id, o.name || po.n, value) });
+      gtag('purchase', { transaction_id: String((b.order && b.order.id) || orderId), currency: 'USD', value: value, items: gaItem(item, o.id || po.id, o.name || po.n, value) });
     }
     ls('remove', 'kira_po_' + orderId);
     return { ok: true, body: b, guestEmail: guestEmail };

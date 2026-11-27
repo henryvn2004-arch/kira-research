@@ -19,10 +19,26 @@
   'use strict';
   if (window.kiraTrack) return;
   var noop = function () {};
+  window.kiraPurchase = noop;   // replaced below when tracking is on (prod, no Do Not Track, not admin)
   var loc = window.location;
   var onProd = /^(www\.)?kiraresearch\.com$/.test(loc.hostname);
   var dnt = navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.msDoNotTrack === '1';
   if (!onProd || dnt || /^\/(en\/)?admin(\/|$)/.test(loc.pathname)) { window.kiraTrack = noop; return; }
+
+  // GA4 `purchase` (W4, 2026-11-27): called by the buy pages AFTER the server confirmed the order as completed.
+  //   o = { id: internal order id, value, currency, slug, name, kind: report | transcript | list | subscription }
+  // Fires once per order id (sessionStorage guard, so a reload never counts it twice). Sends no email and no personal data.
+  window.kiraPurchase = function (o) {
+    try {
+      if (!o || !o.id || typeof window.gtag !== 'function') return;
+      var key = 'kira_purchase_' + o.id;
+      try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, '1'); } catch (_e) { /* storage blocked: fire anyway */ }
+      window.gtag('event', 'purchase', {
+        transaction_id: String(o.id), value: Number(o.value) || 0, currency: o.currency || 'USD',
+        items: [{ item_id: String(o.slug || o.kind || ''), item_name: String(o.name || o.slug || ''), item_category: String(o.kind || '') }]
+      });
+    } catch (_e) { /* never break a purchase page */ }
+  };
 
   var sid;
   try {

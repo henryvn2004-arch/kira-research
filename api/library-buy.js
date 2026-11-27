@@ -282,6 +282,7 @@ export default async function handler(req, res) {
         purchase: { id: purchase.id, slug: purchase.slug, locale: purchase.locale },
         licence: purchase.licence || licence,
         amount: Number(purchase.amount),
+        order: { id: purchase.id, amount: Number(purchase.amount) || 0, currency: purchase.currency || 'USD' },
         ...(guestEmail ? { guest: { email: maskEmail(guestEmail), accessToken: signGuestToken({ kind: 'report', slug, pid: purchase.id }) } } : {})
       });
       return;

@@ -7,6 +7,7 @@
 // ============================================================
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { orgLdTag } from './org-ld.js';
 
 export const BASE = 'https://kiraresearch.com';
 export const LOCALES = ['en', 'ja', 'ko', 'zh'];
@@ -79,6 +80,7 @@ export function fillTemplate(html, opts) {
   if (robots) head += `<meta name="robots" content="${esc(robots)}" />\n`;
   for (const h of opts.hreflang || []) head += `<link rel="alternate" hreflang="${esc(HREFLANG[h.locale])}" href="${esc(h.url)}" data-ssr="1" />\n`;
   if (opts.xDefault) head += `<link rel="alternate" hreflang="x-default" href="${esc(opts.xDefault)}" data-ssr="1" />\n`;
+  if (!(opts.ld || []).some((l) => l.id === 'ld-organization')) head += orgLdTag(locale) + '\n';
   for (const l of opts.ld || []) head += `<script type="application/ld+json" id="${l.id}">${ldJson(l.data)}</script>\n`;
   out = out.replace('</head>', () => head + '</head>');
 

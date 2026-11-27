@@ -13,6 +13,16 @@ const PR = `${LIST_PRICE_MIN}–${LIST_PRICE_MAX}`;
 export const LOCS = ['en', 'ja', 'ko', 'zh'];
 export const NUM_LOCALE = { en: 'en-US', ja: 'ja-JP', ko: 'ko-KR', zh: 'zh-CN' };
 export const nfLoc = (n, loc = 'en') => Number(n).toLocaleString(NUM_LOCALE[loc] || 'en-US');
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+// "2026-11-24" / ISO timestamp -> "November 2026" | "2026年11月" | "2026년 11월". '' for an unusable date.
+export function monthYear(d, loc = 'en') {
+  const m = /^(\d{4})-(\d{2})/.exec(String(d || ''));
+  if (!m || +m[2] < 1 || +m[2] > 12) return '';
+  const [y, mo] = [m[1], +m[2]];
+  if (loc === 'ja' || loc === 'zh') return `${y}年${mo}月`;
+  if (loc === 'ko') return `${y}년 ${mo}월`;
+  return `${MONTHS[mo - 1]} ${y}`;
+}
 export const isLoc = (l) => LOCS.includes(l);
 
 // ── country names by URL slug (the 15 markets plus Hong Kong; same wording as api/_lib/geo-i18n.js) ──
@@ -81,8 +91,8 @@ const en = {
   tConc: (s, l) => `${s}% of companies are Small; only ${l}% are Large`,
   tCerts: (nm, c) => `${nm} is the most-cited certification (${c})`,
   tOrigins: (nm, c) => `${nm} is the most-cited sourcing origin (${c})`,
-  takeaway: (n, seg, cn, st, ax, p, sub, sp, reg, rp, sm, lg) => [
-    `We map ${n} ${seg} companies in ${cn}.`,
+  takeaway: (n, seg, cn, st, ax, p, sub, sp, reg, rp, sm, lg, src) => [
+    `We map ${n} ${seg} companies in ${cn}${src ? ` (${src})` : ''}.`,
     `${st} is the largest ${ax} at ${p}%${sub ? ` and ${sub} the largest sub-category at ${sp}%` : ''}.`,
     reg ? `${reg} holds ${rp}% of them.` : '',
     `${sm}% of companies are Small and ${lg}% are Large by website footprint.`,
@@ -92,6 +102,7 @@ const en = {
   dek: (cn, seg, axT, built) => `A company-level map of ${seg} companies in ${cn}, compiled from company websites by ${axT}, region and relative scale. Snapshot ${built}.`,
   kpiMapped: 'companies mapped', kpiMakers: 'manufacturers / brand owners', kpiTraders: 'importers, distributors and wholesalers', kpiPhone: 'with a company phone in the Excel list',
   snap: (b) => `snapshot ${b}`,
+  srcLab: (dt) => `BizDirect Asia company database, ${dt}`,
   takeLab: 'Executive takeaway', soWhat: 'So what',
   sStructure: 'Structure of the mapped company base',
   subMekko: (ax, y, n) => `Column width = companies in the ${ax}; height = share of the ${ax} by ${y}; cells of 5% of all companies or more are labelled. Based on all ${n} mapped companies.`,
@@ -203,8 +214,8 @@ const ja = {
   tConc: (s, l) => `企業の${s}%が小規模で、大規模は${l}%にとどまります`,
   tCerts: (nm, c) => `最も多く挙げられた認証は${nm}です(${c})`,
   tOrigins: (nm, c) => `最も多く挙げられた調達元は${nm}です(${c})`,
-  takeaway: (n, seg, cn, st, ax, p, sub, sp, reg, rp, sm, lg) => [
-    `${cn}の${seg}企業${n}社をマッピングしました。`,
+  takeaway: (n, seg, cn, st, ax, p, sub, sp, reg, rp, sm, lg, src) => [
+    `${cn}の${seg}企業${n}社をマッピングしました${src ? `(${src})` : ''}。`,
     `最大の${ax}は${st}で${p}%${sub ? `、最大のサブカテゴリーは${sub}で${sp}%` : ''}です。`,
     reg ? `${reg}に${rp}%が集まっています。` : '',
     `ウェブ上の情報量で見ると、小規模が${sm}%、大規模が${lg}%です。`,
@@ -213,6 +224,7 @@ const ja = {
   dek: (cn, seg, axT, built) => `${cn}の${seg}企業を、各社のウェブサイトの情報をもとに${axT}・地域・相対規模別に整理した、企業単位のマップです。時点:${built}。`,
   kpiMapped: 'マッピング企業数', kpiMakers: 'メーカー／ブランドオーナー', kpiTraders: '輸入・流通・卸売企業', kpiPhone: 'Excelリストに代表電話を収録した割合',
   snap: (b) => `${b}時点`,
+  srcLab: (dt) => `BizDirect Asia企業データベース、${dt}時点`,
   takeLab: 'この市場の要点', soWhat: '示唆',
   sStructure: 'マッピング対象企業の構成',
   subMekko: (ax, y, n) => `列の幅=${ax}ごとの企業数、高さ=各${ax}内の${y}別構成比。全企業の5%以上を占めるセルに数値を表示しています。マッピング対象${n}社すべてを集計。`,
@@ -319,8 +331,8 @@ const ko = {
   tConc: (s, l) => `기업의 ${s}%가 소형이며 대형은 ${l}%에 그칩니다`,
   tCerts: (nm, c) => `가장 많이 언급된 인증은 ${nm}입니다(${c})`,
   tOrigins: (nm, c) => `가장 많이 언급된 조달 국가는 ${nm}입니다(${c})`,
-  takeaway: (n, seg, cn, st, ax, p, sub, sp, reg, rp, sm, lg) => [
-    `${cn}의 ${seg} 기업 ${n}개를 매핑했습니다.`,
+  takeaway: (n, seg, cn, st, ax, p, sub, sp, reg, rp, sm, lg, src) => [
+    `${cn}의 ${seg} 기업 ${n}개를 매핑했습니다${src ? `(${src})` : ''}.`,
     `가장 큰 ${ax}는 ${st}로 ${p}%${sub ? `, 가장 큰 하위 카테고리는 ${sub}로 ${sp}%` : ''}입니다.`,
     reg ? `${reg}에 ${rp}%가 모여 있습니다.` : '',
     `웹사이트 정보량 기준으로 소형이 ${sm}%, 대형이 ${lg}%입니다.`,
@@ -329,6 +341,7 @@ const ko = {
   dek: (cn, seg, axT, built) => `${cn}의 ${seg} 기업을 각 사 웹사이트 정보를 바탕으로 ${axT}·지역·상대 규모별로 정리한 기업 단위 지도입니다. 기준일: ${built}.`,
   kpiMapped: '매핑된 기업', kpiMakers: '제조사/브랜드 보유사', kpiTraders: '수입·유통·도매 기업', kpiPhone: '엑셀 리스트에 대표 전화가 있는 비율',
   snap: (b) => `${b} 기준`,
+  srcLab: (dt) => `BizDirect Asia 기업 데이터베이스, ${dt} 기준`,
   takeLab: '핵심 요약', soWhat: '시사점',
   sStructure: '매핑 대상 기업의 구성',
   subMekko: (ax, y, n) => `열 너비 = ${ax}별 기업 수, 높이 = 각 ${ax} 내 ${y}별 비중. 전체 기업의 5% 이상인 칸에는 수치를 표시했습니다. 매핑된 ${n}개 기업 전체 기준.`,
@@ -435,8 +448,8 @@ const zh = {
   tConc: (s, l) => `${s}%的企业为小型企业，大型企业仅占${l}%`,
   tCerts: (nm, c) => `被提及最多的认证是${nm}（${c}）`,
   tOrigins: (nm, c) => `被提及最多的采购来源地是${nm}（${c}）`,
-  takeaway: (n, seg, cn, st, ax, p, sub, sp, reg, rp, sm, lg) => [
-    `我们在${cn}收录了${n}家${seg}企业。`,
+  takeaway: (n, seg, cn, st, ax, p, sub, sp, reg, rp, sm, lg, src) => [
+    `我们在${cn}收录了${n}家${seg}企业${src ? `（${src}）` : ''}。`,
     `最大的${ax}是${st}，占${p}%${sub ? `；最大的子类别是${sub}，占${sp}%` : ''}。`,
     reg ? `其中${reg}集中了${rp}%。` : '',
     `按网站信息体量衡量，小型企业占${sm}%，大型企业占${lg}%。`,
@@ -445,6 +458,7 @@ const zh = {
   dek: (cn, seg, axT, built) => `基于企业官网信息，按${axT}、地区和相对规模梳理${cn}${seg}企业的企业级地图。数据截至${built}。`,
   kpiMapped: '已收录企业', kpiMakers: '制造商/品牌方', kpiTraders: '进口商、分销商和批发商', kpiPhone: 'Excel名单中含企业电话的比例',
   snap: (b) => `截至${b}`,
+  srcLab: (dt) => `BizDirect Asia企业数据库，截至${dt}`,
   takeLab: '核心结论', soWhat: '启示',
   sStructure: '已收录企业的构成',
   subMekko: (ax, y, n) => `列宽=各${ax}的企业数，高度=各${ax}内按${y}划分的占比；占全部企业5%及以上的单元格标注了数值。基于全部${n}家已收录企业。`,

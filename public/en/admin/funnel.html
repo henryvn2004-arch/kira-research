@@ -231,7 +231,11 @@
           <p class="fn-note">Counted from the database, only for people whose browser allowed it (not Do Not Track) and who came through an ad click. Ads that reach the site but produce no sign-up do not appear here; Google Ads shows those clicks and their cost.</p>
           <p><button class="fn-link" id="fn-ads-csv">Download conversions for Google Ads (CSV, last ${Math.min(state.days, 90)} days)</button></p>
           <p><button class="fn-link" data-ads-file="campaign">Download the campaign file for Google Ads Editor (first 100 topics, everything paused)</button>
-             &nbsp;·&nbsp; <button class="fn-link" data-ads-file="negatives">Download the negative keyword list</button></p>`
+             &nbsp;·&nbsp; <button class="fn-link" data-ads-file="negatives">Download the negative keyword list</button></p>
+          <p><b>Dynamic Search Ads test:</b>
+             <button class="fn-link" data-ads-file="pagefeed">Page feed (CSV)</button>
+             &nbsp;·&nbsp; <button class="fn-link" data-ads-file="dsa">DSA campaign file for Ads Editor (paused)</button>
+             &nbsp;·&nbsp; <button class="fn-link" data-ads-file="dsa-negatives">DSA negative keywords</button></p>`
           : '<div class="fn-empty">Not available yet.</div>'}
         </div>
 
@@ -268,11 +272,12 @@
         btn.disabled = true;
         try {
           const session = (await window.db.auth.getSession()).data.session;
-          const negatives = btn.dataset.adsFile === 'negatives';
-          const r = await fetch('/api/admin-ads-campaign' + (negatives ? '?kind=negatives' : ''), { headers: { Authorization: 'Bearer ' + session.access_token } });
+          const kind = btn.dataset.adsFile, negatives = kind === 'negatives';
+          const names = { pagefeed: 'kira-ads-page-feed.csv', dsa: 'kira-ads-dsa-campaign.csv', 'dsa-negatives': 'kira-dsa-negative-keywords.txt' };
+          const r = await fetch('/api/admin-ads-campaign' + (kind === 'campaign' ? '' : '?kind=' + kind), { headers: { Authorization: 'Bearer ' + session.access_token } });
           if (!r.ok) throw new Error(String(r.status));
           const a = document.createElement('a'); a.href = URL.createObjectURL(await r.blob());
-          a.download = negatives ? 'kira-ads-negative-keywords.txt' : 'kira-ads-campaign-0-100.csv'; a.click();
+          a.download = names[kind] || (negatives ? 'kira-ads-negative-keywords.txt' : 'kira-ads-campaign-0-100.csv'); a.click();
         } catch (e) { alert('Could not download (' + e.message + ').'); }
         btn.disabled = false;
       }));

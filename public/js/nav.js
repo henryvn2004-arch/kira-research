@@ -164,37 +164,9 @@
 </footer>`;
 
   // ── Organization JSON-LD ───────────────────────────────────
-  // Single global entity block, identifies the publisher to crawlers across
-  // every page. Idempotent: skipped if a #ld-organization tag already exists
-  // (e.g. dynamic templates may inject their own richer entity).
-  //
-  // Skipped on Studio host — Studio pages are private (noindex) and Henry's
-  // brief is that Studio is invisible infrastructure (no KIRA branding in
-  // output), so we don't want to publish an Organization entity from there.
-  function injectOrganizationJsonLd() {
-    if (isStudioHost) return;
-    if (document.getElementById('ld-organization')) return;
-    const origin = window.location.origin;
-    const payload = {
-      '@context': 'https://schema.org',
-      '@type':    'Organization',
-      name:       'KIRA RESEARCH',
-      alternateName: 'KIRA Research',
-      url:        origin + '/',
-      logo:       origin + '/logo.png',
-      description: 'Market-entry research on Southeast Asia, Japan, South Korea, Taiwan, Australia and New Zealand.',
-      foundingLocation: {
-        '@type': 'Place',
-        address: { '@type': 'PostalAddress', addressLocality: 'Ho Chi Minh City', addressCountry: 'VN' }
-      },
-      sameAs: []
-    };
-    const el = document.createElement('script');
-    el.type = 'application/ld+json';
-    el.id   = 'ld-organization';
-    el.textContent = JSON.stringify(payload);
-    document.head.appendChild(el);
-  }
+  // Not built here any more: crawlers that do not run JavaScript never saw it. The server writes it
+  // into the HTML (api/_lib/org-ld.js: SSR pages, market maps, data pages; scripts/sync-org-ld.mjs:
+  // home, about and methodology in 4 languages). One source, no client copy.
 
   // ── Canonical injection ────────────────────────────────────
   // Tell crawlers which URL is the "real" address of this page. Pins
@@ -336,7 +308,6 @@
     injectFavicon();
     injectCanonical();
     injectHreflang();
-    injectOrganizationJsonLd();
 
     // Atmosphere div (decorative background) goes first if not already present.
     if (!document.querySelector('.atmosphere')) {

@@ -143,7 +143,7 @@ export default async function handler(req, res) {
         if (!purchase) throw err;
       }
       if (fresh) purchase = await finishBuild(purchase, userEmail, `${map.title} (company list)`, { licence, signInUrl });
-      res.status(200).json({ ok: true, purchase: view(purchase), licence: purchase.licence || licence, amount: Number(purchase.amount), ...(guestEmail ? { guest: { email: maskEmail(guestEmail) } } : {}) });
+      res.status(200).json({ ok: true, purchase: view(purchase), licence: purchase.licence || licence, amount: Number(purchase.amount), order: { id: purchase.id, amount: Number(purchase.amount) || 0, currency: 'USD', n: map.n_companies }, ...(guestEmail ? { guest: { email: maskEmail(guestEmail) } } : {}) });
       return;
     }
 

@@ -188,7 +188,7 @@ export default async function handler(req, res) {
           console.error('[transcript-buy] DOUBLE PURCHASE, refund order', orderId, 'user', userId, 'slug', slug);
         }
       }
-      res.status(200).json({ ok: true, purchase: { id: purchase.id, slug: purchase.slug }, licence: purchase.licence || licence, amount: Number(purchase.amount), ...(guestEmail ? { guest: { email: maskEmail(guestEmail), accessToken: signGuestToken({ kind: 'transcript', slug, pid: purchase.id }) } } : {}) });
+      res.status(200).json({ ok: true, purchase: { id: purchase.id, slug: purchase.slug }, licence: purchase.licence || licence, amount: Number(purchase.amount), order: { id: purchase.id, amount: Number(purchase.amount) || 0, currency: 'USD' }, ...(guestEmail ? { guest: { email: maskEmail(guestEmail), accessToken: signGuestToken({ kind: 'transcript', slug, pid: purchase.id }) } } : {}) });
       return;
     }
 

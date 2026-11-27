@@ -225,6 +225,10 @@
         await new Promise((res) => setTimeout(res, 3000));
       }
       history.replaceState({}, '', location.pathname);
+      if (info && info.subscription && info.subscription.entitled && info.subscription.id && window.kiraPurchase) {
+        const pl = info.plans && info.plans[info.subscription.plan];
+        window.kiraPurchase({ id: info.subscription.id, value: pl ? pl.price : 0, currency: 'USD', slug: info.subscription.plan, name: 'KIRA ' + info.subscription.plan + ' plan', kind: 'subscription' });
+      }
       await render(info && info.subscription && info.subscription.entitled ? { text: S.confirmed } : null);
     } else if (q.get('paypal') === 'cancel') {
       history.replaceState({}, '', location.pathname);
