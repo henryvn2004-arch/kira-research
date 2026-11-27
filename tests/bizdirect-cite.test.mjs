@@ -36,8 +36,8 @@ test('citeSentence: missing number, date, name = null; no slug = no map link', (
 });
 test('citeSentence: HTML in names is escaped; bad slug gets no link', () => {
   const s = citeSentence({ ...f, segment: '<b>x</b>&', country: '"C"', slug: 'a"><script>' }, 'en');
-  assert.doesNotMatch(s.html, /<b>|<script>/);
-  assert.match(s.html, /&lt;b&gt;x&lt;\/b&gt;&amp;/);
+  assert.ok(!s.html.includes('<b>') && !s.html.includes('</b>') && !s.html.includes('<script'));
+  assert.ok(s.html.includes('&lt;b&gt;x&lt;/b&gt;&amp;'));
   assert.doesNotMatch(s.html, /market-maps/);
 });
 test('wording: no banned words', () => {
