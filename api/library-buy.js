@@ -98,6 +98,8 @@ export default async function handler(req, res) {
       if (!isSlug(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
       if (!(await getConfig('checkout.single_report_enabled'))) { res.status(403).json({ error: 'checkout_closed' }); return; }
       const licence = normLicence(body.licence);
+      // EU/UK withdrawal acknowledgement: the buy box makes the tick required; the server refuses an order without it.
+      if (body.consent !== true) { res.status(400).json({ error: 'consent_required' }); return; }
       // Signed-in buyer, or a guest: the order is bound to the user id / the guest nonce (custom_id; capture must match).
       const buyer = await createBuyer(req);
       if (buyer.guest && guestOrderLimited(req)) { res.status(429).json({ error: 'too_many_orders' }); return; }
@@ -123,7 +125,7 @@ export default async function handler(req, res) {
             amount: { currency_code: currency, value: amount },
             description: `KIRA RESEARCH — ${slug} (${locale})`,
             // We re-derive item + locale + buyer from this field at capture time.
-            custom_id: buildCustomId('report', slug, locale, buyer.ownerId, licence)
+            custom_id: buildCustomId('report', slug, locale, buyer.ownerId, licence, true)
           }],
           application_context: {
             brand_name:   'KIRA RESEARCH',
@@ -218,7 +220,8 @@ export default async function handler(req, res) {
         captured_at:     new Date().toISOString(),
         licence,
         guest:           !!buyer.guest,
-        attribution:     cleanAttr(body.attr)
+        attribution:     cleanAttr(body.attr),
+        withdrawal_waiver: !!cap.parsed.waiver
       };
 
       let purchase, fresh = false;

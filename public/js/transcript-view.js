@@ -115,12 +115,11 @@
             '<button class="r-btn r-btn-primary" id="tv-buy" type="button">Buy full transcript — $' + data.purchase.price + '</button>' +
             '<p class="alt" style="font-size:12px">' + esc(window.kiraCheckout.t('guestNote', locale)) + '</p>' +
             (window.kiraBuyCopy ? window.kiraBuyCopy.block('transcript', { length_label: data.length_label }) : '') +
-            (subOn ? '<button class="r-btn r-btn-outline" id="tv-subscribe" type="button">Or subscribe — $' + data.subscription.price + '/month, every transcript and report included</button>'
-                   : '<a class="alt" href="' + WAITLIST + '">Or request early access to the subscription</a>')
-          : '<h3>The rest of this interview is for subscribers</h3>' +
-            '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. The full transcript, with every marked source, is part of the KIRA subscription.</p>' +
+            (subOn ? '<button class="r-btn r-btn-outline" id="tv-subscribe" type="button">Or subscribe — $' + data.subscription.price + '/month, every transcript and report included</button>' : '')
+          : '<h3>Read the full interview</h3>' +
+            '<p>You have read the opening ' + (data.totalTurns - data.lockedTurns) + ' of ' + data.totalTurns + ' turns. The full transcript, with every marked source, will be on sale soon.</p>' +
             (subOn ? '<button class="r-btn r-btn-primary" id="tv-subscribe" type="button">Subscribe — $' + data.subscription.price + '/month</button>'
-                   : '<a class="r-btn r-btn-primary" href="' + WAITLIST + '">Request early access</a>')) +
+                   : '<a class="r-btn r-btn-primary" href="' + WAITLIST + '">Tell me when it is on sale</a>')) +
         '<a class="alt" href="/auth.html?next=' + encodeURIComponent(location.pathname) + '&lang=' + locale + '" id="tv-signin">Already have access? Sign in</a>' +
       '</div></div>' +
     '</div>';
@@ -175,7 +174,7 @@
       buyBtn.disabled = true;
       const K = window.kiraCheckout;
       const res = await K.start({ endpoint: '/api/transcript-buy', body: { slug, locale }, item: 'transcript', id: slug, name: data.title || slug });
-      if (res.error) { alert(res.error === 'network' ? K.t('network', locale) : K.t('startFail', locale) + ' (' + res.error + ').'); buyBtn.disabled = false; }
+      if (res.error) { alert(res.error === 'waiver' ? K.t('waiverNeeded', locale) : res.error === 'network' ? K.t('network', locale) : K.t('startFail', locale) + ' (' + res.error + ').'); buyBtn.disabled = false; }
     });
   }
 

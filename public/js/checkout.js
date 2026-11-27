@@ -22,6 +22,7 @@
 
   var TXT = {
     en: {
+      waiverNeeded: 'Please tick the box to confirm that delivery starts immediately and ends the 14-day withdrawal right (EU/UK), then buy.',
       licHead: 'Licence', single: 'Single user', team: 'Team (up to 10 people, same company)', company: 'Company-wide',
       guestNote: 'No account needed. After payment we create one from your PayPal email and send your receipt and a sign-in link.',
       finalising: 'Finalising your purchase…', dontClose: 'Please do not close this tab.',
@@ -30,6 +31,7 @@
       startFail: 'Could not start checkout', network: 'Network error starting checkout. Please retry.', cancelled: 'Checkout cancelled. You were not charged.'
     },
     ja: {
+      waiverNeeded: '購入前に、提供が直ちに始まり、EU・英国の14日間の撤回権が終了することへの同意欄にチェックを入れてください。',
       licHead: 'ライセンス', single: '個人利用(1名)', team: 'チーム(同一企業で最大10名)', company: '全社利用',
       guestNote: 'アカウント登録は不要です。お支払い後、PayPalのメールアドレスでアカウントを作成し、領収書とサインイン用リンクをお送りします。',
       finalising: 'ご購入を確定しています…', dontClose: 'このタブを閉じないでください。',
@@ -38,6 +40,7 @@
       startFail: 'チェックアウトを開始できませんでした', network: '通信エラーが発生しました。もう一度お試しください。', cancelled: 'チェックアウトをキャンセルしました。請求は発生していません。'
     },
     ko: {
+      waiverNeeded: '구매 전에, 제공이 즉시 시작되며 EU·영국의 14일 철회권이 종료됨에 동의하는 칸에 체크해 주세요.',
       licHead: '라이선스', single: '개인 (1인)', team: '팀 (같은 회사 최대 10명)', company: '전사 라이선스',
       guestNote: '계정이 필요 없습니다. 결제 후 PayPal 이메일로 계정을 만들고 영수증과 로그인 링크를 보내 드립니다.',
       finalising: '구매를 마무리하는 중입니다…', dontClose: '이 탭을 닫지 마세요.',
@@ -46,6 +49,7 @@
       startFail: '결제를 시작하지 못했습니다', network: '네트워크 오류가 발생했습니다. 다시 시도해 주세요.', cancelled: '결제가 취소되었습니다. 요금은 청구되지 않았습니다.'
     },
     zh: {
+      waiverNeeded: '购买前请勾选确认：交付立即开始，并由此终止欧盟/英国的14天撤销权。',
       licHead: '授权', single: '个人(1人)', team: '团队(同一公司最多10人)', company: '全公司授权',
       guestNote: '无需注册账号。付款后,我们会用您的PayPal邮箱创建账号,并发送收据和登录链接。',
       finalising: '正在确认您的购买…', dontClose: '请不要关闭此标签页。',
@@ -96,13 +100,38 @@
   }
 
   // ── start: buy click -> PayPal ───────────────────────────
+  // The EU/UK withdrawal acknowledgement (checkbox .kc-waiver, drawn by buy-copy.js / the list page) must be ticked.
+  function waiverOk() {
+    var cb = document.querySelector('.kc-waiver');
+    if (cb && cb.checked) return true;
+    if (cb) { try { cb.scrollIntoView({ behavior: 'smooth', block: 'center' }); cb.focus(); } catch (_e) { /* ignore */ } }
+    return false;
+  }
+
+  // The three main buy buttons stay disabled until the box is ticked (other entry points, e.g. the locked-page dialog,
+  // are caught by waiverOk() when clicked).
+  var BUY_IDS = ['buy-btn', 'tv-buy', 'mm-buy'];
+  function syncWaiver(enable) {
+    var cb = document.querySelector('.kc-waiver');
+    if (!cb) return;
+    BUY_IDS.forEach(function (id) {
+      var b = document.getElementById(id);
+      if (!b) return;
+      if (!cb.checked) b.disabled = true; else if (enable) b.disabled = false;   // only a tick change re-enables; later DOM changes never do
+    });
+  }
+  if (typeof document.addEventListener === 'function') document.addEventListener('change', function (e) { if (e.target && e.target.classList && e.target.classList.contains('kc-waiver')) syncWaiver(true); });
+  try { new MutationObserver(function () { syncWaiver(false); }).observe(document.documentElement, { childList: true, subtree: true }); } catch (_e) { /* old browser: start() still checks the tick */ }
+  if (typeof document.addEventListener === 'function') document.addEventListener('DOMContentLoaded', function () { syncWaiver(false); });
+
   async function start(o) {
     track('buy_click', { it: o.item });
+    if (!waiverOk()) return { error: 'waiver', message: t('waiverNeeded', o.body && (o.body.locale || o.body.loc)) };
     try {
       var s = await session();
       var headers = { 'Content-Type': 'application/json' };
       if (s) headers.Authorization = 'Bearer ' + s.access_token;
-      var body = Object.assign({}, o.body || {}, { licence: o.licence || chosen });
+      var body = Object.assign({}, o.body || {}, { licence: o.licence || chosen, consent: true });
       var r = await fetch(o.endpoint + '?action=create', { method: 'POST', headers: headers, body: JSON.stringify(body) });
       var b = await r.json().catch(function () { return {}; });
       if (!r.ok || !b.approveUrl) return { error: b.error || String(r.status) };

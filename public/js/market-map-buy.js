@@ -60,7 +60,7 @@
   btn.addEventListener('click', async () => {
     btn.disabled = true;
     const res = await window.kiraCheckout.start({ endpoint: '/api/list-buy', body: { slug, loc }, item: 'list', id: slug, name: slug });
-    if (res.error) { say(res.error === 'network' ? M.network : M.startFail + ' (' + res.error + ').'); btn.disabled = false; }
+    if (res.error) { say(res.error === 'waiver' ? window.kiraCheckout.t('waiverNeeded', loc) : res.error === 'network' ? M.network : M.startFail + ' (' + res.error + ').'); btn.disabled = false; }
   });
 
   capture().catch(() => say(M.reload));

@@ -79,6 +79,8 @@ export default async function handler(req, res) {
       if (typeof slug !== 'string' || !SLUG_RE.test(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
       if (!(await getConfig('checkout.transcript_enabled'))) { res.status(403).json({ error: 'checkout_closed' }); return; }
       const licence = normLicence(body.licence);
+      // EU/UK withdrawal acknowledgement: the buy box makes the tick required; the server refuses an order without it.
+      if (body.consent !== true) { res.status(400).json({ error: 'consent_required' }); return; }
       const buyer = await createBuyer(req);   // signed-in buyer, or a guest nonce: the order is bound to it (custom_id)
       if (buyer.guest && guestOrderLimited(req)) { res.status(429).json({ error: 'too_many_orders' }); return; }
 
@@ -95,7 +97,7 @@ export default async function handler(req, res) {
           purchase_units: [{
             amount: { currency_code: 'USD', value: amount },
             description: `KIRA RESEARCH — expert transcript ${slug}`,
-            custom_id: buildCustomId('transcript', slug, locale, buyer.ownerId, licence)
+            custom_id: buildCustomId('transcript', slug, locale, buyer.ownerId, licence, true)
           }],
           application_context: {
             brand_name: 'KIRA RESEARCH', landing_page: 'BILLING', user_action: 'PAY_NOW',
@@ -157,7 +159,7 @@ export default async function handler(req, res) {
       const row = {
         user_id: userId, transcript_id: transcript.id, slug, amount: paid, currency: 'USD',
         paypal_order_id: orderId, status: 'completed', captured_at: new Date().toISOString(),
-        licence, guest: !!buyer.guest, attribution: cleanAttr(body.attr)
+        licence, guest: !!buyer.guest, attribution: cleanAttr(body.attr), withdrawal_waiver: !!cap.parsed.waiver
       };
       let purchase;
       try {
