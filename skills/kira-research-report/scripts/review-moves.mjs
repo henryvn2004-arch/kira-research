@@ -64,7 +64,7 @@ async function apply() {
   for (const d of decisions) {
     const id = Number(d && d.id);
     if (!Number.isInteger(id)) { res.skipped.push({ id: d && d.id, why: 'bad_id' }); continue; }
-    const row = (await sb(`company_events?id=eq.${id}&select=id,status,url,title,company,investor_country,host_country,type,event_date,raw`))[0];
+    const row = (await sb(`company_events?id=eq.${id}&select=id,status,source_key,url,domain,title,company,investor_country,host_country,type,event_date,raw`))[0];
     if (!row) { res.skipped.push({ id, why: 'not_found' }); continue; }
     const c = checkDecision(row, d, published);
     if (!c.ok) {

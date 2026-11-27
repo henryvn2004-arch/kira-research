@@ -18,6 +18,18 @@ export function isHttpUrl(u) {
   try { const x = new URL(String(u)); return x.protocol === 'http:' || x.protocol === 'https:'; } catch (_e) { return false; }
 }
 
+// Aggregator redirects (never a publisher's own article) and the BizDirect press bridge rules (owner 2026-11-27).
+export const BRIDGE_SOURCE = 'bizdirect_press';
+const hostOf = (u) => { try { return new URL(String(u)).hostname.toLowerCase().replace(/^www\./, ''); } catch (_e) { return ''; } };
+export function isAggregatorUrl(u) { const h = hostOf(u); return h === 'google.com' || h.endsWith('.google.com') || h === 'feedproxy.google.com'; }
+// "English" title: at most 20% of its letters outside basic Latin (so CJK, Thai, Hangul, Cyrillic and mostly-accented titles fail).
+export function isEnglishTitle(t) {
+  const letters = String(t || '').match(/\p{L}/gu) || [];
+  if (!letters.length) return false;
+  return letters.filter((c) => c.charCodeAt(0) > 0x24f).length / letters.length <= 0.2
+    && letters.filter((c) => /[^\x00-\x7f]/.test(c)).length / letters.length <= 0.2;
+}
+
 const days = (a, b) => Math.abs(Date.parse(a) - Date.parse(b)) / 864e5;
 
 /**
@@ -47,6 +59,17 @@ export function checkDecision(row, decision, published = [], now = new Date()) {
   const type = d.type !== undefined ? d.type : row.type;
 
   if (!isHttpUrl(row.url)) return { ok: false, error: 'bad_url' };
+  if (isAggregatorUrl(row.url) || /(^|\.)google\./i.test(String(row.domain || ''))) return { ok: false, error: 'aggregator_url' };
+  if (row.domain) {
+    const dom = String(row.domain).toLowerCase().replace(/^www\./, ''), h = hostOf(row.url);
+    if (h && h !== dom && !h.endsWith('.' + dom)) return { ok: false, error: 'url_domain_mismatch' };
+  }
+  if (row.source_key === BRIDGE_SOURCE) {
+    if (!isEnglishTitle(row.title)) return { ok: false, error: 'title_not_english' };
+    const hq = up(row.raw && row.raw.hq_country);
+    if (!hq) return { ok: false, error: 'hq_country_missing' };
+    if (investor !== hq) return { ok: false, error: 'investor_mismatch_hq' };
+  }
   if (company.length < 2 || !/[\p{L}\p{N}]/u.test(company)) return { ok: false, error: 'company_required' };
   if (!host || !HOSTS.includes(host)) return { ok: false, error: 'host_not_a_market' };
   if (!investor || !COUNTRY_CODES.includes(investor)) return { ok: false, error: 'investor_unknown' };
