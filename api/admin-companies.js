@@ -39,7 +39,6 @@ async function verifyBearer(req) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Cache-Control', 'private, no-store');
@@ -50,12 +49,14 @@ export default async function handler(req, res) {
   // Auth gate
   const user = await verifyBearer(req);
   if (!user) return res.status(401).json({ error: 'unauthenticated' });
-  if (ADMIN_EMAILS.length > 0 && !ADMIN_EMAILS.includes(user.email)) {
+  if (ADMIN_EMAILS.length === 0) return res.status(500).json({ error: 'admin_not_configured' });
+  if (!ADMIN_EMAILS.includes(user.email)) {
     return res.status(403).json({ error: 'not_admin' });
   }
 
   const url = new URL(req.url, `https://${req.headers.host || 'kiraresearch.com'}`);
-  const country = (url.searchParams.get('country') || '').toUpperCase() || null;
+  const countryRaw = (url.searchParams.get('country') || '').toUpperCase();
+  const country = /^[A-Z]{2}$/.test(countryRaw) ? countryRaw : null;
   const q       = (url.searchParams.get('q') || '').toLowerCase().trim();
 
   try {

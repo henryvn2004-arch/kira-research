@@ -367,7 +367,8 @@ export async function sendWaitlistNotification(entry) {
 export async function sendTopicRequestConfirmation({ to, title, url, eta }) {
   if (!to || !title || !url) return false;
   const replyTo = ADMIN_EMAILS[0] || undefined;
-  const subject = `We got your request: ${title}`;
+  // Never echo reader-typed text into the subject (mail relay / phishing risk): fixed subject.
+  const subject = 'We got your request';
   const text = [
     `You asked to be told when this report is published:`,
     ``,

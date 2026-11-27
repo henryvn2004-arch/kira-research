@@ -64,7 +64,7 @@
         location.href = '/auth.html?msg=' + encodeURIComponent(M.signInBuy);
         return;
       }
-      const r = await fetch('/api/list-buy?action=create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, loc }) });
+      const r = await fetch('/api/list-buy?action=create', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ slug, loc }) });
       const b = await r.json().catch(() => ({}));
       if (!r.ok || !b.approveUrl) { say(M.startFail + ' (' + (b.error || r.status) + ').'); btn.disabled = false; return; }
       location.href = b.approveUrl;

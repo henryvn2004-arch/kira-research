@@ -275,9 +275,10 @@
         return;
       }
       try {
+        const sess = (await window.db.auth.getSession()).data.session;
         const r = await fetch('/api/library-buy?action=create', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (sess ? sess.access_token : '') },
           body:   JSON.stringify({ slug, locale })
         });
         if (!r.ok) {

@@ -186,7 +186,7 @@
         return;
       }
       const r = await fetch('/api/transcript-buy?action=create', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, locale })
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ slug, locale })
       });
       const b = await r.json().catch(() => ({}));
       if (!r.ok || !b.approveUrl) { alert('Could not start checkout (' + (b.error || r.status) + ').'); buyBtn.disabled = false; return; }

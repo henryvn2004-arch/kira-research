@@ -4,21 +4,21 @@
 // older than the owner's setting `retention.site_events_days` (default 180, /en/admin/config).
 // Idempotent: running it twice deletes nothing the first run did not.
 //
-// If CRON_SECRET is set, the caller must send `Authorization: Bearer <secret>`
+// The caller must (CRON_SECRET is required; unset = always 401) send `Authorization: Bearer <secret>`
 // (Vercel cron does this automatically).
 // ============================================================
 
 import { logJobRun } from './_lib/jobs.js';
 import { getConfig } from './_lib/config.js';
+import { cronAuthorized } from './_lib/cron-auth.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const CRON_SECRET          = process.env.CRON_SECRET;
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
-  if (CRON_SECRET && req.headers['authorization'] !== `Bearer ${CRON_SECRET}`) return res.status(401).json({ error: 'unauthorized' });
+  if (!cronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
 
   const startedAt = Date.now();
   try {

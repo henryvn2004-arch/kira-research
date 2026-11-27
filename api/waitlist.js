@@ -11,12 +11,13 @@
 //
 // Honeypot field `hp` should be empty; bots filling it get a fake success.
 // One row per email (case-insensitive, migration 025). A repeat sign-up is
-// treated as success and updates the plan (+ any newly supplied fields).
-// Response never says whether the email was already on the list.
+// treated as a silent success and changes nothing (unauthenticated callers must not edit rows).
+// Response never says whether the email was already on the list. Capped per IP / per email.
 // ============================================================
 
 import { sendWaitlistNotification } from './_lib/email.js';
 import { cleanAttr } from './_lib/attribution.js';
+import { formLimited } from './_lib/form-limit.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -44,7 +45,6 @@ async function supabase(path, method = 'GET', body = null) {
 }
 
 function cors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
@@ -99,6 +99,8 @@ export default async function handler(req, res) {
   const ua      = clean(req.headers['user-agent'] || '', 500);
   const referer = clean(req.headers['referer'] || '', 500);
 
+  if (await formLimited('waitlist', { ip, email })) { res.status(429).json({ error: 'rate_limited' }); return; }
+
   const row = {
     email,
     name:    name    || null,
@@ -117,21 +119,13 @@ export default async function handler(req, res) {
 
   try {
     const ins = await supabase('waitlist', 'POST', row);
-    let repeat = false;
 
-    if (ins.status === 409) {
-      // Already on the list — update the plan and fill in any new details.
-      // Never touch status/notes (admin-owned) on a repeat sign-up.
-      repeat = true;
-      const patch = { plan, locale };
-      if (name)    patch.name    = name;
-      if (company) patch.company = company;
-      if (role)    patch.role    = role;
-      await supabase(`waitlist?email=eq.${encodeURIComponent(email)}`, 'PATCH', patch);
-    }
+    // Already on the list: stay silent. An unauthenticated repeat must not overwrite someone's
+    // plan/name/company/role, nor re-send an admin email (security audit H5/L7).
+    if (ins.status === 409) { res.status(200).json({ ok: true }); return; }
 
     // Fire-and-forget admin notification — never block or fail the response.
-    sendWaitlistNotification({ ...row, repeat }).catch(e =>
+    sendWaitlistNotification({ ...row, repeat: false }).catch(e =>
       console.error('[waitlist] notify threw despite absorber:', e.message)
     );
 

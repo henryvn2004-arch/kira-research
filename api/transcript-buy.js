@@ -13,6 +13,7 @@
 // switch went off still completes. Same shape as api/library-buy.js.
 // ============================================================
 
+import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
 import { sendPurchaseReceipt } from './_lib/email.js';
 import { getConfig } from './_lib/config.js';
 import { TRANSCRIPT_PRICE } from './_lib/pricing.js';
@@ -55,7 +56,6 @@ async function sb(path, method = 'GET', body = null) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Cache-Control', 'private, no-store');
@@ -74,6 +74,8 @@ export default async function handler(req, res) {
       const locale = LOCALES.has(body.locale) ? body.locale : 'en';
       if (typeof slug !== 'string' || !SLUG_RE.test(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
       if (!(await getConfig('checkout.transcript_enabled'))) { res.status(403).json({ error: 'checkout_closed' }); return; }
+      const buyer = await verifyBearer(req);   // the order is bound to the signed-in buyer (custom_id)
+      if (!buyer) { res.status(401).json({ error: 'unauthenticated' }); return; }
 
       const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=id,slug&limit=1`);
       if (!rows[0]) { res.status(404).json({ error: 'transcript_not_found' }); return; }
@@ -88,7 +90,7 @@ export default async function handler(req, res) {
           purchase_units: [{
             amount: { currency_code: 'USD', value: amount },
             description: `KIRA RESEARCH — expert transcript ${slug}`,
-            custom_id: `${slug}|${locale}`
+            custom_id: buildCustomId('transcript', slug, locale, buyer.id)
           }],
           application_context: {
             brand_name: 'KIRA RESEARCH', landing_page: 'BILLING', user_action: 'PAY_NOW',
@@ -112,42 +114,31 @@ export default async function handler(req, res) {
       const orderId = body.orderId;
       if (!orderId || typeof orderId !== 'string' || !/^[A-Za-z0-9_-]{5,64}$/.test(orderId)) { res.status(400).json({ error: 'bad_order_id' }); return; }
 
-      const token = await getPayPalToken();
-      const capRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}/capture`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-      });
-      const capture = await capRes.json().catch(() => ({}));
-      const issue = capture.status || capture.details?.[0]?.issue || '';
-      const alreadyCaptured = capRes.status === 422 && String(capture?.details?.[0]?.issue || '').includes('ALREADY_CAPTURED');
-      if (!capRes.ok && !alreadyCaptured) {
-        console.error('[transcript-buy] capture failed', capRes.status, capture);
-        res.status(400).json({ error: 'paypal_capture_failed', details: issue });
+      // An order already recorded: same buyer gets it back, anyone else is refused.
+      const prior = await sb(`transcript_purchases?paypal_order_id=eq.${encodeURIComponent(orderId)}&select=id,user_id,slug&limit=1`);
+      if (prior[0]) {
+        if (prior[0].user_id !== user.id) { res.status(409).json({ error: 'order_already_used' }); return; }
+        res.status(200).json({ ok: true, purchase: { id: prior[0].id, slug: prior[0].slug } });
         return;
       }
 
-      let units;
-      if (alreadyCaptured) {
-        const o = await (await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}`, { headers: { Authorization: `Bearer ${token}` } })).json();
-        units = o.purchase_units || [];
-      } else units = capture.purchase_units || [];
-      const unit = units[0] || {};
-      const customId = unit.custom_id || unit.payments?.captures?.[0]?.custom_id || '';
-      const [slugFromPayPal, localeFromPayPal] = String(customId).split('|');
-      const slug = typeof slugFromPayPal === 'string' && SLUG_RE.test(slugFromPayPal) ? slugFromPayPal : null;
-      const locale = LOCALES.has(localeFromPayPal) ? localeFromPayPal : 'en';
-      if (!slug) { res.status(400).json({ error: 'bad_custom_id' }); return; }
-
-      const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(slug)}&select=id,slug&limit=1`);
-      const transcript = rows[0];
-      if (!transcript) { res.status(404).json({ error: 'transcript_not_found' }); return; }
-
-      const paid = Number(unit.amount?.value ?? unit.payments?.captures?.[0]?.amount?.value ?? 0);
-      if (paid > 0 && Math.abs(paid - TRANSCRIPT_PRICE) > 0.01) {
-        console.warn('[transcript-buy] amount mismatch', { paid, expected: TRANSCRIPT_PRICE, slug });
-      }
+      const token = await getPayPalToken();
+      const cap = await captureOrder({
+        token, orderId, kind: 'transcript', userId: user.id,
+        priceFor: async ({ item }) => {
+          if (!SLUG_RE.test(item)) return null;
+          const rows = await sb(`expert_transcripts?slug=eq.${encodeURIComponent(item)}&select=id,slug&limit=1`);
+          return rows[0] ? { ...rows[0], expected: TRANSCRIPT_PRICE } : null;
+        }
+      });
+      if (cap.error) { res.status(cap.status).json({ error: cap.error }); return; }
+      const slug = cap.parsed.item;
+      const locale = LOCALES.has(cap.parsed.locale) ? cap.parsed.locale : 'en';
+      const transcript = cap.item;
+      const paid = cap.paid;
 
       const row = {
-        user_id: user.id, transcript_id: transcript.id, slug, amount: paid || TRANSCRIPT_PRICE, currency: 'USD',
+        user_id: user.id, transcript_id: transcript.id, slug, amount: paid, currency: 'USD',
         paypal_order_id: orderId, status: 'completed', captured_at: new Date().toISOString()
       };
       let purchase;

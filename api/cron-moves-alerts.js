@@ -7,17 +7,17 @@
 // Pausable in /en/admin/config (notify.moves_alerts_enabled): while off, nothing is sent and nothing is moved
 // forward, so readers get the moves when it is switched back on. Logs job 'moves-alerts' for /en/admin/health.
 //
-// If CRON_SECRET is set, the caller must send `Authorization: Bearer <secret>` (Vercel cron does this).
+// The caller must (CRON_SECRET is required; unset = always 401) send `Authorization: Bearer <secret>` (Vercel cron does this).
 // ============================================================
 
 import { sendMovesDigest } from './_lib/email.js';
 import { logJobRun } from './_lib/jobs.js';
 import { getConfig } from './_lib/config.js';
 import { alertLabel, alertPath } from './_lib/moves/alerts.js';
+import { cronAuthorized } from './_lib/cron-auth.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const CRON_SECRET          = process.env.CRON_SECRET;
 const APP_URL              = process.env.APP_URL || 'https://kiraresearch.com';
 const PER_EMAIL = 10, MAX_EMAILS = 500;
 const TYPE = { acquisition: 'Acquisition', stake: 'Stake', investment: 'Investment', plant: 'New plant', jv: 'Joint venture',
@@ -43,7 +43,7 @@ async function sbAll(path) {
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
-  if (CRON_SECRET && req.headers['authorization'] !== `Bearer ${CRON_SECRET}`) return res.status(401).json({ error: 'unauthorized' });
+  if (!cronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
   const startedAt = Date.now();
   try {
     if (!(await getConfig('notify.moves_alerts_enabled'))) {
