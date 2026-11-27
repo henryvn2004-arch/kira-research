@@ -4,14 +4,14 @@
 // languages) whose translation was updated in the last 26 hours, plus the listing pages. Catches what
 // the report Routine, the Experts routine and the insight runner publish, without touching them.
 // Writes one job_runs row (job 'indexnow'). Without INDEXNOW_KEY it records "skipped" and does nothing.
-// If CRON_SECRET is set, the caller must send `Authorization: Bearer <secret>` (Vercel cron does).
+// The caller must (CRON_SECRET is required; unset = always 401) send `Authorization: Bearer <secret>` (Vercel cron does).
 // ============================================================
 import { logJobRun } from './_lib/jobs.js';
 import { changedUrls, submitUrls, indexNowKey } from './_lib/indexnow.js';
+import { cronAuthorized } from './_lib/cron-auth.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const CRON_SECRET = process.env.CRON_SECRET;
 const WINDOW_H = 26;
 
 async function sb(path) {
@@ -23,7 +23,7 @@ async function sb(path) {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
-  if (CRON_SECRET && req.headers['authorization'] !== `Bearer ${CRON_SECRET}`) return res.status(401).json({ error: 'unauthorized' });
+  if (!cronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
   const startedAt = Date.now();
   try {
     if (!indexNowKey()) {

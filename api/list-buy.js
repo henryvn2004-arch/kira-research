@@ -18,6 +18,7 @@
 import { getConfig } from './_lib/config.js';
 import { listPrice } from './_lib/pricing.js';
 import { verifyBearer } from './_lib/transcripts.js';
+import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
 import { sb, SLUG_RE, finishBuild, linkLive, downloadUrl } from './_lib/lists.js';
 
 const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
@@ -36,7 +37,6 @@ async function getPayPalToken() {
 const view = (p) => ({ id: p.id, slug: p.slug, status: p.build_status === 'ready' ? 'ready' : 'pending', ...(linkLive(p) ? { downloadUrl: downloadUrl(p) } : {}) });
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Cache-Control', 'private, no-store');
@@ -54,6 +54,8 @@ export default async function handler(req, res) {
       const slug = body.slug;
       if (typeof slug !== 'string' || !SLUG_RE.test(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
       if (!(await getConfig('checkout.list_enabled'))) { res.status(403).json({ error: 'checkout_closed' }); return; }
+      const buyer = await verifyBearer(req);   // the order is bound to the signed-in buyer (custom_id)
+      if (!buyer) { res.status(401).json({ error: 'unauthenticated' }); return; }
       const rows = await sb(`market_maps?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=id,slug,n_companies,definition:stats->meta->definition&limit=1`);
       if (!rows[0]) { res.status(404).json({ error: 'list_not_found' }); return; }
       if (!rows[0].definition) { res.status(409).json({ error: 'list_unavailable' }); return; }   // no segment definition: the file could not be built
@@ -64,7 +66,7 @@ export default async function handler(req, res) {
         method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           intent: 'CAPTURE',
-          purchase_units: [{ amount: { currency_code: 'USD', value: amount }, description: `KIRA RESEARCH — company list ${slug}`, custom_id: slug }],
+          purchase_units: [{ amount: { currency_code: 'USD', value: amount }, description: `KIRA RESEARCH — company list ${slug}`, custom_id: buildCustomId('list', slug, '', buyer.id) }],
           application_context: { brand_name: 'KIRA RESEARCH', landing_page: 'BILLING', user_action: 'PAY_NOW',
             return_url: `${APP_URL}/${loc}/market-maps/${slug}?paypal=success`, cancel_url: `${APP_URL}/${loc}/market-maps/${slug}?paypal=cancel` },
         }),
@@ -84,33 +86,29 @@ export default async function handler(req, res) {
       const orderId = body.orderId;
       if (!orderId || typeof orderId !== 'string' || !/^[A-Za-z0-9_-]{5,64}$/.test(orderId)) { res.status(400).json({ error: 'bad_order_id' }); return; }
 
-      const token = await getPayPalToken();
-      const capRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}/capture`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
-      const capture = await capRes.json().catch(() => ({}));
-      const alreadyCaptured = capRes.status === 422 && String(capture?.details?.[0]?.issue || '').includes('ALREADY_CAPTURED');
-      if (!capRes.ok && !alreadyCaptured) {
-        console.error('[list-buy] capture failed', capRes.status, capture);
-        res.status(400).json({ error: 'paypal_capture_failed', details: capture.status || capture.details?.[0]?.issue || '' });
+      // An order already recorded: same buyer gets it back, anyone else is refused.
+      const prior = await sb(`list_purchases?paypal_order_id=eq.${encodeURIComponent(orderId)}&select=*&limit=1`);
+      if (prior[0]) {
+        if (prior[0].user_id !== user.id) { res.status(409).json({ error: 'order_already_used' }); return; }
+        res.status(200).json({ ok: true, purchase: view(prior[0]) });
         return;
       }
-      let units;
-      if (alreadyCaptured) {
-        const o = await (await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}`, { headers: { Authorization: `Bearer ${token}` } })).json();
-        units = o.purchase_units || [];
-      } else units = capture.purchase_units || [];
-      const unit = units[0] || {};
-      const customId = unit.custom_id || unit.payments?.captures?.[0]?.custom_id || '';
-      const slug = SLUG_RE.test(customId) ? customId : null;
-      if (!slug) { res.status(400).json({ error: 'bad_custom_id' }); return; }
-      const maps = await sb(`market_maps?slug=eq.${encodeURIComponent(slug)}&select=id,slug,title,n_companies&limit=1`);
-      const map = maps[0];
-      if (!map) { res.status(404).json({ error: 'list_not_found' }); return; }
 
-      const expected = listPrice(map.n_companies);
-      const paid = Number(unit.amount?.value ?? unit.payments?.captures?.[0]?.amount?.value ?? 0);
-      if (paid > 0 && Math.abs(paid - expected) > 0.01) console.warn('[list-buy] amount mismatch', { paid, expected, slug });
+      const token = await getPayPalToken();
+      const cap = await captureOrder({
+        token, orderId, kind: 'list', userId: user.id,
+        priceFor: async ({ item }) => {
+          if (!SLUG_RE.test(item)) return null;
+          const maps = await sb(`market_maps?slug=eq.${encodeURIComponent(item)}&select=id,slug,title,n_companies&limit=1`);
+          return maps[0] ? { ...maps[0], expected: listPrice(maps[0].n_companies) } : null;
+        }
+      });
+      if (cap.error) { res.status(cap.status).json({ error: cap.error }); return; }
+      const slug = cap.parsed.item;
+      const map = cap.item;
+      const paid = cap.paid;
 
-      const row = { user_id: user.id, map_id: map.id, slug, n_companies: map.n_companies, amount: paid || expected, currency: 'USD',
+      const row = { user_id: user.id, map_id: map.id, slug, n_companies: map.n_companies, amount: paid, currency: 'USD',
         paypal_order_id: orderId, status: 'completed', captured_at: new Date().toISOString() };
       let purchase, fresh = false;
       try {

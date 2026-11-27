@@ -269,7 +269,7 @@
             body: JSON.stringify({ slug }),
           })
           .then(r => r.json())
-          .then(({ enriched }) => { if (enriched) location.reload(); })
+          .then(({ enriched }) => { if (enriched) location.reload(); else hideEnrichBanner(); })
           .catch(() => hideEnrichBanner());
         }
       })

@@ -6,15 +6,15 @@
 //   2. Enrichment: the entities checked longest ago (never-checked first) get LEI, national number, legal name,
 //      status, founding date and parent LEIs; keyed national registries join once their key is set.
 // Logs one job_runs row ('registry-refresh') for /en/admin/health.
-// If CRON_SECRET is set, the caller must send `Authorization: Bearer <secret>` (Vercel cron does this).
+// The caller must (CRON_SECRET is required; unset = always 401) send `Authorization: Bearer <secret>` (Vercel cron does this).
 // ============================================================
 
 import { logJobRun } from './_lib/jobs.js';
 import { detectNew, enrich } from './_lib/registry/index.js';
+import { cronAuthorized } from './_lib/cron-auth.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const CRON_SECRET          = process.env.CRON_SECRET;
 const BATCH = 60;            // entities per run
 const ENRICH_BUDGET = 420000; // ms, keeps the run inside maxDuration with detection first
 
@@ -31,7 +31,7 @@ async function sb(path, method = 'GET', body, prefer = '') {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
-  if (CRON_SECRET && req.headers['authorization'] !== `Bearer ${CRON_SECRET}`) return res.status(401).json({ error: 'unauthorized' });
+  if (!cronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
 
   const startedAt = Date.now();
   try {

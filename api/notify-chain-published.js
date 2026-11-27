@@ -10,7 +10,7 @@
 // single shared word (scores below 70) is shown by the search page but never emailed. A request only
 // counts for a chain that was updated after the request was made. Requests without an email are demand signal only and never emailed.
 //
-// If CRON_SECRET is set, the caller must send `Authorization: Bearer <secret>`
+// The caller must (CRON_SECRET is required; unset = always 401) send `Authorization: Bearer <secret>`
 // (Vercel cron does this automatically).
 // ============================================================
 
@@ -18,10 +18,10 @@ import { sendChainPublishedEmail } from './_lib/email.js';
 import { logJobRun } from './_lib/jobs.js';
 import { getConfig } from './_lib/config.js';
 import { matchChains } from './_lib/chain-match.js';
+import { cronAuthorized } from './_lib/cron-auth.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const CRON_SECRET          = process.env.CRON_SECRET;
 const APP_URL              = process.env.APP_URL || 'https://kiraresearch.com';
 const MIN_SCORE            = 70;
 
@@ -39,7 +39,7 @@ async function sb(path, method = 'GET', body, prefer) {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
-  if (CRON_SECRET && req.headers['authorization'] !== `Bearer ${CRON_SECRET}`) return res.status(401).json({ error: 'unauthorized' });
+  if (!cronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
 
   const startedAt = Date.now();
   try {

@@ -14,6 +14,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { runPipeline } from './_lib/company/pipeline.js';
+import { requireAdmin } from './_lib/admin-auth.js';
 
 export const config = { maxDuration: 60 };
 
@@ -21,6 +22,9 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'method_not_allowed' });
   }
+  // Runs paid third-party calls (Tavily, LLM): admin only (was open to anyone; security audit H4).
+  const gate = await requireAdmin(req);
+  if (gate.error) return res.status(gate.status).json({ error: gate.error });
 
   const { slug } = req.body || {};
   if (!slug || typeof slug !== 'string' || slug.length > 200) {

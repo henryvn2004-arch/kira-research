@@ -5,14 +5,14 @@
 // Upserts by content_hash, so a run only rewrites what changed; rows of an older year or a revised value are retired.
 // Logs one job_runs row ('geo-econ') for /en/admin/health.
 //
-// If CRON_SECRET is set, the caller must send `Authorization: Bearer <secret>` (Vercel cron does this automatically).
+// The caller must (CRON_SECRET is required; unset = always 401) send `Authorization: Bearer <secret>` (Vercel cron does this automatically).
 // ============================================================
 import { logJobRun } from './_lib/jobs.js';
 import { buildRows, syncRows } from './_lib/geo-econ.js';
+import { cronAuthorized } from './_lib/cron-auth.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const CRON_SECRET          = process.env.CRON_SECRET;
 const H = () => ({ apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' });
 
 const read = async (path) => {
@@ -29,7 +29,7 @@ const write = async (path, method, body, headers = {}) => {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
-  if (CRON_SECRET && req.headers['authorization'] !== `Bearer ${CRON_SECRET}`) return res.status(401).json({ error: 'unauthorized' });
+  if (!cronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
   const startedAt = Date.now();
   try {
     const { rows, stats } = await buildRows(read);

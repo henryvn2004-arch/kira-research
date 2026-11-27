@@ -5,22 +5,22 @@
 // Sources whose API key is not set yet are skipped and named in the log line.
 // Logs one job_runs row ('econ-refresh', or 'econ-refresh-<source>' for a source's own slot) for /en/admin/health.
 //
-// If CRON_SECRET is set, the caller must send `Authorization: Bearer <secret>`
+// The caller must (CRON_SECRET is required; unset = always 401) send `Authorization: Bearer <secret>`
 // (Vercel cron does this automatically).
 // ============================================================
 
 import { logJobRun } from './_lib/jobs.js';
 import { collect } from './_lib/econ/index.js';
+import { cronAuthorized } from './_lib/cron-auth.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const CRON_SECRET          = process.env.CRON_SECRET;
 const H = () => ({ apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' });
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
-  if (CRON_SECRET && req.headers['authorization'] !== `Bearer ${CRON_SECRET}`) return res.status(401).json({ error: 'unauthorized' });
+  if (!cronAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
 
   const startedAt = Date.now();
   try {

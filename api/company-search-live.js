@@ -9,6 +9,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { OC_JURISDICTION } from './_lib/company/config.js';
+import { bearerUser } from './_lib/admin-auth.js';
 
 // Escape SQL LIKE wildcards in user input so they're treated as literals
 function escapeLike(s) {
@@ -30,6 +31,7 @@ export default async function handler(req, res) {
   }
 
   const countryUC = (country || 'VN').toUpperCase();
+  if (!/^[A-Z]{2}$/.test(countryUC)) return res.status(400).json({ error: 'country_invalid' });
   const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_KEY,
@@ -58,7 +60,8 @@ export default async function handler(req, res) {
 
   // 2) If fewer than 3 DB hits, call OpenCorporates for additional suggestions
   let ocHits = [];
-  if (dbHits.length < 3) {
+  // The external OpenCorporates fallback (quota) is for signed-in users only; DB suggestions stay public.
+  if (dbHits.length < 3 && (await bearerUser(req))) {
     const jCode = OC_JURISDICTION[countryUC];
     if (jCode) {
       try {

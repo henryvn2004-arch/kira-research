@@ -60,8 +60,13 @@ function sanitizeQ(q) {
   if (typeof q !== 'string') return '';
   const trimmed = q.trim().slice(0, 64);
   if (trimmed.length < 2) return '';
-  // Strip characters that break PostgREST or-filter parsing.
-  return trimmed.replace(/[(),*]/g, ' ').trim();
+  return filterSafe(trimmed);
+}
+
+// Whitelist for text that goes inside a PostgREST `or=(...)` filter: letters, digits, space, & _ - '.
+// Everything else (, ( ) * % " \ : . ...) could add conditions or wildcards, so it becomes a space.
+function filterSafe(s) {
+  return String(s).replace(/[^\p{L}\p{N} &_'-]/gu, ' ').replace(/\s+/g, ' ').trim();
 }
 
 export default async function handler(req, res) {
@@ -71,7 +76,7 @@ export default async function handler(req, res) {
 
   const url      = new URL(req.url, `https://${req.headers.host || 'x'}`);
   const locale   = SUPPORTED.has(url.searchParams.get('locale')) ? url.searchParams.get('locale') : 'en';
-  const category = clean(url.searchParams.get('category'));
+  const category = filterSafe(clean(url.searchParams.get('category')).slice(0, 64));
   const q        = sanitizeQ(url.searchParams.get('q'));
   const limit    = int(url.searchParams.get('limit'),  24, 200);
   const offset   = int(url.searchParams.get('offset'),  0, 9600);

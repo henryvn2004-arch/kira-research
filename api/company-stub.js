@@ -13,9 +13,13 @@
 import { createClient } from '@supabase/supabase-js';
 import { normaliseName, makeSlug } from './_lib/company/normalize.js';
 import { SUPPORTED_COUNTRIES } from './_lib/company/config.js';
+import { requireAdmin } from './_lib/admin-auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+  // Writes entities: admin only (was open to anyone; security audit H4).
+  const gate = await requireAdmin(req);
+  if (gate.error) return res.status(gate.status).json({ error: gate.error });
 
   const { name, tax_id, country_code } = req.body || {};
   if (!name || typeof name !== 'string' || name.trim().length < 2) {

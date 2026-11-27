@@ -2,20 +2,21 @@
 // KIRA RESEARCH — api/library-buy.js
 // PayPal checkout for library reports (one report × one locale).
 //
-//   POST /api/library-buy?action=create   body { slug, locale }
+//   POST /api/library-buy?action=create   body { slug, locale }   Authorization: Bearer (REQUIRED)
 //       → { approveUrl, orderId, amount, currency }
 //
 //   POST /api/library-buy?action=capture  body { orderId, slug, locale }
 //       Authorization: Bearer <supabase-jwt>   (REQUIRED)
 //       → { ok, purchase: { id, slug, locale } }
 //
-// The PayPal `custom_id` carries "slug|locale" so the capture step can
-// rebuild context without trusting the client.
+// The PayPal `custom_id` carries "report:slug|locale|userId" so the capture step can
+// rebuild context without trusting the client (see api/_lib/paypal-check.js).
 // ============================================================
 
 import { sendPurchaseReceipt } from './_lib/email.js';
 import { getConfig } from './_lib/config.js';
 import { REPORT_PRICE_DEFAULT } from './_lib/pricing.js';
+import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
 
 const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live'
   ? 'https://api-m.paypal.com'
@@ -75,7 +76,6 @@ async function verifyBearer(req) {
 }
 
 function cors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
@@ -105,6 +105,9 @@ export default async function handler(req, res) {
       const locale = LOCALES.has(body.locale) ? body.locale : 'en';
       if (!isSlug(slug)) { res.status(400).json({ error: 'bad_slug' }); return; }
       if (!(await getConfig('checkout.single_report_enabled'))) { res.status(403).json({ error: 'checkout_closed' }); return; }
+      // Orders are bound to the signed-in buyer (custom_id carries the user id; capture must match).
+      const buyer = await verifyBearer(req);
+      if (!buyer) { res.status(401).json({ error: 'unauthenticated' }); return; }
 
       // Look up the report — price + status come from DB, never from client.
       const rows = await sb(
@@ -126,8 +129,8 @@ export default async function handler(req, res) {
           purchase_units: [{
             amount: { currency_code: currency, value: amount },
             description: `KIRA RESEARCH — ${slug} (${locale})`,
-            // We re-derive slug + locale from this field at capture time.
-            custom_id: `${slug}|${locale}`
+            // We re-derive item + locale + buyer from this field at capture time.
+            custom_id: buildCustomId('report', slug, locale, buyer.id)
           }],
           application_context: {
             brand_name:   'KIRA RESEARCH',
@@ -156,7 +159,7 @@ export default async function handler(req, res) {
 
     // ── CAPTURE ─────────────────────────────────────────
     if (action === 'capture') {
-      // Capture REQUIRES auth so we know which user to attribute the purchase to.
+      // Capture REQUIRES auth; the order must have been created by this same user (custom_id).
       const user = await verifyBearer(req);
       if (!user) { res.status(401).json({ error: 'unauthenticated' }); return; }
 
@@ -165,67 +168,29 @@ export default async function handler(req, res) {
         res.status(400).json({ error: 'bad_order_id' }); return;
       }
 
-      const token = await getPayPalToken();
-      const capRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}/capture`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
-      });
-
-      // PayPal may return 200 (capture done now) or 422 (already captured) — handle both.
-      const capture = await capRes.json().catch(() => ({}));
-      const status = capture.status || capture.details?.[0]?.issue || '';
-      const alreadyCaptured = capRes.status === 422 && (status === 'ORDER_ALREADY_CAPTURED' || String(capture?.details?.[0]?.issue || '').includes('ALREADY_CAPTURED'));
-
-      if (!capRes.ok && !alreadyCaptured) {
-        console.error('[library-buy] capture failed', capRes.status, capture);
-        res.status(400).json({ error: 'paypal_capture_failed', details: status });
+      // An order already recorded: same buyer gets it back, anyone else is refused.
+      const prior = await sb(`purchases?paypal_order_id=eq.${encodeURIComponent(orderId)}&select=*&limit=1`);
+      if (prior && prior[0]) {
+        if (prior[0].user_id !== user.id) { res.status(409).json({ error: 'order_already_used' }); return; }
+        res.status(200).json({ ok: true, purchase: { id: prior[0].id, slug: prior[0].slug, locale: prior[0].locale } });
         return;
       }
 
-      // If we didn't get a fresh capture object, fetch the order to rebuild context.
-      let purchaseUnits;
-      if (alreadyCaptured) {
-        const oRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const order = await oRes.json();
-        purchaseUnits = order.purchase_units || [];
-      } else {
-        purchaseUnits = capture.purchase_units || [];
-      }
-
-      const unit = purchaseUnits[0] || {};
-      // PayPal places custom_id at different paths depending on response type:
-      //   • GET /v2/checkout/orders/{id}      → purchase_units[0].custom_id
-      //   • POST /v2/checkout/orders/{id}/capture (fresh) → purchase_units[0].payments.captures[0].custom_id
-      // Try both before bailing.
-      const customId =
-        unit.custom_id ||
-        unit.payments?.captures?.[0]?.custom_id ||
-        '';
-      const [slugFromPayPal, localeFromPayPal] = String(customId).split('|');
-
-      const slug   = isSlug(slugFromPayPal) ? slugFromPayPal : null;
-      const locale = LOCALES.has(localeFromPayPal) ? localeFromPayPal : 'en';
-      if (!slug) { res.status(400).json({ error: 'bad_custom_id' }); return; }
-
-      // Re-validate the price against DB (defence in depth).
-      const reportRows = await sb(
-        `living_reports?slug=eq.${encodeURIComponent(slug)}&select=id,price,currency&limit=1`
-      );
-      const report = Array.isArray(reportRows) ? reportRows[0] : null;
-      if (!report) { res.status(404).json({ error: 'report_not_found' }); return; }
-
-      const expectedAmount = Number((report.price || REPORT_PRICE_DEFAULT).toFixed(2));
-      const paidAmount = Number(
-        unit.amount?.value ??
-        unit.payments?.captures?.[0]?.amount?.value ??
-        0
-      );
-      if (paidAmount > 0 && Math.abs(paidAmount - expectedAmount) > 0.01) {
-        console.warn('[library-buy] amount mismatch', { paid: paidAmount, expected: expectedAmount, slug, locale });
-        // Continue anyway — PayPal already captured. Flag in DB for review.
-      }
+      const token = await getPayPalToken();
+      const cap = await captureOrder({
+        token, orderId, kind: 'report', userId: user.id,
+        priceFor: async ({ item }) => {
+          if (!isSlug(item)) return null;
+          const rows = await sb(`living_reports?slug=eq.${encodeURIComponent(item)}&select=id,price,currency&limit=1`);
+          const r = Array.isArray(rows) ? rows[0] : null;
+          return r ? { ...r, expected: Number((r.price || REPORT_PRICE_DEFAULT).toFixed(2)) } : null;
+        }
+      });
+      if (cap.error) { res.status(cap.status).json({ error: cap.error }); return; }
+      const slug   = cap.parsed.item;
+      const locale = LOCALES.has(cap.parsed.locale) ? cap.parsed.locale : 'en';
+      const report = cap.item;
+      const paidAmount = cap.paid;
 
       // Upsert purchase row. Unique index prevents dupes.
       const purchaseRow = {
@@ -234,7 +199,7 @@ export default async function handler(req, res) {
         locale,
         report_id:       report.id,
         report_type:     'library_report',
-        amount:          paidAmount || expectedAmount,
+        amount:          paidAmount,
         currency:        report.currency || 'USD',
         paypal_order_id: orderId,
         status:          'completed',
@@ -246,8 +211,9 @@ export default async function handler(req, res) {
         const inserted = await sb('purchases', 'POST', purchaseRow);
         purchase = Array.isArray(inserted) ? inserted[0] : inserted;
       } catch (err) {
-        // Likely the unique-completed index hit (re-capture of the same order).
-        // Fetch the existing row to return idempotently.
+        // Likely a unique index hit (same order, or same user+report+locale bought twice).
+        const sameOrder = await sb(`purchases?paypal_order_id=eq.${encodeURIComponent(orderId)}&select=id,user_id&limit=1`);
+        if (sameOrder && sameOrder[0] && sameOrder[0].user_id !== user.id) { res.status(409).json({ error: 'order_already_used' }); return; }
         const existing = await sb(
           `purchases?user_id=eq.${user.id}&slug=eq.${encodeURIComponent(slug)}` +
           `&locale=eq.${locale}&status=eq.completed&select=*&limit=1`
