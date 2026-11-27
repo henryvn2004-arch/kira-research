@@ -120,7 +120,7 @@ export default async function handler(req, res) {
         if (!purchase) throw err;
       }
       if (fresh) purchase = await finishBuild(purchase, user.email, `${map.title} (company list)`);
-      res.status(200).json({ ok: true, purchase: view(purchase) });
+      res.status(200).json({ ok: true, purchase: view(purchase), order: { id: purchase.id, amount: Number(purchase.amount ?? paid) || 0, currency: 'USD', n: map.n_companies } });
       return;
     }
 

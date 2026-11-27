@@ -55,12 +55,13 @@ test('negatives: BizDirect cross-negatives in, plain "list" out', () => {
   assert.match(txt, /plain word "list" is NOT negative/);
 });
 
-test('DSA campaign: paused, $10, 7 locations, page-feed targets, copy rules', () => {
+test('DSA campaign: paused, $10, 6 locations (no UK), page-feed targets, copy rules', () => {
   const { csv, descriptions } = buildDsaCsv({ reportPrice: 39, transcriptPrice: 29 });
   const lines = csv.trim().split('\n');
   assert.ok(lines[1].includes('Paused') && lines[1].includes(',10,Daily,'));
   assert.ok(lines[1].includes('{lpurl}') && lines[1].includes('Page feed'));
-  for (const l of ['Japan', 'South Korea', 'Singapore', 'Taiwan', 'Australia', 'United States', 'United Kingdom']) assert.ok(csv.includes(l), l);
+  for (const l of ['Japan', 'South Korea', 'Singapore', 'Taiwan', 'Australia', 'United States']) assert.ok(csv.includes(l), l);
+  assert.ok(!/United Kingdom|Ireland|Germany|France/.test(csv));
   for (const k of ['kind_map', 'kind_report', 'kind_transcript']) assert.ok(csv.includes(`Custom label equals ${k}`));
   assert.ok(!/Enabled/.test(csv));
   for (const d of Object.values(descriptions).flat()) {
@@ -73,4 +74,21 @@ test('DSA campaign: paused, $10, 7 locations, page-feed targets, copy rules', ()
 test('no report/transcript price in copy while those checkouts are off', () => {
   const d = dsaDescriptions({});
   assert.ok(!/\$/.test(d.report.join(' ') + d.transcript.join(' ')));
+});
+
+test('kiraPurchase: fires once per order, with value and no email', async () => {
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync(new URL('../public/js/track.js', import.meta.url), 'utf8');
+  const store = {}, calls = [];
+  const win = { gtag: (...a) => calls.push(a), location: { hostname: 'kiraresearch.com', pathname: '/en/x', search: '' }, addEventListener() {} };
+  const g = { window: win, navigator: {}, document: { referrer: '', addEventListener() {}, readyState: 'loading' }, location: win.location,
+    sessionStorage: { getItem: (k) => store[k] || null, setItem: (k, v) => { store[k] = v; } }, localStorage: { getItem: () => null, setItem() {}, removeItem() {} } };
+  new Function(...Object.keys(g), src)(...Object.values(g));
+  const o = { id: 'ord-1', value: 49, currency: 'USD', slug: 'a-2026', name: 'A', kind: 'report' };
+  win.kiraPurchase(o); win.kiraPurchase(o);
+  assert.equal(calls.length, 1);
+  assert.deepEqual(calls[0].slice(0, 2), ['event', 'purchase']);
+  assert.equal(calls[0][2].transaction_id, 'ord-1');
+  assert.equal(calls[0][2].value, 49);
+  assert.ok(!JSON.stringify(calls[0]).includes('@'));
 });

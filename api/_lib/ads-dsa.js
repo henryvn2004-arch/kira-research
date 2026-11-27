@@ -29,8 +29,8 @@ const GENERAL_NEGATIVES = ['jobs', 'salary', 'free download', 'pdf free', 'wiki'
 
 export const DSA_NEGATIVES = [...new Set([...GENERAL_NEGATIVES, ...NEGATIVES, ...BIZDIRECT_NEGATIVES])];
 
-// Default targeting (the founder can edit them in Ads Editor before import). UK: see the guide (consent banner).
-export const DEFAULT_LOCATIONS = ['Japan', 'South Korea', 'Singapore', 'Taiwan', 'Australia', 'United States', 'United Kingdom'];
+// Default targeting (the founder can edit them in Ads Editor before import). UK / EEA are left out until the site has a consent banner with Consent Mode v2 (see the guide).
+export const DEFAULT_LOCATIONS = ['Japan', 'South Korea', 'Singapore', 'Taiwan', 'Australia', 'United States'];
 
 export const slugify = (s) => String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
   .replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');

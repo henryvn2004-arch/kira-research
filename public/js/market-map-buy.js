@@ -51,6 +51,7 @@
     try { sessionStorage.removeItem('kira_pending_lcapture'); } catch (_e) { /* storage blocked */ }
     history.replaceState({}, '', location.pathname);
     const b = await r.json().catch(() => ({}));
+    if (r.ok && b.purchase && b.order && window.kiraPurchase) window.kiraPurchase({ id: b.order.id, value: b.order.amount, currency: b.order.currency, slug: b.purchase.slug, name: b.purchase.slug, kind: 'list' });
     if (r.ok && b.purchase) showResult(b.purchase); else { say(M.couldNot); btn.disabled = false; }
   }
 
