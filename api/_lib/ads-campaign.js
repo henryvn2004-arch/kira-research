@@ -43,7 +43,8 @@ export function keywordsFor({ country, segment, analysis }) {
   return [...gen, ...extra].filter(k => k.split(' ').length <= 8 && !seen.has(k) && seen.add(k));
 }
 
-// opts: { priceOn, etaDays, published }
+// opts: { priceOn, etaDays, published }; topic.price = that report's own price (set only for a published report; the effort-based
+// price of api/_lib/pricing.js, read from living_reports.price). A coming-soon page shows no price, so its ad names none either.
 export function adFor(topic, opts) {
   const country = topic.country, segment = topic.segment;
   const h = [];
@@ -51,7 +52,7 @@ export function adFor(topic, opts) {
   add(fit(30, `${segment} in ${country}`, `${country} ${segment}`, `${segment} market report`));
   add(fit(30, `${country} ${topic.analysis}`, `${country} market report`));
   add(opts.published ? 'Read the full report online' : (opts.etaDays ? `Ready in about ${opts.etaDays} days` : 'Email me when it is ready'));
-  if (opts.priceOn) add(`Report from $${opts.price}`);
+  if (opts.priceOn && opts.published && Number(topic.price) > 0) add(`Full report: $${Math.round(Number(topic.price))}`);
   add('Every figure has a source');
   add('Built for Japan and Korea firms');
   add('Executive summary is free');
@@ -67,23 +68,26 @@ export function adFor(topic, opts) {
 }
 
 const COLS = ['Campaign', 'Campaign Type', 'Campaign Status', 'Budget', 'Budget type', 'Bid Strategy Type', 'Networks', 'Languages',
-  'Ad Group', 'Ad Group Status', 'Ad Group Type', 'Max CPC', 'Keyword', 'Criterion Type', 'Ad type',
+  'Location', 'Ad Group', 'Ad Group Status', 'Ad Group Type', 'Max CPC', 'Keyword', 'Criterion Type', 'Ad type',
   ...Array.from({ length: 15 }, (_, i) => `Headline ${i + 1}`), 'Description 1', 'Description 2', 'Description 3', 'Description 4',
   'Path 1', 'Path 2', 'Final URL', 'Status'];
 const q = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
 const line = obj => COLS.map(c => q(obj[c] == null ? '' : obj[c])).join(',');
 
 // topics: [{ slug, publishedSlug, country, segment, analysis, buyer_question }]
-export function buildCampaignCsv(topics, { campaign, budget, maxCpc, languages, priceOn, price, etaDays }) {
+// negatives: shared negative list (phrase match) written as campaign-level negative keywords; locations: first rides on the campaign row.
+export function buildCampaignCsv(topics, { campaign, budget, maxCpc, languages, priceOn, etaDays, locations = [], negatives = NEGATIVES }) {
   const rows = [COLS.join(','), line({
     Campaign: campaign, 'Campaign Type': 'Search', 'Campaign Status': 'Paused', Budget: budget, 'Budget type': 'Daily',
-    'Bid Strategy Type': 'Manual CPC', Networks: 'Google search', Languages: languages
+    'Bid Strategy Type': 'Manual CPC', Networks: 'Google search', Languages: languages, Location: locations[0] || ''
   })];
+  for (const loc of locations.slice(1)) rows.push(line({ Campaign: campaign, Location: loc }));
+  for (const k of negatives) rows.push(line({ Campaign: campaign, Keyword: k, 'Criterion Type': 'Negative Phrase', Status: 'Paused' }));
   let groups = 0, keywords = 0, skipped = 0;
   for (const t of topics) {
     const kws = keywordsFor(t);
     const published = !!t.publishedSlug;
-    const ad = adFor(t, { priceOn, price, etaDays, published });
+    const ad = adFor(t, { priceOn, etaDays, published });
     if (kws.length < 2 || ad.headlines.length < 3 || ad.descriptions.length < 2) { skipped++; continue; }
     const group = cap(clean(`${t.country} ${t.segment} ${t.analysis}`)).slice(0, 80);
     rows.push(line({ Campaign: campaign, 'Ad Group': group, 'Ad Group Status': 'Paused', 'Ad Group Type': 'Standard', 'Max CPC': maxCpc }));
