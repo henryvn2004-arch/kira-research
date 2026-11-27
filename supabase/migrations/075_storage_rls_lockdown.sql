@@ -10,6 +10,8 @@
 drop policy if exists reports_pdfs_no_anon_read   on storage.objects;
 drop policy if exists studio_buckets_no_anon_read on storage.objects;
 drop policy if exists reports_html_no_anon_read   on storage.objects;
+-- 4th one, created by hand outside the migrations (found live 2026-11-27):
+drop policy if exists reports_html_full_no_anon_read on storage.objects;
 
 -- Check afterwards (expect no permissive SELECT policy for anon/authenticated on private buckets):
 --   select policyname, permissive, roles, qual from pg_policies
