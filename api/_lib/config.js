@@ -79,6 +79,26 @@ export const CONFIG = {
     label: 'Send the daily "new company moves" emails (Kira Data alerts)',
     help: 'Off: nothing is sent and every alert keeps its place, so readers get the moves they missed when you switch it back on. Readers sign up on the moves and corridor pages and confirm by email first.'
   },
+  'notify.seq_alerts_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Weekly "new reports on <country>" alerts (sign-ups + digest)',
+    help: 'On: the small form on report, insight and market-map pages accepts sign-ups (double opt-in) and a weekly digest goes to confirmed alerts. Off: the form answers "paused", the digest sends nothing and keeps each alert where it was.'
+  },
+  'notify.seq_topic_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Follow-ups to coming-soon requesters (+3 days reminder, +10 days related reports)',
+    help: 'Sent only to people who asked to be told about a report that is now published, who have not bought it and have not opted out. Off: nothing is sent; people inside the window simply miss that step.'
+  },
+  'notify.seq_buyers_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'One follow-up to buyers (+3 days: two related items, no discount)',
+    help: 'One email per buyer, three days after the purchase. Off: nothing is sent.'
+  },
+  'notify.seq_abandoned_enabled': {
+    group: 'Emails', type: 'bool', default: true,
+    label: 'Abandoned-checkout reminders (+1 hour, +24 hours)',
+    help: 'Only for signed-in buyers who started a PayPal order and did not finish it (guests are not reminded: we have no email before the payment). Off: nothing is sent.'
+  },
   'notify.chain_ready_enabled': {
     group: 'Emails', type: 'bool', default: true,
     label: 'Send the daily "your value chain is ready" emails',

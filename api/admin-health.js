@@ -31,6 +31,7 @@ const JOBS = [
   { key: 'econ-refresh-eurostat_comext', label: 'Weekly EU trade by product refresh (Eurostat Comext)', schedule: 'Thursdays 04:10 UTC', max_gap_h: 192 },
   { key: 'registry-refresh', label: 'Daily company registries (GLEIF, ACRA; Houjin Bangou, ABN, NZBN when their keys are set)', schedule: 'Daily 21:40 UTC', max_gap_h: 48 },
   { key: 'moves-alerts', label: 'Daily "new company moves" emails to confirmed alerts', schedule: 'Daily 23:50 UTC', max_gap_h: 48 },
+  { key: 'sequences', label: 'Hourly email sequences (reminders, related reports, abandoned checkout, weekly alert digest)', schedule: 'Every hour at :23', max_gap_h: 3 },
   { key: 'moves-refresh', label: 'Daily company moves (GDELT news; OpenDART, EDINET when their keys are set)', schedule: 'Daily 22:20 UTC', max_gap_h: 48 },
   { key: 'econ-refresh-files', label: 'Weekly file sources (Vietnam customs + NSO FDI, Indonesia BKPM, Taiwan outward investment, ASEANstats)', schedule: 'Saturdays 04:10 UTC', max_gap_h: 192 },
   { key: 'econ-refresh-daily', label: 'Daily fast series (ECB exchange rates, Viet Nam half-month trade)', schedule: 'Mon–Fri 15:40 UTC', max_gap_h: 96 },
@@ -87,7 +88,7 @@ export default async function handler(req, res) {
     }));
 
     const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
-    const [runs, failures, lastOk, lastPurchase, mailEvents, mailSuppressed, latePromises, subRows, geo] = await Promise.all([
+    const [runs, failures, lastOk, lastPurchase, mailEvents, mailSuppressed, latePromises, subRows, geo, seqRows] = await Promise.all([
       sb('job_runs?select=job,ok,detail,at&order=at.desc&limit=200').catch(() => []),
       sb('job_runs?select=job,detail,at&ok=eq.false&order=at.desc&limit=10').catch(() => []),
       sb('report_queue_events?select=at,stage&outcome=eq.ok&order=at.desc&limit=1').catch(() => []),
@@ -99,8 +100,13 @@ export default async function handler(req, res) {
       // S7: Month and Annual subscriptions (migration 052). null = table not there yet.
       sb('subscriptions?select=plan,status,created_at,current_period_end,cancel_requested_at&order=created_at.desc&limit=5000').catch(() => null),
       // GEO answers (migration 065): red when no new rows in 72 h while reports or transcripts were published. null = tables not there.
-      geoHealthLine().catch(() => null)
+      geoHealthLine().catch(() => null),
+      // Stage 1 email sequences (migration 080): one row per email sent. null = table not there yet.
+      sb(`email_sequence_log?select=kind,sent_at&sent_at=gte.${since30}&limit=20000`).catch(() => null)
     ]);
+    const seqCount = (k, days) => (seqRows || []).filter(r => r.kind === k && nowMsSeq - Date.parse(r.sent_at) <= days * 86400000).length;
+    const nowMsSeq = Date.now();
+    const sequences = seqRows === null ? null : Object.fromEntries(['A3', 'A10', 'D3', 'ABN1', 'ABN24', 'DIGEST'].map(k => [k, { d7: seqCount(k, 7), d30: seqCount(k, 30) }]));
 
     // Subscribers now, subscriptions that renew, ones cancelled but still inside the paid period, and pending ones
     // older than an hour (the reader approved at PayPal but never came back, or PayPal has not confirmed).
@@ -145,7 +151,7 @@ export default async function handler(req, res) {
       info: {
         last_purchase_at: lastPurchase[0] ? lastPurchase[0].created_at : null, email,
         late_promises: latePromises === null ? null : { count: latePromises.length, items: latePromises.slice(0, 5) },
-        subscriptions, geo
+        subscriptions, geo, sequences
       }
     });
   } catch (err) {

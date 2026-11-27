@@ -45,7 +45,7 @@ async function confirm(row, ip) {
     if (await count(`moves_alerts?email=eq.${encodeURIComponent(row.email)}&confirm_sent_at=gte.${day}&select=id`) >= CONFIRM_PER_EMAIL_DAY) return;
     if (ip && await count(`moves_alerts?ip_address=eq.${encodeURIComponent(ip)}&confirm_sent_at=gte.${hour}&select=id`) >= CONFIRM_PER_IP_HOUR) return;
     const label = alertLabel(row);
-    const ok = await sendMovesAlertConfirm({ to: row.email, label, confirmUrl: `${APP_URL}/api/moves-alert?t=${row.token}&a=confirm` });
+    const ok = await sendMovesAlertConfirm({ to: row.email, label, confirmUrl: `${APP_URL}/api/moves-alert?t=${row.token}&a=confirm`, locale: row.locale });
     if (ok) await sb(`moves_alerts?id=eq.${row.id}`, 'PATCH', { confirm_sent_at: new Date().toISOString() });
   } catch (err) { console.error('[moves-alert] confirmation failed:', err.message); }
 }

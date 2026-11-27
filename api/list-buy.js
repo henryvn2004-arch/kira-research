@@ -22,6 +22,7 @@ import { licencePrice, normLicence } from './_lib/licence.js';
 import { maskEmail } from './_lib/guest-access.js';
 import { createBuyer, captureBuyer, ensureGuestAccount, payerEmail, guestOrderLimited, cleanAttr } from './_lib/guest-checkout.js';
 import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
+import { recordCheckoutOrder } from './_lib/checkout-orders.js';
 import { sb, SLUG_RE, finishBuild, linkLive, downloadUrl } from './_lib/lists.js';
 
 const PAYPAL_BASE = process.env.PAYPAL_MODE === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
@@ -81,6 +82,7 @@ export default async function handler(req, res) {
       const order = await orderRes.json();
       const approveUrl = (order.links || []).find((l) => l.rel === 'approve')?.href;
       if (!approveUrl) throw new Error('no_approve_url');
+      await recordCheckoutOrder({ buyer, orderId: order.id, kind: 'list', slug, locale: loc, amount });   // signed-in only: abandoned-checkout reminders
       res.status(200).json({ approveUrl, orderId: order.id, amount: Number(amount), currency: 'USD', slug, licence, ...(buyer.guest ? { nonce: buyer.guest.nonce } : {}) });
       return;
     }
@@ -129,7 +131,8 @@ export default async function handler(req, res) {
 
       const row = { user_id: userId, map_id: map.id, slug, n_companies: map.n_companies, amount: paid, currency: 'USD',
         paypal_order_id: orderId, status: 'completed', captured_at: new Date().toISOString(),
-        licence, guest: !!buyer.guest, attribution: cleanAttr(body.attr), withdrawal_waiver: !!cap.parsed.waiver };
+        licence, guest: !!buyer.guest, attribution: cleanAttr(body.attr), withdrawal_waiver: !!cap.parsed.waiver,
+        locale: ['en', 'ja', 'ko', 'zh'].includes(cap.parsed.locale) ? cap.parsed.locale : 'en' };
       let purchase, fresh = false;
       try {
         const ins = await sb('list_purchases', 'POST', row);

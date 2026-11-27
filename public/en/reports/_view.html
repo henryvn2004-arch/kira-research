@@ -64,6 +64,7 @@
   <script src="/js/i18n.js" defer></script>
   <script src="/js/research-i18n.js" defer></script>
   <script src="/js/buy-copy.js" defer></script>
+  <script src="/js/report-alert.js" defer></script>
   <script src="/js/coming-soon.js" defer></script>
   <script src="/js/market-panel.js" defer></script>
 
@@ -969,6 +970,10 @@
 
       wireUnlockModal(d, purchaseState);
       wireTabs();
+      // "New reports on this market" alert (stage 1), at the very end of the page.
+      if (window.kiraReportAlert && d.country && !d.isFallback) window.kiraReportAlert.mount(root, { country: d.country, industry: d.industry });
+      // ?buy=1 (links in our emails): bring the buy box into view, nothing is charged or started.
+      if (qs.get('buy') === '1' && !purchaseState.purchased) { const bb = document.getElementById('buy-btn'); if (bb) { bb.scrollIntoView({ behavior: 'smooth', block: 'center' }); bb.focus({ preventScroll: true }); } }
       wireCover();
       wirePreview();
       fitPreviewFrame();

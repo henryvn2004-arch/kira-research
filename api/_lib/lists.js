@@ -78,7 +78,7 @@ export async function finishBuild(purchase, buyerEmail, title, extra = {}) {
     row = await fail(err && err.message ? err.message : 'build failed');
   }
   sendPurchaseReceipt({
-    buyerEmail, slug: purchase.slug, locale: 'en', amount: Number(purchase.amount), currency: purchase.currency || 'USD', reportTitle: title,
+    buyerEmail, slug: purchase.slug, locale: purchase.locale || 'en', amount: Number(purchase.amount), currency: purchase.currency || 'USD', reportTitle: title,
     kind: 'list', licence: extra.licence || purchase.licence || 'single', signInUrl: extra.signInUrl || null, downloadUrl: row.build_status === 'ready' ? downloadUrl(row) : null, pending: row.build_status !== 'ready',
   }).catch((e) => console.error('[lists] receipt threw:', e.message));
   return row;
