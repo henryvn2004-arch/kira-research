@@ -8,6 +8,10 @@
 //       ?limit=100 (max 500) &offset=0              next slice, so the test can grow in steps
 //       &budget=20 (USD per day, 1-500) &cpc=1.00 (max CPC cap, 0.10-20) &languages=English
 //   GET /api/admin-ads-campaign?kind=negatives     → text: the shared negative keywords, one per line
+//   GET /api/admin-ads-campaign?kind=pagefeed      → CSV page feed for Dynamic Search Ads (Page URL, Custom label): indexable EN pages only
+//   GET /api/admin-ads-campaign?kind=dsa           → Ads Editor file, one DSA campaign (Paused, $10/day, page-feed targets)
+//       ?budget=10 &cpc=1.50 &locations=Japan,South Korea,...
+//   GET /api/admin-ads-campaign?kind=dsa-negatives → text: negatives for the DSA campaign (incl. cross-negatives with BizDirect)
 //   GET /api/admin-ads-campaign?format=json        → { groups, keywords, skipped, priceOn, etaDays } for a preview
 //
 // The "from $49" headline is only written while single-report checkout is on
@@ -16,8 +20,9 @@
 // ============================================================
 
 import { getConfig } from './_lib/config.js';
-import { REPORT_PRICE_MIN } from './_lib/pricing.js';
+import { REPORT_PRICE_MIN, TRANSCRIPT_PRICE } from './_lib/pricing.js';
 import { buildCampaignCsv, NEGATIVES } from './_lib/ads-campaign.js';
+import { buildPageFeed, buildDsaCsv, negativesText, DEFAULT_LOCATIONS } from './_lib/ads-dsa.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -56,6 +61,57 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.setHeader('Content-Disposition', 'attachment; filename="kira-ads-negative-keywords.txt"');
     res.status(200).send(NEGATIVES.join('\n') + '\n');
+    return;
+  }
+
+  if (query.kind === 'dsa-negatives') {
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="kira-dsa-negative-keywords.txt"');
+    res.status(200).send(negativesText());
+    return;
+  }
+
+  if (query.kind === 'pagefeed' || query.kind === 'dsa') {
+    try {
+      if (query.kind === 'dsa') {
+        const [rOn, tOn] = await Promise.all([getConfig('checkout.single_report_enabled'), getConfig('checkout.transcript_enabled')]);
+        const locs = String(query.locations || '').split(',').map(x => x.replace(/[^A-Za-z .]/g, '').trim()).filter(Boolean);
+        const out = buildDsaCsv({ budget: num(query.budget, 1, 500, 10), maxCpc: num(query.cpc, 0.1, 20, 1.5).toFixed(2),
+          locations: locs.length ? locs : DEFAULT_LOCATIONS, reportPrice: rOn ? REPORT_PRICE_MIN : null, transcriptPrice: tOn ? TRANSCRIPT_PRICE : null });
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', 'attachment; filename="kira-ads-dsa-campaign.csv"');
+        res.status(200).send(out.csv);
+        return;
+      }
+      const get = async (path) => {
+        const rows = [];
+        for (let from = 0; from < 20000; from += 1000) {
+          const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}&order=slug.asc&limit=1000&offset=${from}`, { headers: H() });
+          if (!r.ok) throw new Error(`${path.split('?')[0]} ${r.status}`);
+          const part = await r.json(); rows.push(...part);
+          if (part.length < 1000) break;
+        }
+        return rows;
+      };
+      const mapsOn = await getConfig('marketmaps.indexing_enabled');
+      const [maps, reps, trs] = await Promise.all([
+        mapsOn ? get('market_maps?status=eq.published&indexable=eq.true&n_companies=gte.50&commentary=not.is.null&select=slug,country,n_companies,indexable,commentary:commentary_built_at') : [],
+        get('living_reports?status=eq.published&select=slug,country,price,status,report_translations!inner(locale,status)&report_translations.locale=eq.en&report_translations.status=eq.published'),
+        get('expert_transcripts?status=eq.published&select=slug,market,status,expert_transcript_translations!inner(locale,status)&expert_transcript_translations.locale=eq.en&expert_transcript_translations.status=eq.published')
+      ]);
+      const out = buildPageFeed({
+        maps,
+        reports: reps.map(r => ({ ...r, hasEn: Array.isArray(r.report_translations) && r.report_translations.length > 0 })),
+        transcripts: trs.map(t => ({ ...t, hasEn: Array.isArray(t.expert_transcript_translations) && t.expert_transcript_translations.length > 0 }))
+      });
+      if (query.format === 'json') { res.status(200).json({ counts: out.counts, total: out.total, mapsIndexingOn: !!mapsOn }); return; }
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="kira-ads-page-feed.csv"');
+      res.status(200).send(out.csv);
+    } catch (err) {
+      console.error('[admin-ads-campaign] dsa error:', err.message);
+      res.status(500).json({ error: 'server_error' });
+    }
     return;
   }
 
