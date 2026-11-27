@@ -6,7 +6,7 @@ Ngân sách thử: ~$300/tháng, 4 tuần. **Đi tiếp nếu ≥ 3 đơn hoặc
 
 ## Bước 0 — LÀM TRƯỚC, nếu không quảng cáo sẽ dẫn khách vào ngõ cụt
 1. Vào `kiraresearch.com/en/admin/config`, mục **Checkout**: bật `checkout.single_report_enabled` và `checkout.transcript_enabled` (market map/list đã bật từ 24/11).
-2. Trước khi bật, đọc `kiraresearch.com/en/terms` (điều khoản). Bật xong, tự mua thử 1 report ($49) bằng PayPal của anh để chắc luồng thanh toán chạy.
+2. Trước khi bật, đọc `kiraresearch.com/en/terms` (điều khoản). Bật xong, tự mua thử 1 transcript (rẻ nhất, $14) bằng thẻ của anh, không cần tài khoản, rồi hoàn tiền trong PayPal để chắc luồng thanh toán chạy.
 3. Nếu để hai công tắc đó tắt, trang report hiện "Request access", trang transcript không bán được: quảng cáo vẫn chạy nhưng không ra đơn. File chiến dịch tự bỏ giá report/transcript khỏi mô tả khi công tắc còn tắt.
 4. Địa điểm mặc định chỉ gồm Japan, South Korea, Singapore, Taiwan, Australia, US. **UK và EU đã bỏ**: site chưa có banner đồng ý cookie, còn UK/EEA cần Consent Mode v2. Muốn thêm UK/EU thì phải làm consent banner trước, rồi mới thêm địa điểm.
 
