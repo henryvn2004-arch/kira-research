@@ -17,7 +17,7 @@ test('monthYear: 4 languages, bad dates give ""', () => {
 test('citeSentence: EN sentence has number, source, date; map + BizDirect links', () => {
   const s = citeSentence(f, 'en');
   assert.equal(s.text, "BizDirect Asia's company database lists 1,234 coffee companies in Vietnam (November 2026).");
-  assert.match(s.html, /<a href="https:\/\/bizdirectasia\.com\/">BizDirect Asia<\/a>/);
+  assert.ok(s.html.includes('<a href="https://bizdirectasia.com/">BizDirect Asia</a>'));
   assert.match(s.html, /href="\/en\/market-maps\/vietnam-coffee"/);
 });
 test('citeSentence: ja / ko / zh', () => {
