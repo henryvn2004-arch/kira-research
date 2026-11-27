@@ -15,6 +15,7 @@ import { answerBlock, claimItem, modelledNote } from './geo-html.js';
 import { T, countryName, companyDataHtml } from './geo-i18n.js';
 import { rankAnswers } from './geo-rank.js';
 import { getBizdirectLists, listsBlockHtml } from './bizdirect-lists.js';
+import { citeHtml } from './bizdirect-cite.js';
 
 const CSS = '<style>.geo-slot{padding-block:8px 48px;max-width:860px}.geo-slot h2{font-size:22px;margin:32px 0 12px}.geo-slot h3{font-size:17px;line-height:1.35;margin:20px 0 6px}.geo-slot p{margin:0 0 6px;line-height:1.6}.geo-slot .geo-src,.geo-slot .geo-basis{color:var(--muted);font-size:13px}.geo-slot .geo-basis{display:block}.geo-slot .geo-claims{list-style:none;padding:0}.geo-slot .geo-claims li{margin:0 0 14px;line-height:1.6}</style>';
 
@@ -108,8 +109,10 @@ export async function companiesHtml(seg, loc = 'en') {
 export async function keyedCompaniesHtml(row, loc = 'en') {
   const country = row && row.market_map_country, segment = row && row.market_map_segment;
   if (!country || !segment) return '';
-  const html = listsBlockHtml(await getBizdirectLists(country, segment), loc, 'bd-lists');
-  return html ? `${CSS}<div class="r-container geo-slot" lang="${loc === 'zh' ? 'zh-Hans' : loc}">${html}</div>` : '';
+  const [rows, cite] = await Promise.all([getBizdirectLists(country, segment), citeHtml(country, segment, loc).catch(() => '')]);
+  const html = listsBlockHtml(rows, loc, 'bd-lists', cite);   // the citable sentence sits right above the link list
+  const body = html || cite;   // no partner lists but a sourced sentence: the sentence alone
+  return body ? `${CSS}<div class="r-container geo-slot" lang="${loc === 'zh' ? 'zh-Hans' : loc}">${body}</div>` : '';
 }
 
 export async function reportCompaniesHtml(slug, loc = 'en', row = null) {
