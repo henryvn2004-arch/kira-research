@@ -16,6 +16,7 @@
 // ============================================================
 
 import { sendPurchaseReceipt } from './_lib/email.js';
+import { recordCheckoutOrder } from './_lib/checkout-orders.js';
 import { getConfig } from './_lib/config.js';
 import { REPORT_PRICE_DEFAULT } from './_lib/pricing.js';
 import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
@@ -138,6 +139,8 @@ export default async function handler(req, res) {
       const order = await orderRes.json();
       const approveUrl = (order.links || []).find(l => l.rel === 'approve')?.href;
       if (!approveUrl) throw new Error('no_approve_url');
+
+      await recordCheckoutOrder({ buyer, orderId: order.id, kind: 'report', slug, locale, amount, currency });   // signed-in only: abandoned-checkout reminders
 
       res.status(200).json({
         approveUrl,

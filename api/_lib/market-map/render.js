@@ -476,6 +476,7 @@ ${buyBox(S, { ...opts, loc })}
 ${listsBlockHtml(opts.bdLists, loc, 'bd-lists mm-bd')}
 ${sec8}
 ${citeHtml(t.citeTitle(seg, cn), S.built, opts.canonical || `${BASE}/${loc}/market-maps/${S.meta?.slug}`, loc)}
+<div id="report-alert" data-country="${esc(countrySlug(S))}" data-industry=""></div><script src="/js/report-alert.js" defer></script>
 <div class="foot"><span>KIRA Research · Know first. Move first.</span><span>${bdCredit(loc)} · ${esc(t.snap(S.built))}</span></div>
 </main>`;
 }

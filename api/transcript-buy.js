@@ -16,6 +16,7 @@
 
 import { buildCustomId, captureOrder } from './_lib/paypal-check.js';
 import { sendPurchaseReceipt } from './_lib/email.js';
+import { recordCheckoutOrder } from './_lib/checkout-orders.js';
 import { getConfig } from './_lib/config.js';
 import { transcriptPriceOf } from './_lib/pricing.js';
 import { SLUG_RE, LOCALES } from './_lib/transcripts.js';
@@ -108,6 +109,7 @@ export default async function handler(req, res) {
       const order = await orderRes.json();
       const approveUrl = (order.links || []).find(l => l.rel === 'approve')?.href;
       if (!approveUrl) throw new Error('no_approve_url');
+      await recordCheckoutOrder({ buyer, orderId: order.id, kind: 'transcript', slug, locale, amount });
       res.status(200).json({ approveUrl, orderId: order.id, amount: Number(amount), currency: 'USD', slug, locale, licence, ...(buyer.guest ? { nonce: buyer.guest.nonce } : {}) });
       return;
     }
@@ -157,7 +159,7 @@ export default async function handler(req, res) {
       const row = {
         user_id: userId, transcript_id: transcript.id, slug, amount: paid, currency: 'USD',
         paypal_order_id: orderId, status: 'completed', captured_at: new Date().toISOString(),
-        licence, guest: !!buyer.guest, attribution: cleanAttr(body.attr)
+        licence, guest: !!buyer.guest, attribution: cleanAttr(body.attr), locale
       };
       let purchase;
       try {

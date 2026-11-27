@@ -136,6 +136,13 @@
         <div class="hl-sub">${g.ok ? (g.new_rows_72h ? 'Rows were added in the last 72 hours.' : 'Nothing was published in the last 72 hours, so nothing was expected.') : 'Reports or transcripts were published in that time, so a daily hook (batch runner step 5.3b-7 or the experts routine) is not writing.'} <a href="/en/admin/geo">Open GEO</a></div></div>
         <span class="hl-pill ${g.ok ? 'ok' : 'bad'}">${g.ok ? 'Running' : 'Stalled'}</span></div>`;
     }
+    // Stage 1 email sequences: how many of each were sent (a switch per sequence is in Settings > Emails).
+    function seqCard(q) {
+      const head = '<h2 class="hl-sec">Email sequences<small>sent, last 7 / 30 days</small></h2>';
+      if (!q) return head + '<div class="hl-card"><div><b>Could not read</b><div class="hl-sub">The sequence log needs migration 080.</div></div><span class="hl-pill warn">Check</span></div>';
+      const L = { A3: 'Requesters +3 days', A10: 'Requesters +10 days', D3: 'Buyers +3 days', ABN1: 'Abandoned checkout +1 h', ABN24: 'Abandoned checkout +24 h', DIGEST: 'Weekly alert digest' };
+      return head + '<div class="hl-card"><div>' + Object.keys(L).map(k => '<div class="hl-sub"><b>' + L[k] + '</b>: ' + q[k].d7 + ' / ' + q[k].d30 + '</div>').join('') + '</div></div>';
+    }
     function mailBad(m) {
       if (!m) return false;
       const total = m.delivered + m.bounced + m.complained;
@@ -173,6 +180,7 @@
 
         ${promiseCard(d.info.late_promises)}
         ${subscriptionCard(d.info.subscriptions)}
+        ${seqCard(d.info.sequences)}
         ${mailCard(d.info.email)}
         ${geoCard(d.info.geo)}
 
