@@ -313,9 +313,9 @@
       // The link type only picks which one-time token Supabase checks; Supabase verifies the token server-side,
       // so nothing on this page trusts the URL. Unknown types fall back to 'recovery' (our receipt email link).
       var OTP_TYPES = { recovery: 'recovery', magiclink: 'magiclink', email: 'email' };
-      var th = Q.get('token_hash') || '';
       var type = OTP_TYPES[Q.get('type') || ''] || 'recovery';
-      if (th.length > 0) {
+      // At most one token from the link; Supabase decides whether it is valid.
+      for (var th of Q.getAll('token_hash').filter(Boolean).slice(0, 1)) {
         var info = document.getElementById('msg-info'); info.textContent = tr('signingLink'); info.style.display = 'block';
         try {
           var v = await window.db.auth.verifyOtp({ token_hash: th, type: type });
