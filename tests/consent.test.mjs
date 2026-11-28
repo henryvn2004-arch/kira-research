@@ -40,15 +40,18 @@ test('choice storage: save, read, bad value, blocked storage', () => {
   assert.equal(C.readChoice(bad), null); assert.doesNotThrow(() => C.saveChoice(bad, { ad: true, an: true }));
 });
 test('parseAudience: whitelist keys, safe values, needs page_type', () => {
-  assert.deepEqual(C.parseAudience('page_type=report&country=vietnam&segment=coffee-chains&analysis=market-overview&email=a%40b.c'),
-    { page_type: 'report', country: 'vietnam', segment: 'coffee-chains', analysis: 'market-overview' });
+  assert.deepEqual(C.parseAudience('page_type=report&country=vn&country_slug=vietnam&segment=coffee-chains&analysis=market-overview&email=a%40b.c'),
+    { page_type: 'report', country: 'VN', country_slug: 'vietnam', segment: 'coffee-chains', analysis: 'market-overview' });
   assert.equal(C.parseAudience('country=vietnam'), null);
   assert.deepEqual(C.parseAudience('page_type=report&country=%3Cscript%3E'), { page_type: 'report' });
 });
 test('audMeta: slugged params, empty values dropped', () => {
   const h = audMeta({ page_type: 'market_map', country: 'Viet Nam', segment: null, analysis: '' });
-  assert.match(h, /name="kira-audience"/); assert.match(h, /page_type=market_map&amp;country=viet-nam/); assert.doesNotMatch(h, /segment/);
+  assert.match(h, /name="kira-audience"/); assert.match(h, /country=VN&amp;country_slug=viet-nam&amp;page_type=market_map/); assert.doesNotMatch(h, /segment/);
   assert.equal(audMeta({}), '');
+  assert.doesNotMatch(audMeta({ page_type: 'report', country: 'atlantis' }), /country/);
+  assert.match(audMeta({ page_type: 'transcript', country: 'south-korea' }), /country=KR/);
+  assert.match(audMeta({ page_type: 'report', country: 'th' }), /country=TH/);
 });
 test('consent-region API: country from header, private cache', () => {
   const run = (hdr, method = 'GET') => { const r = { h: {}, setHeader(k, v) { this.h[k] = v; }, status(c) { this.c = c; return this; }, json(b) { this.b = b; } }; region({ method, headers: hdr }, r); return r; };

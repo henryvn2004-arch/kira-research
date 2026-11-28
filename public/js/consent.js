@@ -16,7 +16,7 @@
   var EEA = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO'];
   var REGIONS = EEA.concat(['GB', 'CH']);
   var KEY = 'kira_consent', CC_KEY = 'kira_cc', CC_TTL = 86400000;
-  var AUD_KEYS = ['page_type', 'country', 'segment', 'analysis'];
+  var AUD_KEYS = ['page_type', 'country', 'country_slug', 'segment', 'analysis'];
 
   function needsConsent(cc) { return !!cc && REGIONS.indexOf(String(cc).toUpperCase()) >= 0; }
   function gpcOn(nav, win) {
@@ -48,7 +48,7 @@
       var i = kv.indexOf('='); if (i < 1) return;
       var k = kv.slice(0, i), v = kv.slice(i + 1);
       try { v = decodeURIComponent(v); } catch (_e) { return; }
-      if (AUD_KEYS.indexOf(k) >= 0 && /^[a-z0-9][a-z0-9_-]{0,79}$/i.test(v)) out[k] = v.toLowerCase();
+      if (AUD_KEYS.indexOf(k) >= 0 && (k === 'country' ? /^[A-Za-z]{2}$/ : /^[a-z0-9][a-z0-9_-]{0,79}$/i).test(v)) out[k] = k === 'country' ? v.toUpperCase() : v.toLowerCase();
     });
     return out.page_type ? out : null;
   }
