@@ -102,13 +102,18 @@ export async function buildXlsx(report, data) {
 
 // ── PowerPoint ───────────────────────────────────────────
 const INK = '0F172A', PRIMARY = '1E6FFF', MID = '64748B', PANEL = 'F8FAFC', BORDER = 'E2E8F0';
+// pptxgenjs 4 ships its ES build as a .js file without "type": "module"; Vercel's loader cannot parse it
+// ("Cannot use import statement outside a module", the function exits). Load the CommonJS build instead.
+import { createRequire } from 'node:module';
+const loadPptxGen = () => createRequire(import.meta.url)('pptxgenjs');
+
 const PALETTE = ['1E6FFF', '0F172A', 'F59E0B', '10B981', '7C3AED', 'EC4899', '64748B', '0EA5E9'];
 
 const cell = (v) => (v === null || v === undefined ? '' : typeof v === 'number' ? String(v) : String(v));
 
 // Returns a Buffer. Charts are native PowerPoint charts, so the reader can restyle them.
 export async function buildPptx(report, data) {
-  const pptxgen = (await import('pptxgenjs')).default;
+  const pptxgen = loadPptxGen();
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_WIDE';            // 13.33 x 7.5 in
   pptx.title = `${report.title} — exhibits`;
