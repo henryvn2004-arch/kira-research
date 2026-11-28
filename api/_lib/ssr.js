@@ -60,6 +60,19 @@ function setById(html, id, attr, value) {
   return html.replace(tag, (m) => m.replace(new RegExp(`(\\b${attr}=")[^"]*(")`), (_x, a, b) => a + esc(value) + b));
 }
 
+// Audience tags for Google Ads remarketing (W5): read by /js/consent.js, sent as the GA4 view_item event. No personal data.
+const ISO2 = { vietnam: 'VN', 'viet-nam': 'VN', thailand: 'TH', singapore: 'SG', indonesia: 'ID', japan: 'JP', 'south-korea': 'KR', korea: 'KR', taiwan: 'TW', malaysia: 'MY', philippines: 'PH', australia: 'AU', 'new-zealand': 'NZ', 'hong-kong': 'HK', cambodia: 'KH', laos: 'LA', myanmar: 'MM', brunei: 'BN' };
+export function audMeta(a) {
+  const slug = (v) => String(v).toLowerCase().replace(/[^a-z0-9_]+/g, '-').replace(/^-+|-+$/g, '');
+  const o = { ...(a || {}) };
+  const cs = o.country ? slug(o.country) : '';
+  const iso = ISO2[cs] || (/^[a-z]{2}$/.test(cs) && Object.values(ISO2).includes(cs.toUpperCase()) ? cs.toUpperCase() : '');
+  delete o.country;   // country = ISO2 upper case (same as BizDirect); unknown country → no param, never a wrong value
+  const q = [...(iso ? [`country=${iso}`, `country_slug=${encodeURIComponent(cs)}`] : []),
+    ...Object.entries(o).filter(([, v]) => v && slug(v)).map(([k, v]) => `${k}=${encodeURIComponent(slug(v))}`)].join('&');
+  return q ? `<meta name="kira-audience" content="${esc(q)}" />\n` : '';
+}
+
 // opts: { locale, title, description, canonical, ogImage, robots, hreflang:[{locale,url}], xDefault, ld:[{id,data}], extraHead, content, ogType }
 export function fillTemplate(html, opts) {
   const { locale, title, description, canonical, ogImage, robots, content } = opts;
@@ -77,6 +90,7 @@ export function fillTemplate(html, opts) {
   if (ogImage) { out = setById(out, 'meta-og-image', 'content', ogImage); out = setById(out, 'meta-tw-image', 'content', ogImage); }
 
   let head = '';
+  if (opts.aud) head += audMeta(opts.aud);
   if (robots) head += `<meta name="robots" content="${esc(robots)}" />\n`;
   for (const h of opts.hreflang || []) head += `<link rel="alternate" hreflang="${esc(HREFLANG[h.locale])}" href="${esc(h.url)}" data-ssr="1" />\n`;
   if (opts.xDefault) head += `<link rel="alternate" hreflang="x-default" href="${esc(opts.xDefault)}" data-ssr="1" />\n`;

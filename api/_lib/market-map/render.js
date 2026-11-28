@@ -16,7 +16,7 @@
 // The stats JSON is the contract with the private pipeline (see the header of scripts/load-market-maps.mjs).
 // Nothing here ever prints a phone number, an email or a named person: the stats hold none.
 // ============================================================
-import { BASE, esc, ldJson, HREFLANG, OG_LOCALE } from '../ssr.js';
+import { BASE, esc, ldJson, HREFLANG, OG_LOCALE, audMeta } from '../ssr.js';
 import { citeBlock, citationText } from '../cite.js';
 import { BANDS, SORTS, isFiltered, hubHref } from './hub.js';
 import { LOCS, ui, lab, labShort, nfLoc, monthYear } from './i18n.js';
@@ -489,14 +489,14 @@ const methodSource = (t, built) => esc(t.m1(built)).replace('BizDirect Asia', '<
 
 // ── document shell: head, JSON-LD, shared chrome (nav.js builds the header and footer) ──
 // alternates: [[loc, absolute url], ...] = the languages this page may be indexed in (self included); x-default = the English one.
-function shell({ loc = 'en', title, description, canonical, robots, ld, body, buyScripts = '', researchCss = false, alternates = [] }) {
+function shell({ loc = 'en', title, description, canonical, robots, ld, body, buyScripts = '', researchCss = false, alternates = [], aud = null }) {
   const alt = alternates.length > 1 && alternates.some(([l]) => l === loc)
     ? `${alternates.map(([l, u]) => `<link rel="alternate" hreflang="${HREFLANG[l]}" href="${esc(u)}">`).join('\n')}${alternates.some(([l]) => l === 'en') ? `\n<link rel="alternate" hreflang="x-default" href="${esc(alternates.find(([l]) => l === 'en')[1])}">` : ''}\n` : '';
   return `<!doctype html><html lang="${ui(loc).htmlLang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <meta name="robots" content="${esc(robots)}">
-<link rel="canonical" href="${esc(canonical)}">
+${aud ? audMeta(aud) : ''}<link rel="canonical" href="${esc(canonical)}">
 ${alt}<meta property="og:type" content="article"><meta property="og:site_name" content="KIRA RESEARCH"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${esc(canonical)}"><meta property="og:image" content="${BASE}/og-image.png"><meta property="og:locale" content="${OG_LOCALE[loc] || 'en_US'}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(description)}"><meta name="twitter:image" content="${BASE}/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://api.fontshare.com">
@@ -545,7 +545,7 @@ export function renderDocument(S, C, opts = {}) {
         { '@type': 'ListItem', position: 4, name: seg, item: canonical },
       ] } },
   ];
-  return shell({ loc, title: mapTitle(S, o), description: mapDescription(S, buyOn, o), canonical, robots: opts.robots || 'noindex,follow', ld, alternates: opts.alternates || [],
+  return shell({ loc, title: mapTitle(S, o), description: mapDescription(S, buyOn, o), canonical, robots: opts.robots || 'noindex,follow', ld, alternates: opts.alternates || [], aud: { page_type: 'market_map', country: countrySlug(S), segment: String(S.meta?.slug || '').split('/').slice(1).join('-') },
     body: renderBody(S, C, { ...opts, loc, countryName: cn, segName: seg }),
     buyScripts: buyOn ? '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/auth.js"></script><script src="/js/checkout.js"></script><script src="/js/market-map-buy.js" defer></script>\n' : '' });
 }

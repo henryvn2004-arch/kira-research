@@ -154,6 +154,7 @@
         <a href="mailto:hello@kiraresearch.com"           data-i18n="footer.contact">Contact</a>
         <a href="${localPath('/terms')}"                  data-i18n="footer.terms">Terms</a>
         <a href="${localPath('/privacy')}"                data-i18n="footer.privacy">Privacy</a>
+        <a href="#" data-kira-cookie-settings                data-i18n="footer.cookieSettings">Cookie settings</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -431,16 +432,17 @@
     if (window.location.pathname.startsWith('/en/admin/')) return;
     if (document.getElementById('kira-ga')) return;
     const GA_ID = 'G-N1891GBDCB';
-    const s = document.createElement('script');
-    s.id = 'kira-ga';
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
-    document.head.appendChild(s);
+    // Consent Mode v2 (W5): /js/consent.js sets the consent defaults, then loads gtag.js, sends config + the audience
+    // event and shows the cookie banner where consent is needed. Without it nothing is loaded (safe by default).
     window.dataLayer = window.dataLayer || [];
     function gtag(){ window.dataLayer.push(arguments); }
     window.gtag = window.gtag || gtag;   // /js/track.js sends the sign-up key event through it
-    gtag('js', new Date());
-    gtag('config', GA_ID);
+    const c = document.createElement('script');
+    c.id = 'kira-ga';
+    c.defer = true;
+    c.src = '/js/consent.js';
+    c.onload = function () { if (window.kiraConsent) window.kiraConsent.boot(GA_ID, locale); };
+    document.head.appendChild(c);
   }
   injectGA();
 
