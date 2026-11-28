@@ -20,7 +20,11 @@
 //
 // ============================================================
 
-import pptxgen from 'pptxgenjs';
+// pptxgenjs 4 ships its ES build as a .js file without "type": "module"; Vercel's loader cannot parse it
+// ("Cannot use import statement outside a module", the function exits). Load the CommonJS build instead.
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const pptxgen = require('pptxgenjs');
 
 // Brand colors (hex without #).
 const C_PRIMARY = '1E6FFF';
