@@ -105,7 +105,8 @@ const INK = '0F172A', PRIMARY = '1E6FFF', MID = '64748B', PANEL = 'F8FAFC', BORD
 // pptxgenjs 4 ships its ES build as a .js file without "type": "module"; Vercel's loader cannot parse it
 // ("Cannot use import statement outside a module", the function exits). Load the CommonJS build instead.
 import { createRequire } from 'node:module';
-const loadPptxGen = () => createRequire(import.meta.url)('pptxgenjs');
+const require = createRequire(import.meta.url);
+const loadPptxGen = () => require('pptxgenjs');
 
 const PALETTE = ['1E6FFF', '0F172A', 'F59E0B', '10B981', '7C3AED', 'EC4899', '64748B', '0EA5E9'];
 
