@@ -33,6 +33,7 @@ const ADMIN_EMAILS   = (process.env.ADMIN_EMAILS || '')
 
 import { tr, noun as nounOf } from './email-i18n.js';
 import { renderMail, unsubHeaders } from './email-layout.js';
+import { emailCrosssellForSlug } from './bizdirect-crosssell.js';
 
 // Addresses that hard-bounced or marked us as spam (email_suppressions, filled by /api/email-webhook).
 // Sending to them again hurts the domain's reputation. Fails open: if the lookup breaks, mail still goes out.
@@ -119,7 +120,8 @@ export async function sendPurchaseReceipt({
   kind = 'report',           // 'report' | 'transcript' (expert-interview transcript, S19) | 'list' (market-map company list)
   pending = false,           // list only: paid, the file is not ready yet
   licence = 'single',        // 'single' | 'team' | 'company' (shown on the receipt)
-  signInUrl = null           // guest checkout: one-time sign-in link, the same mail doubles as the sign-in email
+  signInUrl = null,          // guest checkout: one-time sign-in link, the same mail doubles as the sign-in email
+  crosssell = null           // W6: { url, label } last line (BizDirect list of the same segment)
 }) {
   if (!buyerEmail) return false;
 
@@ -150,6 +152,8 @@ export async function sendPurchaseReceipt({
   if (isList) blocks.push({ small: listNote });
   if (downloadUrl && !isList) blocks.push({ small: `${tr(L, 'receipt.pdfDirect')}: ${downloadUrl}` });
   blocks.push({ small: tr(L, 'refund') }, { small: tr(L, 'receipt.questions') });
+  const xs = crosssell || await emailCrosssellForSlug(kind, slug, L);   // W6: BizDirect list of the same segment, when there is one
+  if (xs && xs.url && xs.label) blocks.push({ link: xs });
   const { html, text } = renderMail({ loc: L, blocks });
   return resendSend({ to: buyerEmail, subject, html, text });
 }
@@ -372,7 +376,7 @@ export async function sendTopicRequestConfirmation({ to, title, url, eta, locale
 // Sent once to each reader who asked to be told (topic_requests).
 // Sequence A, step 0. price/reason make it a buy email: price, why it costs that, and a direct buy link
 // (the report page opens its buy box with ?buy=1).
-export async function sendTopicPublishedEmail({ to, title, url, locale = 'en', price = null, reason = '', unsubUrl = null }) {
+export async function sendTopicPublishedEmail({ to, title, url, locale = 'en', price = null, reason = '', unsubUrl = null, crosssell = null }) {
   if (!to || !url) return false;
   const p = price ? `$${price}` : null;
   const buyUrl = p ? `${url}${url.includes('?') ? '&' : '?'}buy=1` : url;
@@ -381,6 +385,7 @@ export async function sendTopicPublishedEmail({ to, title, url, locale = 'en', p
   blocks.push({ cta: { url: buyUrl, label: p ? tr(locale, 'pub.cta', { price: p }) : tr(locale, 'pub.free') } });
   if (p) blocks.push({ small: `${tr(locale, 'pub.free')}: ${url}` });
   blocks.push({ small: p ? tr(locale, 'pub.reason', { price: p }) : tr(locale, 'chain.once') }, { small: tr(locale, 'refund') });
+  if (crosssell && crosssell.url && crosssell.label) blocks.push({ link: crosssell });   // W6: one last line, only when BizDirect has a list for the segment
   const { html, text } = renderMail({ loc: locale, blocks, unsubUrl });
   return resendSend({ to, subject: tr(locale, 'pub.subject', { title }), html, text, headers: unsubHeaders(unsubUrl) });
 }
