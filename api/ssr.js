@@ -137,6 +137,7 @@ async function renderTranscript(req, res, loc, slug) {
     hreflang: have.map((l) => ({ locale: l, url: `${BASE}/${l}/experts/transcripts/${base.slug}` })),
     xDefault: have.includes('en') ? `${BASE}/en/experts/transcripts/${base.slug}` : null,
     ld, content,
+    aud: { page_type: 'transcript', country: base.market_map_country || base.country },
     slots: { KP: await keyPointsHtml(base.slug, served).catch(() => ''), KB: await transcriptCompaniesHtml(base.slug, served, await sbT(`expert_transcripts?id=eq.${base.id}&select=market_map_country,market_map_segment&limit=1`).then((r) => r[0] || null).catch(() => null)).catch(() => '') },
   });
   send(res, html);
@@ -271,6 +272,7 @@ async function renderReport(req, res, loc, slug) {
     ogImage: cover && cover.full,
     hreflang: have.map((l) => ({ locale: l, url: `${BASE}/${l}/reports/${base.slug}` })),
     xDefault: `${BASE}/en/reports/${base.slug}`, ld, content,
+    aud: { page_type: 'report', country: base.country, segment: base.market_map_segment, analysis: base.analysis },
     slots: { KQ: await keyQuestionsHtml(base.slug, served).catch(() => ''), KB: await reportCompaniesHtml(base.slug, served, base).catch(() => '') },
   }));
   return true;
