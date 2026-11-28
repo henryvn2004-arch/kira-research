@@ -31,6 +31,9 @@ export function renderMail({ loc = 'en', blocks = [], why = null, unsubUrl = nul
     } else if (b.cta) {
       text.push(`${b.cta.label}: ${b.cta.url}`, '');
       html.push(`<p style="margin:0 0 18px;"><a href="${esc(b.cta.url)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 18px;font-size:14px;border-radius:4px;">${esc(b.cta.label)}</a></p>`);
+    } else if (b.link) {
+      text.push(`${b.link.label}: ${b.link.url}`, '');
+      html.push(`<p style="margin:0 0 14px;font-size:13px;"><a href="${esc(b.link.url)}" style="color:#111;">${esc(b.link.label)}</a></p>`);
     } else if (b.items) {
       for (const it of b.items) {
         text.push(`• ${it.title}${it.meta ? ' (' + it.meta + ')' : ''}`, `  ${it.url}`);

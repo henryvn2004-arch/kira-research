@@ -16,6 +16,7 @@
 // The stats JSON is the contract with the private pipeline (see the header of scripts/load-market-maps.mjs).
 // Nothing here ever prints a phone number, an email or a named person: the stats hold none.
 // ============================================================
+import { mapCtaHtml } from '../bizdirect-crosssell.js';
 import { BASE, esc, ldJson, HREFLANG, OG_LOCALE, audMeta } from '../ssr.js';
 import { citeBlock, citationText } from '../cite.js';
 import { BANDS, SORTS, isFiltered, hubHref } from './hub.js';
@@ -358,14 +359,14 @@ function buyBox(S, opts) {
 <div id="mm-lic" data-base="${esc(String(p))}"></div><button class="btn" type="button" id="mm-buy" disabled>${esc(t.buyBtn(p))}</button><div class="msg" id="mm-msg" role="status"></div>
 <div class="sub" style="margin-top:8px">${esc(t.buyNote(S.built))}</div>
 <div class="sub" style="margin-top:6px">${esc(t.refundLine)} <a href="/${loc}/terms#refunds">${esc(t.refundLink)}</a></div>
-<label class="sub" style="margin-top:6px;font-size:12px;display:flex;gap:8px;align-items:flex-start;cursor:pointer"><input type="checkbox" class="kc-waiver" style="margin-top:3px;flex:none"> <span>${esc(t.euLine)}</span></label></div>`;
+<label class="sub" style="margin-top:6px;font-size:12px;display:flex;gap:8px;align-items:flex-start;cursor:pointer"><input type="checkbox" class="kc-waiver" style="margin-top:3px;flex:none"> <span>${esc(t.euLine)}</span></label>${mapCtaHtml(opts.bdLists, loc)}</div>`;
   }
   const msgs = { bad: t.reqBad, ok: t.reqOk, fail: t.reqFail };
   return `<div class="buy" id="buy"><b style="font-size:20px">${esc(t.buyHead(N(n), null))}</b>${cols}
 <form id="mm-req" novalidate><label class="hp" aria-hidden="true">${esc(t.reqHp)}<input type="text" name="hp" tabindex="-1" autocomplete="off"></label>
 <input type="email" name="email" placeholder="${esc(t.reqPh)}" aria-label="${esc(t.reqPh)}" autocomplete="email" required><button class="btn" type="submit">${esc(t.reqBtn)}</button></form>
 <div class="msg" id="mm-msg" role="status"></div>
-<div class="sub" style="margin-top:8px">${esc(t.reqNote(S.built))}</div></div>
+<div class="sub" style="margin-top:8px">${esc(t.reqNote(S.built))}</div>${mapCtaHtml(opts.bdLists, loc)}</div>
 <script>(function(){var f=document.getElementById('mm-req'),m=document.getElementById('mm-msg');if(!f)return;var X=${jsJson(msgs)};f.addEventListener('submit',function(e){e.preventDefault();var em=f.elements.email.value.trim();if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(em)){m.textContent=X.bad;return}var btn=f.querySelector('button');btn.disabled=true;fetch('/api/topic-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,keyword:${jsJson(keyword)},locale:${jsJson(loc)},hp:f.elements.hp.value})}).then(function(r){if(!r.ok)throw 0;m.textContent=X.ok;f.reset();btn.disabled=false}).catch(function(){m.textContent=X.fail;btn.disabled=false})})})();</script>`;
 }
 

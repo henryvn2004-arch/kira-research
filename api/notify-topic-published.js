@@ -16,6 +16,7 @@ import { cronAuthorized } from './_lib/cron-auth.js';
 import { optoutUrl } from './_lib/sequences.js';
 import { optoutsFor } from './_lib/seq-data.js';
 import { reasonLine, normLocale } from './_lib/email-i18n.js';
+import { emailCrosssell } from './_lib/bizdirect-crosssell.js';
 
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -49,7 +50,7 @@ export default async function handler(req, res) {
     const info = new Map();
     if (due.length) {
       const slugs = [...new Set(due.map((d) => d.report_slug))].map((s) => `"${s}"`).join(',');
-      for (const r of await sb(`living_reports?slug=in.(${encodeURIComponent(slugs)})&select=slug,price,pages,exhibits`).catch(() => [])) info.set(r.slug, r);
+      for (const r of await sb(`living_reports?slug=in.(${encodeURIComponent(slugs)})&select=slug,price,pages,exhibits,market_map_country,market_map_segment`).catch(() => [])) info.set(r.slug, r);
     }
     const optouts = await optoutsFor(due.map((d) => d.email)).catch(() => new Set());
     let sent = 0, failed = 0;
@@ -62,7 +63,8 @@ export default async function handler(req, res) {
       const loc = normLocale(d.locale), rep = info.get(d.report_slug);
       const ok = await sendTopicPublishedEmail({
         to: d.email, title: d.topic_title, url: `${APP_URL}/${loc}/reports/${d.report_slug}`, locale: loc,
-        price: saleOn && rep ? rep.price : null, reason: rep ? reasonLine(loc, 'report', rep) : '', unsubUrl: optoutUrl(APP_URL, d.email)
+        price: saleOn && rep ? rep.price : null, reason: rep ? reasonLine(loc, 'report', rep) : '', unsubUrl: optoutUrl(APP_URL, d.email),
+        crosssell: rep ? await emailCrosssell(rep.market_map_country, rep.market_map_segment, loc) : null
       });
       if (ok) sent++;
       else {
